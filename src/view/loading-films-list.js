@@ -1,4 +1,4 @@
-const createFilmsListLoadingElement = () => `
+const createLoadingFilmsListTemplate = () => `
 <section class="films">
 <section class="films-list">
   <h2 class="films-list__title">Loading...</h2>
@@ -6,4 +6,4 @@ const createFilmsListLoadingElement = () => `
 </section>
 `;
 
-export {createFilmsListLoadingElement};
+export {createLoadingFilmsListTemplate};

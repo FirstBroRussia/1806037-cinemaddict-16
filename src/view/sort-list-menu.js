@@ -1,4 +1,4 @@
-const createMenuSortListElement = () => `
+const createSortListMenuTemplate = () => `
 <ul class="sort">
 <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
 <li><a href="#" class="sort__button">Sort by date</a></li>
@@ -6,4 +6,4 @@ const createMenuSortListElement = () => `
 </ul>
 `;
 
-export {createMenuSortListElement};
+export {createSortListMenuTemplate};

@@ -1,4 +1,4 @@
-const createMenuNavigationElement = () => `
+const createNavigationMenuTemplate = () => `
 <nav class="main-navigation">
     <div class="main-navigation__items">
       <a href="#all" class="main-navigation__item">All movies</a>
@@ -10,4 +10,4 @@ const createMenuNavigationElement = () => `
   </nav>
 `;
 
-export {createMenuNavigationElement};
+export {createNavigationMenuTemplate};

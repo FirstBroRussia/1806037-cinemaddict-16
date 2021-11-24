@@ -1,4 +1,4 @@
-const createFilmsListElement = () => `
+const createFilmsListTemplate = () => `
 <div class="films-list__container">
 <article class="film-card">
   <a class="film-card__link">
@@ -102,4 +102,4 @@ const createFilmsListElement = () => `
 </div>
 `;
 
-export {createFilmsListElement};
+export {createFilmsListTemplate};

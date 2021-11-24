@@ -1,41 +1,42 @@
-import {createMenuNavigationElement} from '/src/view/menu-navigation.js';
-import {createMenuStatisticElement} from '/src/view/menu-statistic.js';
-import {createMenuSortListElement} from '/src/view/menu-sort-list.js';
-import {createFilmsListElement} from '/src/view/films-list.js';
-import {createProfileUserTitleElement} from '/src/view/profile-user.js';
-import {createQuantityOfFilmsElement} from '/src/view/quantity-of-films.js';
-import {createPopupFilmDetailsElement} from '/src/view/popup-film-details.js';
-import {createFilmsListEmptyElement} from '/src/view/films-list-empty.js';
-import {createShowMoreButtonElement} from '/src/view/button-show-more.js';
-import {createFilmsListExtraElement} from '/src/view/films-list-extra.js';
-import {createFilmsListLoadingElement} from '/src/view/loading-films-list.js';
+import {createNavigationMenuTemplate} from '/src/view/navigation-menu.js';
+import {createStatisticMenuTemplate} from '/src/view/statistic-menu.js';
+import {createSortListMenuTemplate} from '/src/view/sort-list-menu.js';
+import {createFilmsListTemplate} from '/src/view/films-list.js';
+import {createTitleProfileUserTemplate} from '/src/view/profile-user.js';
+import {createFilmsCountTemplate} from '/src/view/films-count.js';
+import {createFilmDetailsPopupTemplate} from '/src/view/film-details-popup.js';
+import {createEmptyFilmsListTemplate} from '/src/view/empty-films-list.js';
+import {createShowMoreButtonTemplate} from '/src/view/show-more-button.js';
+import {createExtraFilmsListTemplate} from '/src/view/extra-films-list.js';
+import {createLoadingFilmsListTemplate} from '/src/view/loading-films-list.js';
 
 
-const headerBodyElement = document.querySelector('.header'); // звание отрисовать
-const mainBodyElement = document.querySelector('.main'); // меню + сортировка + контент
+const headerBodyElement = document.querySelector('.header');
+const mainBodyElement = document.querySelector('.main');
 const footerBodyElement = document.querySelector('.footer');
-const footerStatisticBodyElement = document.querySelector('.footer__statistics'); // кол-во фильмов
+const footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
-headerBodyElement.insertAdjacentHTML('beforeend',createProfileUserTitleElement());
-
-
-mainBodyElement.insertAdjacentHTML('beforeend', createMenuNavigationElement());
-
-mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListLoadingElement());
-
-mainBodyElement.insertAdjacentHTML('beforeend', createMenuSortListElement());
-mainBodyElement.insertAdjacentHTML('beforeend', createMenuStatisticElement());
-mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListElement());
-mainBodyElement.insertAdjacentHTML('beforeend', createShowMoreButtonElement());
-mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListExtraElement());
-mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListEmptyElement());
+headerBodyElement.insertAdjacentHTML('beforeend',createTitleProfileUserTemplate());
 
 
-footerStatisticBodyElement.insertAdjacentHTML('beforeend', createQuantityOfFilmsElement());
-footerBodyElement.insertAdjacentHTML('beforeend', createPopupFilmDetailsElement());
+mainBodyElement.insertAdjacentHTML('beforeend', createNavigationMenuTemplate());
 
-// обработчик для попапа чтоб закрывался при нажатии на крестик
-const closePopupFilmDetailsButton = document.querySelector('.film-details');
+mainBodyElement.insertAdjacentHTML('beforeend', createLoadingFilmsListTemplate());
+
+mainBodyElement.insertAdjacentHTML('beforeend', createSortListMenuTemplate());
+mainBodyElement.insertAdjacentHTML('beforeend', createStatisticMenuTemplate());
+mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListTemplate());
+mainBodyElement.insertAdjacentHTML('beforeend', createShowMoreButtonTemplate());
+mainBodyElement.insertAdjacentHTML('beforeend', createExtraFilmsListTemplate());
+mainBodyElement.insertAdjacentHTML('beforeend', createEmptyFilmsListTemplate());
+
+
+footerStatisticBodyElement.insertAdjacentHTML('beforeend', createFilmsCountTemplate());
+footerBodyElement.insertAdjacentHTML('beforeend', createFilmDetailsPopupTemplate());
+
+const closePopupFilmDetailsButton = document.querySelector('.film-details__close-btn');
+const filmDetailsPopup = document.querySelector('.film-details');
+
 closePopupFilmDetailsButton.addEventListener('click', () => {
-  closePopupFilmDetailsButton.style.display = 'none';
+  filmDetailsPopup.style.display = 'none';
 });

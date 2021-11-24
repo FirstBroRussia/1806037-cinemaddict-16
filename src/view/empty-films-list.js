@@ -1,4 +1,4 @@
-const createFilmsListEmptyElement = () => `
+const createEmptyFilmsListTemplate = () => `
 <section class="films">
 <section class="films-list">
   <h2 class="films-list__title">There are no movies in our database</h2>
@@ -11,6 +11,7 @@ const createFilmsListEmptyElement = () => `
       * Favorites — 'There are no favorite movies now'.
   -->
 </section>
+</section>
 `;
 
-export {createFilmsListEmptyElement};
+export {createEmptyFilmsListTemplate};

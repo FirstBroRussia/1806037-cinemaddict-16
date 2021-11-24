@@ -1,4 +1,4 @@
-const createMenuStatisticElement = () => `
+const createStatisticMenuTemplate = () => `
 <section class="statistic">
 <p class="statistic__rank">
   Your rank
@@ -50,4 +50,4 @@ const createMenuStatisticElement = () => `
 </section>
 `;
 
-export {createMenuStatisticElement};
+export {createStatisticMenuTemplate};
