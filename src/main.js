@@ -45,6 +45,7 @@ function getCreateListFilms (data) {
       showMoreButton.classList.add('hidden');
       for (const card of filmsListWithClassToHidden) {
         card.classList.remove('hidden');
+        showMoreButton.removeEventListener('click', getRenderFilmsCardToShowMoreButton);
       }
       return;
     }
@@ -53,9 +54,7 @@ function getCreateListFilms (data) {
     }
   }
   getRenderFilmsCardToShowMoreButton();
-  showMoreButton.addEventListener('click', () => {
-    getRenderFilmsCardToShowMoreButton();
-  });
+  showMoreButton.addEventListener('click', getRenderFilmsCardToShowMoreButton);
 }
 getCreateListFilms(filmsData);
 
