@@ -3,7 +3,7 @@ import {filmsData} from '/src/mock/temporary-data.js';
 import {createNavigationMenuTemplate} from '/src/view/navigation-menu.js';
 import {createSortListMenuTemplate} from '/src/view/sort-list-menu.js';
 import {createFilmsListTemplate} from '/src/view/films-list.js';
-import {createFilmCardTemplate, setClassToggleToControlButtonsForFilmCard, setMarkupCommentsCountField} from '/src/view/film-card.js';
+import {createFilmCardTemplate} from '/src/view/film-card.js';
 import {createTitleProfileUserTemplate} from '/src/view/profile-user.js';
 import {createFilmsCountTemplate} from '/src/view/films-count.js';
 import {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate, setFilmDetailGenresMarkup, setClassToggleToControlButtonsForFilmDetails} from '/src/view/film-details-popup.js';
@@ -16,7 +16,7 @@ import {createShowMoreButtonTemplate} from '/src/view/show-more-button.js';
 import {createExtraFilmsListTemplate} from '/src/view/extra-films-list.js';
 import {createLoadingFilmsListTemplate} from '/src/view/loading-films-list.js'; */
 
-const MAX_COUNT_FILMS_CARD_TO_SCREEN_IN_ONE_LINE = 5;
+const INITIAL_FILMS_CARD_COUNT = 5;
 
 const headerBodyElement = document.querySelector('.header');
 const mainBodyElement = document.querySelector('.main');
@@ -29,34 +29,39 @@ mainBodyElement.insertAdjacentHTML('beforeend', createSortListMenuTemplate());
 footerStatisticBodyElement.insertAdjacentHTML('beforeend', createFilmsCountTemplate(filmsData.length));
 
 
-function getCreateListFilms (data) {
+function сreateFilmsList (films) {
   mainBodyElement.insertAdjacentHTML('beforeend', createFilmsListTemplate());
   const filmsListContainer = document.querySelector('.films-list__container');
-  data.forEach( (item) => {
-    filmsListContainer.insertAdjacentHTML('beforeend', createFilmCardTemplate(item));
-    setClassToggleToControlButtonsForFilmCard(item);
-    setMarkupCommentsCountField(item);
-  });
   const showMoreButton = document.querySelector('.films-list__show-more');
-
-  function getRenderFilmsCardToShowMoreButton () {
-    const filmsListWithClassToHidden = document.querySelectorAll('article[class="film-card hidden"]');
-    if (filmsListWithClassToHidden.length <= MAX_COUNT_FILMS_CARD_TO_SCREEN_IN_ONE_LINE) {
-      showMoreButton.classList.add('hidden');
-      for (const card of filmsListWithClassToHidden) {
-        card.classList.remove('hidden');
-        showMoreButton.removeEventListener('click', getRenderFilmsCardToShowMoreButton);
-      }
-      return;
-    }
-    for (let index = 0; index < MAX_COUNT_FILMS_CARD_TO_SCREEN_IN_ONE_LINE; index++) {
-      filmsListWithClassToHidden[index].classList.remove('hidden');
-    }
+  const classHidden = 'hidden';
+  if (films.length <= INITIAL_FILMS_CARD_COUNT) {
+    showMoreButton.classList.add(classHidden);
   }
-  getRenderFilmsCardToShowMoreButton();
-  showMoreButton.addEventListener('click', getRenderFilmsCardToShowMoreButton);
+  films.forEach( (item, index) => {
+    if (index >= INITIAL_FILMS_CARD_COUNT) {
+      return filmsListContainer.insertAdjacentHTML('beforeend', createFilmCardTemplate(item, classHidden));
+    }
+    filmsListContainer.insertAdjacentHTML('beforeend', createFilmCardTemplate(item));
+  });
+  showMoreButton.addEventListener('click', getRenderFilmsCardToShowMoreButtonClickHandler);
 }
-getCreateListFilms(filmsData);
+сreateFilmsList(filmsData);
+
+function getRenderFilmsCardToShowMoreButtonClickHandler () {
+  const showMoreButton = document.querySelector('.films-list__show-more');
+  const filmsListWithClassToHidden = document.querySelectorAll('article[class="film-card hidden"]');
+  if (filmsListWithClassToHidden.length <= INITIAL_FILMS_CARD_COUNT) {
+    showMoreButton.classList.add('hidden');
+    for (const card of filmsListWithClassToHidden) {
+      card.classList.remove('hidden');
+      showMoreButton.removeEventListener('click', getRenderFilmsCardToShowMoreButtonClickHandler);
+    }
+    return;
+  }
+  for (let index = 0; index < INITIAL_FILMS_CARD_COUNT; index++) {
+    filmsListWithClassToHidden[index].classList.remove('hidden');
+  }
+}
 
 
 // mainBodyElement.insertAdjacentHTML('beforeend', createLoadingFilmsListTemplate());
