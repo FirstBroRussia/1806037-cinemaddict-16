@@ -56,7 +56,13 @@ const createFilmDetailsPopupTemplate = () => `
 `;
 
 
-const createFilmDetailsMarkupTemplate = (film) => `
+const createFilmDetailsMarkupTemplate = (film) => {
+  let textMarkupToGenresList = '';
+  film.genre.forEach( (item) => {
+    textMarkupToGenresList += `<span class="film-details__genre">${item}</span>\n`;
+  });
+
+  return `
 <div class="film-details__info-wrap">
       <div class="film-details__poster">
         <img class="film-details__poster-img" src="${film.img}" alt="">
@@ -102,10 +108,9 @@ const createFilmDetailsMarkupTemplate = (film) => `
             <td class="film-details__cell">${film.country}</td>
           </tr>
           <tr class="film-details__row genre">
-            <td class="film-details__term"> </td>
+            <td class="film-details__term">${film.genre.length === 1 ? 'Genre' : 'Genres'}</td>
             <td class="film-details__cell">
-
-
+              ${textMarkupToGenresList}
           </tr>
         </table>
 
@@ -113,66 +118,12 @@ const createFilmDetailsMarkupTemplate = (film) => `
       </div>
     </div>
 
-
 <section class="film-details__controls">
-      <button type="button" class="film-details__control-button film-details__control-button--watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-      <button type="button" class="film-details__control-button film-details__control-button--watched" id="watched" name="watched">Already watched</button>
-      <button type="button" class="film-details__control-button film-details__control-button--favorite" id="favorite" name="favorite">Add to favorites</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
+      <button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
+      <button type="button" class="film-details__control-button film-details__control-button--favorite ${film.isFavorite && 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
     </section>
-`;
-
-const setFilmDetailGenresMarkup = (film) => {
-  const genreMarkup = document.querySelector('.film-details__row.genre');
-  const filmDetailGenreMarkup = genreMarkup.querySelector('.film-details__term');
-  const cellGenresListMarkup = genreMarkup.querySelector('.film-details__cell');
-  const setCellGenreMarkup = (item) => `
-    <span class="film-details__genre">${item}</span>
-
-  `;
-  const convertedGenres = film.genre.split(/,\s/);
-  if (convertedGenres.length === 1) {
-    filmDetailGenreMarkup.textContent = 'Genre';
-    cellGenresListMarkup.insertAdjacentHTML('beforeend', setCellGenreMarkup(convertedGenres[0]));
-    return;
-  }
-  filmDetailGenreMarkup.textContent = 'Genres';
-  convertedGenres.forEach( (item) => {
-    cellGenresListMarkup.insertAdjacentHTML('beforeend', setCellGenreMarkup(item));
-  });
-};
+`;};
 
 
-const setClassToggleToControlButtonsForFilmDetails = ({isWatchlist, isWatched, isFavorite}) => {
-  const filmDetailsControlButtons = document.querySelector('.film-details__controls');
-  const watchlistFilmDetailsControlButton = filmDetailsControlButtons.querySelector('#watchlist');
-  const watchedFilmDetailsControlButton = filmDetailsControlButtons.querySelector('#watched');
-  const favoriteFilmDetailsControlButton = filmDetailsControlButtons.querySelector('#favorite');
-
-  if (isWatchlist) {
-    watchlistFilmDetailsControlButton.classList.add('film-details__control-button--active');
-  }
-  if (isWatched) {
-    watchedFilmDetailsControlButton.classList.add('film-details__control-button--active');
-  }
-  if (isFavorite) {
-    favoriteFilmDetailsControlButton.classList.add('film-details__control-button--active');
-  }
-};
-
-export {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate, setFilmDetailGenresMarkup, setClassToggleToControlButtonsForFilmDetails};
-
-/* ШАБЛОН КОММЕНТАРИЯ
-<li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-          </span>
-          <div>
-            <p class="film-details__comment-text">Interesting setting and a good cast</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">2019/12/31 23:59</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
-*/
+export {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate};
