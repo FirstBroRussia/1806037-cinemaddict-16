@@ -1,7 +1,7 @@
 const getRandomNumber = (min, max, fixed) => {
   if (fixed) {
     const randomFractionalNumber = (Math.random() * (max + 1 - min) + min).toFixed(1);
-    return randomFractionalNumber >= max ? 'max' : randomFractionalNumber;
+    return randomFractionalNumber >= max ? max : randomFractionalNumber;
   }
   return Math.floor(Math.random() * (max + 1 - min) + min);
 };
