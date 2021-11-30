@@ -1,7 +1,7 @@
 import {filmsData} from '/src/mock/temporary-data.js';
 import {createNavigationMenuTemplate} from '/src/view/navigation-menu.js';
 import {createSortListMenuTemplate} from '/src/view/sort-list-menu.js';
-import {createFilmsListTemplate} from '/src/view/films-list.js';
+import {FilmsListMarkup} from '/src/view/films-list.js';
 import {createFilmCardTemplate} from '/src/view/film-card.js';
 import {createTitleProfileUserTemplate} from '/src/view/profile-user.js';
 import {createFilmsCountTemplate} from '/src/view/films-count.js';
@@ -24,7 +24,7 @@ renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, createSortLi
 renderMarkupHtmlElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, createFilmsCountTemplate(filmsData.length));
 
 function сreateFilmsList (films) {
-  renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, createFilmsListTemplate());
+  renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, new FilmsListMarkup().getTemplate);
   const filmsListContainer = document.querySelector('.films-list__container');
   const showMoreButton = document.querySelector('.films-list__show-more');
   const classHidden = 'hidden';

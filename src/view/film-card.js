@@ -25,4 +25,11 @@ const createFilmCardTemplate = (film, requiredClass) => `
 
 `;
 
+class filmCardMarkup {
+  #template = 'null';
+  #element = 'null';
+
+
+}
+
 export {createFilmCardTemplate};

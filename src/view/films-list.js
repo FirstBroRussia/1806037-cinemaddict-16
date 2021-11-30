@@ -34,4 +34,17 @@ const createFilmsListTemplate = () => `
   </section>
 `;
 
-export {createFilmsListTemplate};
+class FilmsListMarkup {
+  #template = 'null';
+
+  get getTemplate() {
+    this.#template = createFilmsListTemplate();
+    return this.#template;
+  }
+
+  removeTemplate() {
+    this.#template = 'null';
+  }
+}
+
+export {createFilmsListTemplate, FilmsListMarkup};
