@@ -18,7 +18,7 @@ const MAX_LENGTH_STRING_ACTORS = 16;
 const MIN_LENGTH_STRING_GENRES = 1;
 const MAX_LENGTH_STRING_GENRES = 3;
 
-const NAME_FILMS = [
+const nameFilms = [
   'Made for each other',
   'Popeye meets sindbad',
   'Sagebrush trail',
@@ -28,7 +28,7 @@ const NAME_FILMS = [
   'The man with the golden arm'
 ];
 
-const PATH_FOR_PICTURE = [
+const pathForPicture = [
   'made-for-each-other.png',
   'popeye-meets-sinbad.png',
   'sagebrush-trail.jpg',
@@ -38,7 +38,7 @@ const PATH_FOR_PICTURE = [
   'the-man-with-the-golden-arm.jpg'
 ];
 
-const GENRE = [
+const genre = [
   'Melodrama',
   'Cartoon',
   'Comedy',
@@ -48,7 +48,7 @@ const GENRE = [
   'Thriller'
 ];
 
-const DURATION = [
+const duration = [
   '1h 40m',
   '1h 16m',
   '54m',
@@ -58,7 +58,7 @@ const DURATION = [
   '1h 59m'
 ];
 
-const COMMENTS = [
+const comments = [
   'Фильм пушка!',
   'Неплохой фильм, на один раз с пивком потянет=)',
   'Игра актёров средняя, они всё и испортили.',
@@ -67,7 +67,7 @@ const COMMENTS = [
   'ОЧЕНЬ ПЛОХОЙ ФИЛЬМ!!!'
 ];
 
-const ORIGINAL_NAME_FILMS = [
+const originalNameFilms = [
   'Made for each other',
   'Popeye meets sindbad',
   'Sagebrush trail',
@@ -77,7 +77,7 @@ const ORIGINAL_NAME_FILMS = [
   'The man with the golden arm'
 ];
 
-const DIRECTOR = [
+const director = [
   'Александр Овечкин',
   'Дмитрий Толстой',
   'Пётр Первый',
@@ -85,7 +85,7 @@ const DIRECTOR = [
   'Сергей Кутерьма',
 ];
 
-const SCREEMWRITER = [
+const screenwritters = [
   'Шакро Молодой',
   'Рембо Кровский',
   'Арни Старый',
@@ -93,7 +93,7 @@ const SCREEMWRITER = [
   'Алексей Сплит',
 ];
 
-const ACTORS = [
+const actors = [
   'Василий Пилюлин',
   'Виктор Пелевин',
   'Стас Метёлкин',
@@ -101,7 +101,7 @@ const ACTORS = [
   'Александр Люсин',
 ];
 
-const AGE_RATING = [
+const ageRating = [
   '0+',
   '6+',
   '12+',
@@ -109,7 +109,7 @@ const AGE_RATING = [
   '18+'
 ];
 
-const COUNTRY = [
+const country = [
   'USSR',
   'USA',
   'Italia',
@@ -118,49 +118,49 @@ const COUNTRY = [
 ];
 
 
-const DESCRIPTIONS_LIST = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
+const descriptionsList = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
   .split(/\.\s*/);
 
 const getRandomDescriptionsList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_DESCRIPTION, MAX_LENGTH_STRING_DESCRIPTION)})
-  .map( () => DESCRIPTIONS_LIST[getRandomNumber(0, DESCRIPTIONS_LIST.length - 1)])
+  .map( () => descriptionsList[getRandomNumber(0, descriptionsList.length - 1)])
   .join('. ');
 
 const getRandomScreenWrittersList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_SCREENWRITER, MAX_LENGTH_STRING_SCREENWRITER)})
-  .map( () => SCREEMWRITER[getRandomNumber(0, SCREEMWRITER.length - 1)])
+  .map( () => screenwritters[getRandomNumber(0, screenwritters.length - 1)])
   .join(', ');
 
 const getRandomActorsList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_ACTORS, MAX_LENGTH_STRING_ACTORS)})
-  .map( () => ACTORS[getRandomNumber(0, ACTORS.length - 1)])
+  .map( () => actors[getRandomNumber(0, actors.length - 1)])
   .join(', ');
 
 const getRandomGenresList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_GENRES, MAX_LENGTH_STRING_GENRES)})
-  .map( () => GENRE[getRandomNumber(0, GENRE.length - 1)])
+  .map( () => genre[getRandomNumber(0, genre.length - 1)])
   .join(', ');
 
 
 function getRandomCommentsListForRandomFilm() {
   return Array.from({ length: getRandomNumber(MIN_LENGTH_COMMENTS_LIST, MAX_LENGTH_COMMENTS_LIST) })
-    .map(() => COMMENTS[getRandomNumber(0, COMMENTS.length - 1)]);
+    .map(() => comments[getRandomNumber(0, comments.length - 1)]);
 }
 
 
 const createFilmsData = () => Array.from({length: getRandomNumber(MIN_LENGTH_DATA_FILMS, MAX_LENGTH_DATA_FILMS)})
   .map( (item, index) => ({
     id: index,
-    img: `./images/posters/${PATH_FOR_PICTURE[getRandomNumber(0, PATH_FOR_PICTURE.length - 1)]}`,
-    name: NAME_FILMS[getRandomNumber(0, NAME_FILMS.length - 1)],
-    originalName: ORIGINAL_NAME_FILMS[getRandomNumber(0, ORIGINAL_NAME_FILMS.length - 1)],
+    img: `./images/posters/${pathForPicture[getRandomNumber(0, pathForPicture.length - 1)]}`,
+    name: nameFilms[getRandomNumber(0, nameFilms.length - 1)],
+    originalName: originalNameFilms[getRandomNumber(0, originalNameFilms.length - 1)],
     rating: getRandomNumber(0, 10, true),
-    director: DIRECTOR[getRandomNumber(0, DIRECTOR.length - 1)],
+    director: director[getRandomNumber(0, director.length - 1)],
     screenwritters: getRandomScreenWrittersList(),
     actors: getRandomActorsList(),
     releaseYear: getRandomNumber(1920, 1980),
     releaseFullFormat: 'D MMMM YY',
-    duration: DURATION[getRandomNumber(0, DURATION.length - 1)],
-    country: COUNTRY[getRandomNumber(0, COUNTRY.length - 1)],
-    genre: getRandomGenresList(),
+    duration: duration[getRandomNumber(0, duration.length - 1)],
+    country: country[getRandomNumber(0, country.length - 1)],
+    genre: getRandomGenresList().split(/,\s/),
     description: getRandomDescriptionsList(),
-    ageRating: AGE_RATING[getRandomNumber(0, AGE_RATING.length - 1)],
+    ageRating: ageRating[getRandomNumber(0, ageRating.length - 1)],
     comments: getRandomCommentsListForRandomFilm(),
     isWatchlist: Boolean(getRandomNumber(0,1)),
     isWatched: Boolean(getRandomNumber(0,1)),
