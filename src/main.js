@@ -6,7 +6,7 @@ import {createFilmCardTemplate} from '/src/view/film-card.js';
 import {createTitleProfileUserTemplate} from '/src/view/profile-user.js';
 import {createFilmsCountTemplate} from '/src/view/films-count.js';
 import {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate} from '/src/view/film-details-popup.js';
-import {positionMarkup, renderMarkupHtmlElement} from '/src/utils/render-html-element.js';
+import {positionMarkup, renderMarkupHtmlElement} from '/src/render-html-element.js';
 
 const INITIAL_FILMS_CARD_COUNT = 5;
 
@@ -33,13 +33,9 @@ function сreateFilmsList (films) {
     showMoreButton.classList.add(classHidden);
   }
 
-  films.forEach( (item, index) => {
-    if (index >= INITIAL_FILMS_CARD_COUNT) {
-      return renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, createFilmCardTemplate(item, classHidden));
-    }
-
-    return renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, createFilmCardTemplate(item));
-  });
+  films.forEach( (item, index) => index >= INITIAL_FILMS_CARD_COUNT ?
+    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, createFilmCardTemplate(item, classHidden)) :
+    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, createFilmCardTemplate(item)));
 
   showMoreButton.addEventListener('click', renderFilmsCardToShowMoreButtonClickHandler);
 }
