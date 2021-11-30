@@ -1,5 +1,5 @@
-const createFilmsCountTemplate = () => `
-<p>130 291 movies inside</p>
+const createFilmsCountTemplate = (value) => `
+<p>${value} movies inside</p>
 `;
 
 export {createFilmsCountTemplate};
