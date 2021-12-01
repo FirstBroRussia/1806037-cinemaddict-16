@@ -10,6 +10,7 @@ const createNodeElement = (element) => {
   newCreateElement.insertAdjacentHTML('afterbegin', element);
   const newElement = newCreateElement.firstElementChild;
   newCreateElement.remove();
+
   return newElement;
 };
 
