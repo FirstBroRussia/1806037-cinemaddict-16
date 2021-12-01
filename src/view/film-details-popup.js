@@ -1,5 +1,7 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createFilmDetailsPopupTemplate = () => `
-<section class="film-details">
+<section class="film-details hidden">
 <form class="film-details__inner" action="" method="get">
   <div class="film-details__top-container">
     <div class="film-details__close">
@@ -56,7 +58,7 @@ const createFilmDetailsPopupTemplate = () => `
 `;
 
 
-const createFilmDetailsMarkupTemplate = (film) => {
+const createFilmDetailsCardMarkupTemplate = (film) => {
   let textMarkupToGenresList = '';
   film.genre.forEach( (item) => {
     textMarkupToGenresList += `<span class="film-details__genre">${item}</span>\n`;
@@ -118,12 +120,69 @@ const createFilmDetailsMarkupTemplate = (film) => {
       </div>
     </div>
 
-<section class="film-details__controls">
-      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
-      <button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
-      <button type="button" class="film-details__control-button film-details__control-button--favorite ${film.isFavorite && 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
-    </section>
+
 `;};
 
+const createFilmDetailsCardFilterControlButtons = (film) => `
+<section class="film-details__controls">
+<button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
+<button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
+<button type="button" class="film-details__control-button film-details__control-button--favorite ${film.isFavorite && 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
+</section>
+`;
 
-export {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate};
+class FilmDetailsCardFilterButtons {
+  #template = 'null';
+  #element = 'null';
+
+  constructor (filmData) {
+    this.#template = createFilmDetailsCardFilterControlButtons;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = 'null';
+  }
+}
+
+class FilmDetailsPopupMarkup {
+  #template = 'null';
+  #element = 'null';
+
+  constructor () {
+    this.#template = createFilmDetailsPopupTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = 'null';
+  }
+}
+
+class FilmDetailCardMarkup {
+  #template = 'null';
+  #element = 'null';
+
+  constructor (filmData) {
+    this.#template = createFilmDetailsCardMarkupTemplate;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = 'null';
+  }
+}
+
+export {FilmDetailsPopupMarkup, FilmDetailCardMarkup, FilmDetailsCardFilterButtons};

@@ -5,18 +5,21 @@ const positionMarkup = {
   AFTER_END: 'afterend',
 };
 
-const renderMarkupHtmlElement = (container, position, element) => {
-  const createElement = document.createElement('div');
-  createElement.insertAdjacentHTML('afterbegin', element);
-  const newElement = createElement.firstElementChild;
-  createElement.remove();
+const createNodeElement = (element) => {
+  const newCreateElement = document.createElement('div');
+  newCreateElement.insertAdjacentHTML('afterbegin', element);
+  const newElement = newCreateElement.firstElementChild;
+  newCreateElement.remove();
+  return newElement;
+};
 
+const renderMarkupHtmlElement = (container, position, element) => {
   switch (position) {
-    case 'beforebegin': return container.before(newElement);
-    case 'afterbegin': return container.prepend(newElement);
-    case 'beforeend': return container.append(newElement);
-    case 'afterend': return container.after(newElement);
+    case 'beforebegin': return container.before(element);
+    case 'afterbegin': return container.prepend(element);
+    case 'beforeend': return container.append(element);
+    case 'afterend': return container.after(element);
   }
 };
 
-export {positionMarkup, renderMarkupHtmlElement};
+export {positionMarkup, createNodeElement, renderMarkupHtmlElement};

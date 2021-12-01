@@ -1,3 +1,5 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createSortListMenuTemplate = () => `
 <ul class="sort">
 <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
@@ -6,4 +8,22 @@ const createSortListMenuTemplate = () => `
 </ul>
 `;
 
-export {createSortListMenuTemplate};
+class SortListMarkup {
+  #template = 'null';
+  #element = 'null';
+
+  constructor () {
+    this.#template = createSortListMenuTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = 'null';
+  }
+}
+
+export {SortListMarkup};

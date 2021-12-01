@@ -8,5 +8,6 @@ const getRandomNumber = (min, max, fixed) => {
 
 const getConvertedString = (string, specifiedLength) => string.length > specifiedLength ? `${string.slice(0, specifiedLength - 1)}...` : string;
 
+const onEscKeydown = (evt) => (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 27) && true;
 
-export {getRandomNumber, getConvertedString};
+export {getRandomNumber, getConvertedString, onEscKeydown};

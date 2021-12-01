@@ -1,4 +1,5 @@
 import {getConvertedString} from '../utils/util.js';
+import {createNodeElement} from '/src/utils/render-html-element.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
@@ -21,15 +22,28 @@ const createFilmCardTemplate = (film, requiredClass) => `
   <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${film.isWatched && 'film-card__controls-item--active'}" type="button">Mark as watched</button>
   <button class="film-card__controls-item film-card__controls-item--favorite ${film.isFavorite && 'film-card__controls-item--active'}" type="button">Mark as favorite</button>
 </div>
-</article>
+</article>`;
 
-`;
-
-class filmCardMarkup {
+class FilmCardMarkup {
   #template = 'null';
   #element = 'null';
 
+  constructor (filmData, classHidden) {
+    this.#template = createFilmCardTemplate;
+    if (classHidden === true) {
+      this.#element = createNodeElement(this.#template(filmData, 'hidden'));
+    } else {
+      this.#element = createNodeElement(this.#template(filmData));
+    }
+  }
 
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = 'null';
+  }
 }
 
-export {createFilmCardTemplate};
+export {FilmCardMarkup};

@@ -1,10 +1,11 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createFilmsListTemplate = () => `
 <section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
 
       <div class="films-list__container">
-
 
 
       </div>
@@ -18,7 +19,6 @@ const createFilmsListTemplate = () => `
       <div class="films-list__container">
 
 
-
       </div>
       </section>
 
@@ -28,7 +28,6 @@ const createFilmsListTemplate = () => `
       <div class="films-list__container">
 
 
-
       </div>
     </section>
   </section>
@@ -36,10 +35,14 @@ const createFilmsListTemplate = () => `
 
 class FilmsListMarkup {
   #template = 'null';
+  #element = 'null';
+  constructor () {
+    this.#template = createFilmsListTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
 
-  get getTemplate() {
-    this.#template = createFilmsListTemplate();
-    return this.#template;
+  get getElement() {
+    return this.#element;
   }
 
   removeTemplate() {
@@ -47,4 +50,4 @@ class FilmsListMarkup {
   }
 }
 
-export {createFilmsListTemplate, FilmsListMarkup};
+export {FilmsListMarkup};
