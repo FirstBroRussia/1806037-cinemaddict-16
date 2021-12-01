@@ -1,4 +1,5 @@
 import {filmsData} from '/src/mock/temporary-data.js';
+
 import {NavigationMenuMarkup} from '/src/view/navigation-menu.js';
 import {SortListMarkup} from '/src/view/sort-list-menu.js';
 import {FilmsListMarkup} from '/src/view/films-list.js';
@@ -36,6 +37,7 @@ function сreateFilmsList (films) {
   const showMoreButton = document.querySelector('.films-list__show-more');
   const addClassHidden = true;
   const removeClassHidden = false;
+
 
   if (films.length <= INITIAL_FILMS_CARD_COUNT) {
     showMoreButton.classList.add(addClassHidden);
