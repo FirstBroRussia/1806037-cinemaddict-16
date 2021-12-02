@@ -13,6 +13,11 @@ function getRandomNumber(min, max, fixed) {
 
 const getConvertedString = (string, specifiedLength) => string.length > specifiedLength ? `${string.slice(0, specifiedLength - 1)}...` : string;
 
-const onEscKeydown = (evt) => (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 27) && true;
+const onEscKeydown = (evt) => {
+  if (evt.key === 'Escape' || evt.key === 'Esc' || evt.key === 27) {
+    evt.preventDefault();
+    return true;
+  }
+};
 
 export {getRandomNumber, getConvertedString, onEscKeydown, dayjs};

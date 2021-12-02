@@ -9,8 +9,8 @@ const createSortListMenuTemplate = () => `
 `;
 
 class SortListMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor () {
     this.#template = createSortListMenuTemplate;
@@ -22,7 +22,7 @@ class SortListMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

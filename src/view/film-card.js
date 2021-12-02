@@ -25,12 +25,12 @@ const createFilmCardTemplate = (film, requiredClass) => `
 </article>`;
 
 class FilmCardMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData, classHidden) {
     this.#template = createFilmCardTemplate;
-    if (classHidden === true) {
+    if (classHidden) {
       this.#element = createNodeElement(this.#template(filmData, 'hidden'));
     } else {
       this.#element = createNodeElement(this.#template(filmData));
@@ -42,7 +42,7 @@ class FilmCardMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

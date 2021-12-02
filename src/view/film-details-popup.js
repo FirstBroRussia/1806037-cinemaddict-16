@@ -152,8 +152,8 @@ const createFilmDetailsCommentMarkup = (commentData) => `
 `;
 
 class FilmDetailsCardFilterButtons {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = createFilmDetailsCardFilterControlButtons;
@@ -165,13 +165,13 @@ class FilmDetailsCardFilterButtons {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 
 class FilmDetailsPopupMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor () {
     this.#template = createFilmDetailsPopupTemplate;
@@ -183,13 +183,13 @@ class FilmDetailsPopupMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 
 class FilmDetailCardMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = createFilmDetailsCardMarkupTemplate;
@@ -201,13 +201,13 @@ class FilmDetailCardMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 
 class filmDetailsCommentsCountMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = filmDetailsCommentsCount;
@@ -219,13 +219,13 @@ class filmDetailsCommentsCountMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 
 class filmDetailsCommentMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = createFilmDetailsCommentMarkup;
@@ -237,7 +237,7 @@ class filmDetailsCommentMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

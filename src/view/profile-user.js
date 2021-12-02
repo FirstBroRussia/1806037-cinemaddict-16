@@ -8,8 +8,8 @@ const createTitleProfileUserTemplate = () => `
 `;
 
 class ProfileUserMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor () {
     this.#template = createTitleProfileUserTemplate;
@@ -21,7 +21,7 @@ class ProfileUserMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

@@ -5,8 +5,8 @@ const createFilmsCountTemplate = (value) => `
 `;
 
 class FilmsCountMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (value) {
     this.#template = createFilmsCountTemplate;
@@ -18,7 +18,7 @@ class FilmsCountMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

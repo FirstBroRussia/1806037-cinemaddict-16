@@ -68,12 +68,10 @@ function сreateFilmsList (films) {
 
   const filmsListContainer = document.querySelector('.films-list__container');
   const showMoreButton = document.querySelector('.films-list__show-more');
-  const addClassHidden = true;
-  const removeClassHidden = false;
 
   films.forEach( (item, index) => index >= INITIAL_FILMS_CARD_COUNT ?
-    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, new FilmCardMarkup(item, addClassHidden).getElement) :
-    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, new FilmCardMarkup(item, removeClassHidden).getElement));
+    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, new FilmCardMarkup(item, true).getElement) :
+    renderMarkupHtmlElement(filmsListContainer, positionMarkup.BEFORE_END, new FilmCardMarkup(item).getElement));
 
   const topRatedFilmsListContainer = document.querySelector('.films-list__container.top-rated');
   const mostCommentedFilmsListContainer = document.querySelector('.films-list__container.most-commented');

@@ -120,8 +120,8 @@ const createExtraFilmCardTemplate = (film) => `
 `;
 
 class ExtraFilmCardMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = createExtraFilmCardTemplate;
@@ -133,7 +133,7 @@ class ExtraFilmCardMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

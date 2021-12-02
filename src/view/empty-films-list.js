@@ -17,8 +17,8 @@ const createEmptyFilmsListTemplate = () => `
 `;
 
 class EmptyFilmsListMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor () {
     this.#template = createEmptyFilmsListTemplate;
@@ -30,7 +30,7 @@ class EmptyFilmsListMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

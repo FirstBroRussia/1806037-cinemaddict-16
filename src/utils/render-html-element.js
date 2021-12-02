@@ -20,6 +20,7 @@ const renderMarkupHtmlElement = (container, position, element) => {
     case 'afterbegin': return container.prepend(element);
     case 'beforeend': return container.append(element);
     case 'afterend': return container.after(element);
+    default : throw new Error('Передайте валидное значение!');
   }
 };
 

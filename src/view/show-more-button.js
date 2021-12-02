@@ -5,8 +5,8 @@ const createShowMoreButtonTemplate = () => `
 `;
 
 class ShowMoreButtonMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor () {
     this.#template = createShowMoreButtonTemplate;
@@ -18,7 +18,7 @@ class ShowMoreButtonMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 

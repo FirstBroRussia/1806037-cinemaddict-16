@@ -13,8 +13,8 @@ const createNavigationMenuTemplate = (filmsData) => `
 `;
 
 class NavigationMenuMarkup {
-  #template = 'null';
-  #element = 'null';
+  #template = null;
+  #element = null;
 
   constructor (filmData) {
     this.#template = createNavigationMenuTemplate;
@@ -26,7 +26,7 @@ class NavigationMenuMarkup {
   }
 
   removeElement() {
-    this.#element = 'null';
+    this.#element = null;
   }
 }
 
