@@ -1,4 +1,5 @@
 import {filmsData} from '/src/mock/temporary-data.js';
+
 import {NavigationMenuMarkup} from '/src/view/navigation-menu.js';
 import {SortListMarkup} from '/src/view/sort-list-menu.js';
 import {FilmsListMarkup} from '/src/view/films-list.js';
