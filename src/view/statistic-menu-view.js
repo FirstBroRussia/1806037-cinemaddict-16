@@ -1,3 +1,6 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+
 const createStatisticMenuTemplate = () => `
 <section class="statistic">
 <p class="statistic__rank">
@@ -50,4 +53,13 @@ const createStatisticMenuTemplate = () => `
 </section>
 `;
 
-export {createStatisticMenuTemplate};
+class StatisticMenuMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createStatisticMenuTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+export {StatisticMenuMarkup};

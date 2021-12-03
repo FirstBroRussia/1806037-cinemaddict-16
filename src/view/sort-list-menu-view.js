@@ -1,4 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const createSortListMenuTemplate = () => `
 <ul class="sort">
@@ -8,21 +9,12 @@ const createSortListMenuTemplate = () => `
 </ul>
 `;
 
-class SortListMarkup {
-  #template = null;
-  #element = null;
-
+class SortListMarkup extends AbstractClass {
   constructor () {
-    this.#template = createSortListMenuTemplate;
-    this.#element = createNodeElement(this.#template());
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createSortListMenuTemplate;
+    this._element = createNodeElement(this._template());
   }
 }
 

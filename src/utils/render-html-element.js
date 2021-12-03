@@ -1,3 +1,5 @@
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+
 const positionMarkup = {
   BEFORE_BEGIN: 'beforebegin',
   AFTER_BEGIN: 'afterbegin',
@@ -15,13 +17,22 @@ const createNodeElement = (element) => {
 };
 
 const renderMarkupHtmlElement = (container, position, element) => {
+  const parent = container instanceof AbstractClass ? container.getElement : container;
+  const child = element instanceof AbstractClass ? element.getElement : element;
   switch (position) {
-    case 'beforebegin': return container.before(element);
-    case 'afterbegin': return container.prepend(element);
-    case 'beforeend': return container.append(element);
-    case 'afterend': return container.after(element);
+    case 'beforebegin': return parent.before(child);
+    case 'afterbegin': return parent.prepend(child);
+    case 'beforeend': return parent.append(child);
+    case 'afterend': return parent.after(child);
     default : throw new Error('Передайте валидное значение!');
   }
 };
 
-export {positionMarkup, createNodeElement, renderMarkupHtmlElement};
+const replaceNodeElement = (parentNodeElement, newChildElement, oldChildElement) => {
+  parentNodeElement = parentNodeElement instanceof AbstractClass ? parentNodeElement.getElement : parentNodeElement;
+  newChildElement = newChildElement instanceof AbstractClass ? newChildElement.getElement : newChildElement;
+  oldChildElement = oldChildElement instanceof AbstractClass ? oldChildElement.getElement : oldChildElement;
+  parentNodeElement.replaceChild(newChildElement, oldChildElement);
+};
+
+export {positionMarkup, createNodeElement, renderMarkupHtmlElement, replaceNodeElement};

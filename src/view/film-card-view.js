@@ -1,5 +1,6 @@
 import {getConvertedString} from '../utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
@@ -11,9 +12,9 @@ const createFilmCardTemplate = (film, requiredClass) => `
   <p class="film-card__info">
     <span class="film-card__year">${film.releaseYear}</span>
     <span class="film-card__duration">${film.duration}</span>
-    <span class="film-card__genre">${film.genre}</span>
+    <span class="film-card__genre">${film.genre[0]}</span>
   </p>
-  <img src="${film.img}" alt="" class="film-card__poster">
+  <img src="${film.img}" alt="${film.name}" class="film-card__poster">
   <p class="film-card__description">${getConvertedString(film.description, MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD)}</p>
   <span class="film-card__comments">${film.comments.length === 1 ? '1 comment' : `${film.comments.length} comments`}</span>
 </a>
@@ -24,25 +25,16 @@ const createFilmCardTemplate = (film, requiredClass) => `
 </div>
 </article>`;
 
-class FilmCardMarkup {
-  #template = null;
-  #element = null;
-
+class FilmCardMarkup extends AbstractClass {
   constructor (filmData, classHidden) {
-    this.#template = createFilmCardTemplate;
+    super();
+
+    this._template = createFilmCardTemplate;
     if (classHidden) {
-      this.#element = createNodeElement(this.#template(filmData, 'hidden'));
+      this._element = createNodeElement(this._template(filmData, 'hidden'));
     } else {
-      this.#element = createNodeElement(this.#template(filmData));
+      this._element = createNodeElement(this._template(filmData));
     }
-  }
-
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

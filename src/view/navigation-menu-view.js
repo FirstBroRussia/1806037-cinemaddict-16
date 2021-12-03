@@ -1,4 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const createNavigationMenuTemplate = (filmsData) => `
 <nav class="main-navigation">
@@ -12,21 +13,12 @@ const createNavigationMenuTemplate = (filmsData) => `
   </nav>
 `;
 
-class NavigationMenuMarkup {
-  #template = null;
-  #element = null;
-
+class NavigationMenuMarkup extends AbstractClass {
   constructor (filmData) {
-    this.#template = createNavigationMenuTemplate;
-    this.#element = createNodeElement(this.#template(filmData));
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createNavigationMenuTemplate;
+    this._element = createNodeElement(this._template(filmData));
   }
 }
 
