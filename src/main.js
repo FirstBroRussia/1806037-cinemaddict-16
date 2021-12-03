@@ -38,6 +38,7 @@ renderMarkupHtmlElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, F
 renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, LoadingFilmsListComponent);
 renderMarkupHtmlElement(footerBodyElement, positionMarkup.BEFORE_END, FilmDetailsPopupComponent);
 
+
 const filmDetailsContainer = FilmDetailsPopupComponent.getElement.querySelector('.film-details__top-container');
 const closePopupFilmDetailsButton = FilmDetailsPopupComponent.getElement.querySelector('.film-details__close-btn');
 const filmDetailsCommentsWrap = FilmDetailsPopupComponent.getElement.querySelector('.film-details__comments-wrap');
