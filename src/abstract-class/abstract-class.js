@@ -15,7 +15,7 @@ class AbstractClass {
     return this._element;
   }
 
-  addHangEventHandler(event, callback) {
+  addEventHandler(event, callback) {
     if (typeof event !== 'string') {
       throw new Error('Параметр "event" должен быть типом данных "string"');
     }
@@ -23,7 +23,7 @@ class AbstractClass {
     this._element.addEventListener(event, this.#hangFunctionHandler);
   }
 
-  removeHangEventHandler(event, callback) {
+  removeEventHandler(event, callback) {
     if (typeof event !== 'string') {
       throw new Error('Параметр "event" должен быть типом данных "string"');
     }

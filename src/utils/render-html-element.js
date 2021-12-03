@@ -16,23 +16,20 @@ const createNodeElement = (element) => {
   return newElement;
 };
 
+const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.getElement : nodeElement;
+
 const renderMarkupHtmlElement = (container, position, element) => {
-  const parent = container instanceof AbstractClass ? container.getElement : container;
-  const child = element instanceof AbstractClass ? element.getElement : element;
   switch (position) {
-    case 'beforebegin': return parent.before(child);
-    case 'afterbegin': return parent.prepend(child);
-    case 'beforeend': return parent.append(child);
-    case 'afterend': return parent.after(child);
+    case 'beforebegin': return getNodeElement(container).before(getNodeElement(element));
+    case 'afterbegin': return getNodeElement(container).prepend(getNodeElement(element));
+    case 'beforeend': return getNodeElement(container).append(getNodeElement(element));
+    case 'afterend': return getNodeElement(container).after(getNodeElement(element));
     default : throw new Error('Передайте валидное значение!');
   }
 };
 
 const replaceNodeElement = (parentNodeElement, newChildElement, oldChildElement) => {
-  parentNodeElement = parentNodeElement instanceof AbstractClass ? parentNodeElement.getElement : parentNodeElement;
-  newChildElement = newChildElement instanceof AbstractClass ? newChildElement.getElement : newChildElement;
-  oldChildElement = oldChildElement instanceof AbstractClass ? oldChildElement.getElement : oldChildElement;
-  parentNodeElement.replaceChild(newChildElement, oldChildElement);
+  getNodeElement(parentNodeElement).replaceChild(getNodeElement(newChildElement), getNodeElement(oldChildElement));
 };
 
 export {positionMarkup, createNodeElement, renderMarkupHtmlElement, replaceNodeElement};
