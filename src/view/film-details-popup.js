@@ -1,5 +1,7 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createFilmDetailsPopupTemplate = () => `
-<section class="film-details">
+<section class="film-details hidden">
 <form class="film-details__inner" action="" method="get">
   <div class="film-details__top-container">
     <div class="film-details__close">
@@ -11,7 +13,7 @@ const createFilmDetailsPopupTemplate = () => `
 
   <div class="film-details__bottom-container">
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">   4   </span></h3>
+
 
       <ul class="film-details__comments-list">
         <!-- СЮДА ВСТАВЛЯЮТСЯ КОММЕНТЫ С СЕРВЕРА -->
@@ -56,7 +58,7 @@ const createFilmDetailsPopupTemplate = () => `
 `;
 
 
-const createFilmDetailsMarkupTemplate = (film) => {
+const createFilmDetailsCardMarkupTemplate = (film) => {
   let textMarkupToGenresList = '';
   film.genre.forEach( (item) => {
     textMarkupToGenresList += `<span class="film-details__genre">${item}</span>\n`;
@@ -118,12 +120,125 @@ const createFilmDetailsMarkupTemplate = (film) => {
       </div>
     </div>
 
-<section class="film-details__controls">
-      <button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
-      <button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
-      <button type="button" class="film-details__control-button film-details__control-button--favorite ${film.isFavorite && 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
-    </section>
+
 `;};
 
+const createFilmDetailsCardFilterControlButtons = (film) => `
+<section class="film-details__controls">
+<button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
+<button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
+<button type="button" class="film-details__control-button film-details__control-button--favorite ${film.isFavorite && 'film-details__control-button--active'}" id="favorite" name="favorite">Add to favorites</button>
+</section>
+`;
 
-export {createFilmDetailsPopupTemplate, createFilmDetailsMarkupTemplate};
+const filmDetailsCommentsCount = (filmData) => `
+<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmData.comments.length}</span></h3>
+`;
+
+const createFilmDetailsCommentMarkup = (commentData) => `
+<li class="film-details__comment">
+          <span class="film-details__comment-emoji">
+            <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+          </span>
+          <div>
+            <p class="film-details__comment-text">${commentData}</p>
+            <p class="film-details__comment-info">
+              <span class="film-details__comment-author">Tim Macoveev</span>
+              <span class="film-details__comment-day">2019/12/31 23:59</span>
+              <button class="film-details__comment-delete">Delete</button>
+            </p>
+          </div>
+        </li>
+`;
+
+class FilmDetailsCardFilterButtons {
+  #template = null;
+  #element = null;
+
+  constructor (filmData) {
+    this.#template = createFilmDetailsCardFilterControlButtons;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+class FilmDetailsPopupMarkup {
+  #template = null;
+  #element = null;
+
+  constructor () {
+    this.#template = createFilmDetailsPopupTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+class FilmDetailCardMarkup {
+  #template = null;
+  #element = null;
+
+  constructor (filmData) {
+    this.#template = createFilmDetailsCardMarkupTemplate;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+class filmDetailsCommentsCountMarkup {
+  #template = null;
+  #element = null;
+
+  constructor (filmData) {
+    this.#template = filmDetailsCommentsCount;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+class filmDetailsCommentMarkup {
+  #template = null;
+  #element = null;
+
+  constructor (filmData) {
+    this.#template = createFilmDetailsCommentMarkup;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+export {FilmDetailsPopupMarkup, FilmDetailCardMarkup, FilmDetailsCardFilterButtons, filmDetailsCommentsCountMarkup, filmDetailsCommentMarkup};

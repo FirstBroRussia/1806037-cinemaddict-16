@@ -1,4 +1,4 @@
-import {getRandomNumber} from '../utils/util.js';
+import {getRandomNumber, dayjs} from '../utils/util.js';
 
 const MIN_LENGTH_COMMENTS_LIST = 0;
 const MAX_LENGTH_COMMENTS_LIST = 5;
@@ -17,6 +17,9 @@ const MAX_LENGTH_STRING_ACTORS = 16;
 
 const MIN_LENGTH_STRING_GENRES = 1;
 const MAX_LENGTH_STRING_GENRES = 3;
+
+const MIN_YEAR_COUNT = 1925;
+const MAX_YEAR_COUNT = 1980;
 
 const nameFilms = [
   'Made for each other',
@@ -155,7 +158,7 @@ const createFilmsData = () => Array.from({length: getRandomNumber(MIN_LENGTH_DAT
     screenwritters: getRandomScreenWrittersList(),
     actors: getRandomActorsList(),
     releaseYear: getRandomNumber(1920, 1980),
-    releaseFullFormat: 'D MMMM YY',
+    releaseFullFormat: dayjs.between(`${MIN_YEAR_COUNT}`, `${MAX_YEAR_COUNT}`).format('DD MMMM YYYY'),
     duration: duration[getRandomNumber(0, duration.length - 1)],
     country: country[getRandomNumber(0, country.length - 1)],
     genre: getRandomGenresList().split(/,\s/),

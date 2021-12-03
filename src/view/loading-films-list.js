@@ -1,3 +1,5 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createLoadingFilmsListTemplate = () => `
 <section class="films">
 <section class="films-list">
@@ -6,4 +8,22 @@ const createLoadingFilmsListTemplate = () => `
 </section>
 `;
 
-export {createLoadingFilmsListTemplate};
+class LoadingFilmsListMarkup {
+  #template = null;
+  #element = null;
+
+  constructor () {
+    this.#template = createLoadingFilmsListTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+export {LoadingFilmsListMarkup};

@@ -1,3 +1,5 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createTitleProfileUserTemplate = () => `
 <section class="header__profile profile">
 <p class="profile__rating">Movie Buff</p>
@@ -5,4 +7,22 @@ const createTitleProfileUserTemplate = () => `
 </section>
 `;
 
-export {createTitleProfileUserTemplate};
+class ProfileUserMarkup {
+  #template = null;
+  #element = null;
+
+  constructor () {
+    this.#template = createTitleProfileUserTemplate;
+    this.#element = createNodeElement(this.#template());
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+export {ProfileUserMarkup};

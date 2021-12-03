@@ -1,3 +1,5 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 const createNavigationMenuTemplate = (filmsData) => `
 <nav class="main-navigation">
     <div class="main-navigation__items">
@@ -10,4 +12,22 @@ const createNavigationMenuTemplate = (filmsData) => `
   </nav>
 `;
 
-export {createNavigationMenuTemplate};
+class NavigationMenuMarkup {
+  #template = null;
+  #element = null;
+
+  constructor (filmData) {
+    this.#template = createNavigationMenuTemplate;
+    this.#element = createNodeElement(this.#template(filmData));
+  }
+
+  get getElement() {
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
+  }
+}
+
+export {NavigationMenuMarkup};
