@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {filmsData} from '/src/mock/temporary-data.js';
 
 import {NavigationMenuMarkup} from '/src/view/navigation-menu.js';
@@ -12,6 +13,7 @@ import {onEscKeydown} from '/src/utils/util.js';
 import {ShowMoreButtonMarkup} from '/src/view/show-more-button.js';
 import {LoadingFilmsListMarkup} from '/src/view/loading-films-list.js';
 import {ExtraFilmCardMarkup} from '/src/view/extra-films-list.js';
+import {EmptyFilmsListMarkup} from '/src/view/empty-films-list.js';
 
 const INITIAL_FILMS_CARD_COUNT = 5;
 
@@ -90,9 +92,8 @@ function сreateFilmsList (films) {
 }
 
 setTimeout(() => {
-  сreateFilmsList(filmsData);
-  filmsCard = document.querySelector('.films');
-  filmsCard.addEventListener('click', openFilmDetailsPopupClickHandler);
+  document.querySelector('.films').remove();
+  renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, new EmptyFilmsListMarkup().getElement);
 }, 3000);
 
 
