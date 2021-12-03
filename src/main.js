@@ -38,6 +38,7 @@ const closePopupFilmDetailsButton = document.querySelector('.film-details__close
 const filmDetailsCommentsWrap = document.querySelector('.film-details__comments-wrap');
 const filmDetailsCommentsList = document.querySelector('.film-details__comments-list');
 
+
 function renderFilmsCardToShowMoreButtonClickHandler () {
   const filmsList = document.querySelector('.films-list');
   const showMoreButton = document.querySelector('.films-list__show-more');
