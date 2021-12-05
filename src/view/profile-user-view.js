@@ -1,4 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const createTitleProfileUserTemplate = () => `
 <section class="header__profile profile">
@@ -7,21 +8,12 @@ const createTitleProfileUserTemplate = () => `
 </section>
 `;
 
-class ProfileUserMarkup {
-  #template = null;
-  #element = null;
-
+class ProfileUserMarkup extends AbstractClass {
   constructor () {
-    this.#template = createTitleProfileUserTemplate;
-    this.#element = createNodeElement(this.#template());
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createTitleProfileUserTemplate;
+    this._element = createNodeElement(this._template());
   }
 }
 
