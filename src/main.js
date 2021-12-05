@@ -48,27 +48,6 @@ const filmDetailsCommentsWrap = FilmDetailsPopupComponent.getElement.querySelect
 const filmDetailsCommentsList = FilmDetailsPopupComponent.getElement.querySelector('.film-details__comments-list');
 
 
-
-function renderFilmsCardToShowMoreButtonClickHandler () {
-  const filmsList = document.querySelector('.films-list');
-  const showMoreButton = document.querySelector('.films-list__show-more');
-  const filmsListWithClassToHidden = document.querySelectorAll('article[class="film-card hidden"]');
-
-  if (filmsListWithClassToHidden.length <= INITIAL_FILMS_CARD_COUNT) {
-    filmsList.removeChild(showMoreButton);
-    for (const card of filmsListWithClassToHidden) {
-      card.classList.remove('hidden');
-      showMoreButton.removeEventListener('click', renderFilmsCardToShowMoreButtonClickHandler);
-    }
-
-    return;
-  }
-
-  for (let index = 0; index < INITIAL_FILMS_CARD_COUNT; index++) {
-    filmsListWithClassToHidden[index].classList.remove('hidden');
-  }
-}
-
 function сreateFilmsList (films) {
   LoadingFilmsListComponent.getElement.remove();
   renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, FilmsListComponent);
