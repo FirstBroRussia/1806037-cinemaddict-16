@@ -1,4 +1,6 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+
 
 const createFilmDetailsPopupTemplate = () => `
 <section class="film-details hidden">
@@ -58,7 +60,7 @@ const createFilmDetailsPopupTemplate = () => `
 `;
 
 
-const createFilmDetailsCardMarkupTemplate = (film) => {
+const createFilmDetailsInfoMarkupTemplate = (film) => {
   let textMarkupToGenresList = '';
   film.genre.forEach( (item) => {
     textMarkupToGenresList += `<span class="film-details__genre">${item}</span>\n`;
@@ -151,93 +153,48 @@ const createFilmDetailsCommentMarkup = (commentData) => `
         </li>
 `;
 
-class FilmDetailsCardFilterButtons {
-  #template = null;
-  #element = null;
-
+class FilmDetailsCardFilterButtons extends AbstractClass {
   constructor (filmData) {
-    this.#template = createFilmDetailsCardFilterControlButtons;
-    this.#element = createNodeElement(this.#template(filmData));
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createFilmDetailsCardFilterControlButtons;
+    this._element = createNodeElement(this._template(filmData));
   }
 }
 
-class FilmDetailsPopupMarkup {
-  #template = null;
-  #element = null;
-
+class FilmDetailsPopupMarkup extends AbstractClass {
   constructor () {
-    this.#template = createFilmDetailsPopupTemplate;
-    this.#element = createNodeElement(this.#template());
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createFilmDetailsPopupTemplate;
+    this._element = createNodeElement(this._template());
   }
 }
 
-class FilmDetailCardMarkup {
-  #template = null;
-  #element = null;
-
+class FilmDetailCardMarkup extends AbstractClass {
   constructor (filmData) {
-    this.#template = createFilmDetailsCardMarkupTemplate;
-    this.#element = createNodeElement(this.#template(filmData));
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createFilmDetailsInfoMarkupTemplate;
+    this._element = createNodeElement(this._template(filmData));
   }
 }
 
-class filmDetailsCommentsCountMarkup {
-  #template = null;
-  #element = null;
-
+class filmDetailsCommentsCountMarkup extends AbstractClass {
   constructor (filmData) {
-    this.#template = filmDetailsCommentsCount;
-    this.#element = createNodeElement(this.#template(filmData));
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = filmDetailsCommentsCount;
+    this._element = createNodeElement(this._template(filmData));
   }
 }
 
-class filmDetailsCommentMarkup {
-  #template = null;
-  #element = null;
-
+class filmDetailsCommentMarkup extends AbstractClass {
   constructor (filmData) {
-    this.#template = createFilmDetailsCommentMarkup;
-    this.#element = createNodeElement(this.#template(filmData));
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createFilmDetailsCommentMarkup;
+    this._element = createNodeElement(this._template(filmData));
   }
 }
 

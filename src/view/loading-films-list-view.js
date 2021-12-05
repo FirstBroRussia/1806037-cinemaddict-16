@@ -1,4 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const createLoadingFilmsListTemplate = () => `
 <section class="films">
@@ -8,21 +9,12 @@ const createLoadingFilmsListTemplate = () => `
 </section>
 `;
 
-class LoadingFilmsListMarkup {
-  #template = null;
-  #element = null;
-
+class LoadingFilmsListMarkup extends AbstractClass {
   constructor () {
-    this.#template = createLoadingFilmsListTemplate;
-    this.#element = createNodeElement(this.#template());
-  }
+    super();
 
-  get getElement() {
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
+    this._template = createLoadingFilmsListTemplate;
+    this._element = createNodeElement(this._template());
   }
 }
 

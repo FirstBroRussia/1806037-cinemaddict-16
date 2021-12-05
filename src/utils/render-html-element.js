@@ -1,3 +1,5 @@
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+
 const positionMarkup = {
   BEFORE_BEGIN: 'beforebegin',
   AFTER_BEGIN: 'afterbegin',
@@ -14,14 +16,20 @@ const createNodeElement = (element) => {
   return newElement;
 };
 
+const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.getElement : nodeElement;
+
 const renderMarkupHtmlElement = (container, position, element) => {
   switch (position) {
-    case 'beforebegin': return container.before(element);
-    case 'afterbegin': return container.prepend(element);
-    case 'beforeend': return container.append(element);
-    case 'afterend': return container.after(element);
+    case 'beforebegin': return getNodeElement(container).before(getNodeElement(element));
+    case 'afterbegin': return getNodeElement(container).prepend(getNodeElement(element));
+    case 'beforeend': return getNodeElement(container).append(getNodeElement(element));
+    case 'afterend': return getNodeElement(container).after(getNodeElement(element));
     default : throw new Error('Передайте валидное значение!');
   }
 };
 
-export {positionMarkup, createNodeElement, renderMarkupHtmlElement};
+const replaceNodeElement = (parentNodeElement, newChildElement, oldChildElement) => {
+  getNodeElement(parentNodeElement).replaceChild(getNodeElement(newChildElement), getNodeElement(oldChildElement));
+};
+
+export {positionMarkup, createNodeElement, renderMarkupHtmlElement, replaceNodeElement};
