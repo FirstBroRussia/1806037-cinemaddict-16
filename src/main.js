@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {filmsData} from '/src/mock/temporary-data.js';
 
 import {NavigationMenuMarkup} from '/src/view/navigation-menu-view.js';
@@ -9,8 +10,11 @@ import {FilmsCountMarkup} from '/src/view/films-count-view.js';
 import {FilmDetailsPopupMarkup, FilmDetailCardMarkup, FilmDetailsCardFilterButtons, filmDetailsCommentsCountMarkup, filmDetailsCommentMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderMarkupHtmlElement} from '/src/utils/render-html-element.js';
 import {onEscKeydown} from '/src/utils/util.js';
-import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
-import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
+
+import {ShowMoreButtonMarkup} from '/src/view/show-more-button.js';
+import {LoadingFilmsListMarkup} from '/src/view/loading-films-list.js';
+import {ExtraFilmCardMarkup} from '/src/view/extra-films-list.js';
+import {EmptyFilmsListMarkup} from '/src/view/empty-films-list.js';
 
 const INITIAL_FILMS_CARD_COUNT = 5;
 
@@ -72,8 +76,10 @@ function сreateFilmsList (films) {
 }
 
 setTimeout(() => {
-  сreateFilmsList(filmsData);
-  FilmsListComponent.addEventHandler('click', openFilmDetailsPopupClickHandler);
+
+  document.querySelector('.films').remove();
+  renderMarkupHtmlElement(mainBodyElement, positionMarkup.BEFORE_END, new EmptyFilmsListMarkup().getElement);
+
 }, 3000);
 
 function renderFilmsCardToShowMoreButtonClickHandler () {
