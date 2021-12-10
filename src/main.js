@@ -162,3 +162,19 @@ function closeFilmDetailsPopupKeydownHandler (evt) {
 }
 
 export {openFilmDetailsPopupClickHandler};
+
+// Пробная функция для нажатия кнопок фильтров
+const filterButtons = document.querySelector('.main-navigation__items');
+
+function closureFn () {
+  let currentClickedFilterButton = document.querySelector('.main-navigation__item--active');
+  return function () {
+    filterButtons.addEventListener('click', (evt) => {
+      currentClickedFilterButton.classList.remove('main-navigation__item--active');
+      currentClickedFilterButton = evt.target.closest('.main-navigation__item');
+      currentClickedFilterButton.classList.add('main-navigation__item--active');
+    });
+  };
+}
+
+closureFn()();
