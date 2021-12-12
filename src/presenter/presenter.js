@@ -112,22 +112,6 @@ class Presenter {
     this.renderFilmCard(mostCommentedSortFilms, mostCommentedFilmsListContainer);
   }
 
-  filteringData (currentClickButton, data) {
-    switch (currentClickButton) {
-      case currentClickButton.closest('a[href="#watchlist"]') : return data.filter( (item) => item.isWatchlist === true);
-      case currentClickButton.closest('a[href="#history"]') : return data.filter( (item) => item.isWatched === true);
-      case currentClickButton.closest('a[href="#favorites"]') : return data.filter( (item) => item.isFavorite === true);
-      case currentClickButton.closest('a[href="#all"]') : return data;
-    }
-  }
-
-  sortingData (currentClickButton, data) {
-    switch (currentClickButton) {
-      case currentClickButton.closest('a[href="#default"]') : return data;
-      case currentClickButton.closest('a[href="#date"]') : return data.sort( (itemA, itemB) => itemB.releaseYear - itemA.releaseYear);
-      case currentClickButton.closest('a[href="#rating"]') : return data.sort( (itemA, itemB) => itemB.rating - itemA.rating);
-    }
-  }
 
   // ПРОЧЕЕ
 
@@ -282,38 +266,6 @@ class Presenter {
     }
   };
 
-  #filterButtonsClickHandler = (evt) => {
-    if (evt.target.closest('.main-navigation__item--active') || !evt.target.closest('a[class^="main-navigation__item"]')) {
-      return;
-    }
-    const currentButtonWithClass = document.querySelector('.main-navigation__item--active');
-    currentButtonWithClass.classList.remove('main-navigation__item--active');
-
-    const currentClickedFilterButton = evt.target.closest('a[class^="main-navigation__item"]');
-    currentClickedFilterButton.classList.add('main-navigation__item--active');
-
-    this.#filteredFilms = this.filteringData(currentClickedFilterButton, this.#films);
-    this.renderFilmsList(this.#filteredFilms);
-    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
-
-    document.querySelector('.sort__button--active').classList.remove('sort__button--active');
-    document.querySelector('a[href="#default"]').classList.add('sort__button--active');
-  };
-
-  #sortButtonsClickHandler = (evt) => {
-    if (!evt.target.closest('.sort__button') || evt.target.closest('.sort__button--active')) {
-      return;
-    }
-    const currentButtonWithClass = document.querySelector('.sort__button--active');
-    currentButtonWithClass.classList.remove('sort__button--active');
-
-    const currentClickedSortButton = evt.target.closest('a[class^="sort__button"]');
-    currentClickedSortButton.classList.add('sort__button--active');
-
-    const sortedData = this.sortingData(currentClickedSortButton, this.#filteredFilms);
-    this.renderFilmsList(sortedData);
-    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
-  };
 
   // ОБНОВЛЕНИЕ ДАННЫХ
 
@@ -364,8 +316,6 @@ class Presenter {
     this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
 
     document.addEventListener('click', this.#controlButtonsOnTheFilmCardClickHandler);
-    this.#NavigationMenuComponent.addEventHandler('click', this.#filterButtonsClickHandler);
-    this.#SortListComponent.addEventHandler('click', this.#sortButtonsClickHandler);
   }
 
 }
