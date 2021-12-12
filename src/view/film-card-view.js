@@ -18,12 +18,25 @@ const createFilmCardTemplate = (film, requiredClass) => `
   <p class="film-card__description">${getConvertedString(film.description, MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD)}</p>
   <span class="film-card__comments">${film.comments.length === 1 ? '1 comment' : `${film.comments.length} comments`}</span>
 </a>
-<div class="film-card__controls">
-  <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${film.isWatchlist && 'film-card__controls-item--active'}" type="button">Add to watchlist</button>
-  <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${film.isWatched && 'film-card__controls-item--active'}" type="button">Mark as watched</button>
-  <button class="film-card__controls-item film-card__controls-item--favorite ${film.isFavorite && 'film-card__controls-item--active'}" type="button">Mark as favorite</button>
-</div>
+
 </article>`;
+
+const createControlButtonOnTheFilmCardTemplate = (film) => `
+<div id="${film.id}" class="film-card__controls">
+<button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${film.isWatchlist && 'film-card__controls-item--active'}" type="button">Add to watchlist</button>
+<button class="film-card__controls-item film-card__controls-item--mark-as-watched ${film.isWatched && 'film-card__controls-item--active'}" type="button">Mark as watched</button>
+<button class="film-card__controls-item film-card__controls-item--favorite ${film.isFavorite && 'film-card__controls-item--active'}" type="button">Mark as favorite</button>
+</div>
+`;
+
+class ControlButtonOnTheFilmCardMarkup extends AbstractClass {
+  constructor (filmData) {
+    super();
+
+    this._template = createControlButtonOnTheFilmCardTemplate;
+    this._element = createNodeElement(this._template(filmData));
+  }
+}
 
 class FilmCardMarkup extends AbstractClass {
   constructor (filmData, classHidden) {
@@ -38,4 +51,4 @@ class FilmCardMarkup extends AbstractClass {
   }
 }
 
-export {FilmCardMarkup};
+export {FilmCardMarkup, ControlButtonOnTheFilmCardMarkup};
