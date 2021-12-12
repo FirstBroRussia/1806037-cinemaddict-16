@@ -22,7 +22,7 @@ class Presenter {
   #footerBodyElement = document.querySelector('.footer');
   #footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
-  #ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+  #ShowMoreButtonComponent = null;
   #LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   #SortListComponent = new SortListMarkup();
   #FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
@@ -31,6 +31,7 @@ class Presenter {
   #NavigationMenuComponent = null;
   #FilmsCountComponent = null;
   #FilmsListComponent = null;
+  #FilmsCardComponent = null;
 
   #filmDetailsContainer = null;
   #closePopupFilmDetailsButton = null;
@@ -73,13 +74,16 @@ class Presenter {
   renderFilmCard (films, container) {
     films.forEach( (item, index) => {
       if (index >= INITIAL_FILMS_CARD_COUNT) {
-        renderNodeElement(container, positionMarkup.BEFORE_END, new FilmCardMarkup(item, true));
+        this.#FilmsCardComponent = new FilmCardMarkup(item, true);
+        renderNodeElement(container, positionMarkup.BEFORE_END, this.#FilmsCardComponent);
         renderNodeElement(container.lastElementChild, positionMarkup.BEFORE_END, new ControlButtonOnTheFilmCardMarkup(item));
       } else {
-        renderNodeElement(container, positionMarkup.BEFORE_END, new FilmCardMarkup(item));
+        this.#FilmsCardComponent = new FilmCardMarkup(item);
+        renderNodeElement(container, positionMarkup.BEFORE_END, this.#FilmsCardComponent);
         renderNodeElement(container.lastElementChild, positionMarkup.BEFORE_END, new ControlButtonOnTheFilmCardMarkup(item));
       }
     });
+    this.#FilmsCardComponent = null;
   }
 
   renderFilmsList (films) {
@@ -91,7 +95,9 @@ class Presenter {
     renderNodeElement(this.#mainBodyElement, positionMarkup.BEFORE_END, this.#FilmsListComponent);
 
     if (films.length > INITIAL_FILMS_CARD_COUNT) {
-      this.#FilmsListComponent.getElement.querySelector('.films-list').append(this.#ShowMoreButtonComponent.getElement);
+      this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+      const filmsListElement = this.#FilmsListComponent.getElement.querySelector('.films-list');
+      renderNodeElement(filmsListElement, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
       this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmsCardToShowMoreButtonClickHandler);
     }
 
@@ -123,14 +129,14 @@ class Presenter {
   // ОБРАБОТЧИКИ
 
   #renderFilmsCardToShowMoreButtonClickHandler = () => {
-    const filmsList = this.#FilmsListComponent.getElement.querySelector('.films-list');
     const filmsListWithClassToHidden = this.#FilmsListComponent.getElement.querySelectorAll('article[class="film-card hidden"]');
 
     if (filmsListWithClassToHidden.length <= INITIAL_FILMS_CARD_COUNT) {
-      filmsList.removeChild(this.#ShowMoreButtonComponent.getElement);
+      this.#ShowMoreButtonComponent.getElement.remove();
+      this.#ShowMoreButtonComponent.removeEventHandler('click', this.#renderFilmsCardToShowMoreButtonClickHandler);
+
       for (const filmCard of filmsListWithClassToHidden) {
         filmCard.classList.remove('hidden');
-        this.#ShowMoreButtonComponent.removeEventHandler('click', this.#renderFilmsCardToShowMoreButtonClickHandler);
       }
 
       return;
@@ -147,10 +153,10 @@ class Presenter {
     }
 
     if (evt.target.closest('article[class^="film-card"]')) {
+      this.#FilmsListComponent.removeEventHandler('click', this.#openFilmDetailsPopupClickHandler);
       this.#bodyElement.classList.add('hide-overflow');
       this.#FilmDetailsPopupComponent.getElement.classList.remove('hidden');
 
-      this.#FilmsListComponent.removeEventHandler('click', this.#openFilmDetailsPopupClickHandler);
 
       const currentIdFilmCard = +evt.target.closest('article[class^="film-card"]').getAttribute('id');
 
@@ -165,13 +171,17 @@ class Presenter {
         }
       }
 
-      this.#FilmDetailsPopupComponent.addEventHandler('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
-      this.#closePopupFilmDetailsButton.addEventListener('click', this.#closeFilmDetailsPopupClickHandler);
+      this.#FilmDetailsPopupComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
       document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+      document.addEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
     }
   }
 
-  #closeFilmDetailsPopupClickHandler = () => {
+  #closeFilmDetailsPopupClickHandler = (evt) => {
+    if (!evt.target.closest('.film-details__close-btn')) {
+      return;
+    }
+
     this.updateControlButtonsView();
 
     this.#bodyElement.classList.remove('hide-overflow');
@@ -186,9 +196,10 @@ class Presenter {
     this.#filmDetailsCommentsWrap.removeChild(filmDetailsCommentsTitle);
     this.#filmDetailsCommentsList.textContent = '';
 
-    this.#FilmDetailsPopupComponent.removeEventHandler('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
-    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
+    this.#FilmDetailsPopupComponent.removeEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
     document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+    document.removeEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
+    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
   }
 
   #closeFilmDetailsPopupKeydownHandler = (evt) => {
@@ -224,24 +235,30 @@ class Presenter {
     let id;
 
     if (currentClickedWatchlistButton) {
-      id = currentClickedWatchlistButton.closest('article').id;
+      id = +currentClickedWatchlistButton.closest('article').id;
       this.controlItemButtonChangeData(id, 'isWatchlist');
       this.updateControlButtonsView();
     }
     if (currentClickedWatchedButton) {
-      id = currentClickedWatchedButton.closest('article').id;
+      id = +currentClickedWatchedButton.closest('article').id;
       this.controlItemButtonChangeData(id, 'isWatched');
       this.updateControlButtonsView();
     }
     if (currentClickedFavouriteButton) {
-      id = currentClickedFavouriteButton.closest('article').id;
+      id = +currentClickedFavouriteButton.closest('article').id;
       this.controlItemButtonChangeData(id, 'isFavorite');
       this.updateControlButtonsView();
     }
-    replaceNodeElement(this.#mainBodyElement, new NavigationMenuMarkup(this.#films).getElement, this.#mainBodyElement.firstElementChild);
+
+    this.#NavigationMenuComponent =  new NavigationMenuMarkup(this.#films);
+    replaceNodeElement(this.#mainBodyElement, this.#NavigationMenuComponent, this.#mainBodyElement.firstElementChild);
   };
 
   #controlButtonsOnTheFilmDetailsPopupClickHandler = (evt) => {
+    if (!evt.target.closest('.film-details__control-button')) {
+      return;
+    }
+
     const currentClickedWatchlistButton = evt.target.closest('.film-details__control-button--watchlist');
     const currentClickedWatchedButton = evt.target.closest('.film-details__control-button--watched');
     const currentClickedFavouriteButton = evt.target.closest('.film-details__control-button--favorite');
@@ -250,17 +267,17 @@ class Presenter {
     let currentValueChangeableFeature;
 
     if (currentClickedWatchlistButton) {
-      id = currentClickedWatchlistButton.closest('.film-details__controls').id;
+      id = +currentClickedWatchlistButton.closest('.film-details__controls').id;
       currentValueChangeableFeature = this.controlItemButtonChangeData(id, 'isWatchlist');
       this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedWatchlistButton, currentValueChangeableFeature);
     }
     if (currentClickedWatchedButton) {
-      id = currentClickedWatchedButton.closest('.film-details__controls').id;
+      id = +currentClickedWatchedButton.closest('.film-details__controls').id;
       currentValueChangeableFeature = this.controlItemButtonChangeData(id, 'isWatched');
       this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedWatchedButton, currentValueChangeableFeature);
     }
     if (currentClickedFavouriteButton) {
-      id = currentClickedFavouriteButton.closest('.film-details__controls').id;
+      id = +currentClickedFavouriteButton.closest('.film-details__controls').id;
       currentValueChangeableFeature = this.controlItemButtonChangeData(id, 'isFavorite');
       this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedFavouriteButton, currentValueChangeableFeature);
     }
@@ -273,15 +290,15 @@ class Presenter {
 
     let clickedButton;
     this.#films.forEach( (film) => {
-      if (film.id === +id && controlItem === 'isWatchlist') {
+      if (film.id === id && controlItem === 'isWatchlist') {
         film.isWatchlist = !film.isWatchlist;
         clickedButton = film.isWatchlist;
       }
-      if (film.id === +id && controlItem === 'isWatched') {
+      if (film.id === id && controlItem === 'isWatched') {
         film.isWatched = !film.isWatched;
         clickedButton = film.isWatched;
       }
-      if (film.id === +id && controlItem === 'isFavorite') {
+      if (film.id === id && controlItem === 'isFavorite') {
         film.isFavorite = !film.isFavorite;
         clickedButton = film.isFavorite;
       }
