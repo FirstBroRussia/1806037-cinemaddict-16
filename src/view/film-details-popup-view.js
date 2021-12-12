@@ -6,9 +6,6 @@ const createFilmDetailsPopupTemplate = () => `
 <section class="film-details hidden">
 <form class="film-details__inner" action="" method="get">
   <div class="film-details__top-container">
-    <div class="film-details__close">
-      <button class="film-details__close-btn" type="button">close</button>
-    </div>
 
 
   </div>
@@ -17,42 +14,6 @@ const createFilmDetailsPopupTemplate = () => `
     <section class="film-details__comments-wrap">
 
 
-      <ul class="film-details__comments-list">
-        <!-- СЮДА ВСТАВЛЯЮТСЯ КОММЕНТЫ С СЕРВЕРА -->
-
-
-
-      </ul>
-
-      <div class="film-details__new-comment">
-        <div class="film-details__add-emoji-label"></div>
-
-        <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-        </label>
-
-        <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-          <label class="film-details__emoji-label" for="emoji-smile">
-            <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-          <label class="film-details__emoji-label" for="emoji-sleeping">
-            <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-          <label class="film-details__emoji-label" for="emoji-puke">
-            <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-          </label>
-
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-          <label class="film-details__emoji-label" for="emoji-angry">
-            <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-          </label>
-        </div>
-      </div>
     </section>
   </div>
 </form>
@@ -137,20 +98,67 @@ const filmDetailsCommentsCount = (filmData) => `
 <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmData.comments.length}</span></h3>
 `;
 
-const createFilmDetailsCommentMarkup = (commentData) => `
-<li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
-          </span>
-          <div>
-            <p class="film-details__comment-text">${commentData}</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">2019/12/31 23:59</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
+const createFilmDetailsCommentsMarkup = (film) => {
+  let htmlTextMarkup = '';
+  film.comments.forEach( (item) => {
+    htmlTextMarkup += `<li class="film-details__comment">
+    <span class="film-details__comment-emoji">
+      <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+    </span>
+    <div>
+      <p class="film-details__comment-text">${item}</p>
+      <p class="film-details__comment-info">
+        <span class="film-details__comment-author">Tim Macoveev</span>
+        <span class="film-details__comment-day">2019/12/31 23:59</span>
+        <button class="film-details__comment-delete">Delete</button>
+      </p>
+    </div>
+   </li>\n`;
+  });
+
+  return `
+  <ul class="film-details__comments-list">
+    ${htmlTextMarkup}
+  </ul>
+  `;
+};
+
+const createFolmDetailsNewCommentMarkup = () => `
+<div class="film-details__new-comment">
+        <div class="film-details__add-emoji-label"></div>
+
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+        </label>
+
+        <div class="film-details__emoji-list">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
+          <label class="film-details__emoji-label" for="emoji-smile">
+            <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
+          <label class="film-details__emoji-label" for="emoji-sleeping">
+            <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
+          <label class="film-details__emoji-label" for="emoji-puke">
+            <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+          </label>
+
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
+          <label class="film-details__emoji-label" for="emoji-angry">
+            <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+          </label>
+        </div>
+      </div>
+`;
+
+const createFilmsDetailsCloseButtonMarkup = () => `
+<div class="film-details__close">
+      <button class="film-details__close-btn" type="button">close</button>
+    </div>
 `;
 
 class FilmDetailsCardFilterButtons extends AbstractClass {
@@ -171,7 +179,7 @@ class FilmDetailsPopupMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailCardMarkup extends AbstractClass {
+class FilmDetailInfoMarkup extends AbstractClass {
   constructor (filmData) {
     super();
 
@@ -180,7 +188,7 @@ class FilmDetailCardMarkup extends AbstractClass {
   }
 }
 
-class filmDetailsCommentsCountMarkup extends AbstractClass {
+class FilmDetailsCommentsCountMarkup extends AbstractClass {
   constructor (filmData) {
     super();
 
@@ -189,13 +197,31 @@ class filmDetailsCommentsCountMarkup extends AbstractClass {
   }
 }
 
-class filmDetailsCommentMarkup extends AbstractClass {
+class FilmDetailsCommentMarkup extends AbstractClass {
   constructor (filmData) {
     super();
 
-    this._template = createFilmDetailsCommentMarkup;
+    this._template = createFilmDetailsCommentsMarkup;
     this._element = createNodeElement(this._template(filmData));
   }
 }
 
-export {FilmDetailsPopupMarkup, FilmDetailCardMarkup, FilmDetailsCardFilterButtons, filmDetailsCommentsCountMarkup, filmDetailsCommentMarkup};
+class FilmDetailsNewCommentMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createFolmDetailsNewCommentMarkup();
+    this._element = createNodeElement(this._template);
+  }
+}
+
+class FilmDetailsCloseButtonMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createFilmsDetailsCloseButtonMarkup();
+    this._element = createNodeElement(this._template);
+  }
+}
+
+export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup};

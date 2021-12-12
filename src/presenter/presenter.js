@@ -4,7 +4,7 @@ import {FilmsListMarkup} from '/src/view/films-list-view.js';
 import {FilmCardMarkup, ControlButtonOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {FilmsCountMarkup} from '/src/view/films-count-view.js';
-import {FilmDetailsPopupMarkup, FilmDetailCardMarkup, FilmDetailsCardFilterButtons, filmDetailsCommentsCountMarkup, filmDetailsCommentMarkup} from '/src/view/film-details-popup-view.js';
+import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElement} from '/src/utils/render-html-element.js';
 import {onEscKeydown} from '/src/utils/util.js';
 import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
@@ -22,10 +22,11 @@ class Presenter {
   #footerBodyElement = document.querySelector('.footer');
   #footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
-  #ShowMoreButtonComponent = null;
+  #ShowMoreButtonComponent = new ShowMoreButtonMarkup();
   #LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   #SortListComponent = new SortListMarkup();
   #FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
+  #FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
 
   #ProfileUserComponent = null;
   #NavigationMenuComponent = null;
@@ -33,10 +34,15 @@ class Presenter {
   #FilmsListComponent = null;
   #FilmsCardComponent = null;
 
+  #FilmDetailsInfoComponent = null;
+  #FilmDetailsFilterButtonsComponent = null;
+  #FilmDetailsFilmsCountComponent = null;
+  #FilmDetailsCommentsComponent = null;
+  #FilmDetailsNewCommentComponent = null;
+
   #filmDetailsContainer = null;
   #closePopupFilmDetailsButton = null;
   #filmDetailsCommentsWrap = null;
-  #filmDetailsCommentsList = null;
 
 
   constructor (data) {
@@ -66,9 +72,7 @@ class Presenter {
 
   selectedElementsBySelectors () {
     this.#filmDetailsContainer = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__top-container');
-    this.#closePopupFilmDetailsButton = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__close-btn');
     this.#filmDetailsCommentsWrap = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__comments-wrap');
-    this.#filmDetailsCommentsList = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__comments-list');
   }
 
   renderFilmCard (films, container) {
@@ -95,7 +99,6 @@ class Presenter {
     renderNodeElement(this.#mainBodyElement, positionMarkup.BEFORE_END, this.#FilmsListComponent);
 
     if (films.length > INITIAL_FILMS_CARD_COUNT) {
-      this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
       const filmsListElement = this.#FilmsListComponent.getElement.querySelector('.films-list');
       renderNodeElement(filmsListElement, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
       this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmsCardToShowMoreButtonClickHandler);
@@ -118,6 +121,20 @@ class Presenter {
     this.renderFilmCard(mostCommentedSortFilms, mostCommentedFilmsListContainer);
   }
 
+  closeFilmDetailsPopup () {
+    this.updateControlButtonsView();
+
+    this.#bodyElement.classList.remove('hide-overflow');
+    this.#FilmDetailsPopupComponent.getElement.classList.add('hidden');
+
+    this.#filmDetailsContainer.textContent = '';
+    this.#filmDetailsCommentsWrap.textContent = '';
+
+    this.#FilmDetailsPopupComponent.removeEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
+    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+    document.removeEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
+    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
+  }
 
   // ПРОЧЕЕ
 
@@ -148,33 +165,39 @@ class Presenter {
   }
 
   #openFilmDetailsPopupClickHandler = (evt) => {
-    if (evt.target.closest('.film-card__controls-item')) {
+    if (evt.target.closest('.film-card__controls-item') || !evt.target.closest('article[class^="film-card"]')) {
       return;
     }
 
-    if (evt.target.closest('article[class^="film-card"]')) {
-      this.#FilmsListComponent.removeEventHandler('click', this.#openFilmDetailsPopupClickHandler);
-      this.#bodyElement.classList.add('hide-overflow');
-      this.#FilmDetailsPopupComponent.getElement.classList.remove('hidden');
+    this.#FilmsListComponent.removeEventHandler('click', this.#openFilmDetailsPopupClickHandler);
+    this.#bodyElement.classList.add('hide-overflow');
+    this.#FilmDetailsPopupComponent.getElement.classList.remove('hidden');
 
 
-      const currentIdFilmCard = +evt.target.closest('article[class^="film-card"]').getAttribute('id');
+    const currentIdFilmCard = +evt.target.closest('article[class^="film-card"]').getAttribute('id');
 
-      for (const film of this.#films) {
-        if (film.id === currentIdFilmCard) {
-          renderNodeElement(this.#filmDetailsContainer, positionMarkup.BEFORE_END, new FilmDetailCardMarkup(film));
-          renderNodeElement(this.#filmDetailsContainer, positionMarkup.BEFORE_END, new FilmDetailsCardFilterButtons(film));
-          renderNodeElement(this.#filmDetailsCommentsWrap, positionMarkup.AFTER_BEGIN, new filmDetailsCommentsCountMarkup(film));
-          film.comments.forEach( (item) => renderNodeElement(this.#filmDetailsCommentsList, positionMarkup.BEFORE_END, new filmDetailsCommentMarkup(item)));
+    for (const film of this.#films) {
+      if (film.id === currentIdFilmCard) {
+        this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(film);
+        this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(film);
+        this.#FilmDetailsFilmsCountComponent = new FilmDetailsCommentsCountMarkup(film);
+        this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(film);
+        this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
 
-          break;
-        }
+        renderNodeElement(this.#filmDetailsContainer, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
+        renderNodeElement(this.#filmDetailsContainer, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
+        renderNodeElement(this.#filmDetailsContainer, positionMarkup.BEFORE_END, this.#FilmDetailsFilterButtonsComponent);
+        renderNodeElement(this.#filmDetailsCommentsWrap, positionMarkup.AFTER_BEGIN, this.#FilmDetailsFilmsCountComponent);
+        renderNodeElement(this.#filmDetailsCommentsWrap, positionMarkup.BEFORE_END, this.#FilmDetailsCommentsComponent);
+        renderNodeElement(this.#filmDetailsCommentsWrap, positionMarkup.BEFORE_END, this.#FilmDetailsNewCommentComponent);
+
+        break;
       }
-
-      this.#FilmDetailsPopupComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
-      document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-      document.addEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
     }
+
+    this.#FilmDetailsPopupComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
+    document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+    document.addEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
   }
 
   #closeFilmDetailsPopupClickHandler = (evt) => {
@@ -182,47 +205,15 @@ class Presenter {
       return;
     }
 
-    this.updateControlButtonsView();
-
-    this.#bodyElement.classList.remove('hide-overflow');
-    this.#FilmDetailsPopupComponent.getElement.classList.add('hidden');
-
-    const filmDetailsInfo = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__info-wrap');
-    const filmDetailsFilterButtons = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__controls');
-    const filmDetailsCommentsTitle = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__comments-title');
-
-    this.#filmDetailsContainer.removeChild(filmDetailsInfo);
-    this.#filmDetailsContainer.removeChild(filmDetailsFilterButtons);
-    this.#filmDetailsCommentsWrap.removeChild(filmDetailsCommentsTitle);
-    this.#filmDetailsCommentsList.textContent = '';
-
-    this.#FilmDetailsPopupComponent.removeEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
-    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-    document.removeEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
-    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
+    this.closeFilmDetailsPopup();
   }
 
   #closeFilmDetailsPopupKeydownHandler = (evt) => {
     if (!onEscKeydown(evt)) {
       return;
     }
-    this.updateControlButtonsView();
 
-    this.#bodyElement.classList.remove('hide-overflow');
-    this.#FilmDetailsPopupComponent.getElement.classList.add('hidden');
-
-    const filmDetailsInfo = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__info-wrap');
-    const filmDetailsFilterButtons = this.#FilmDetailsPopupComponent.getElement.querySelector('.film-details__controls');
-    const filmDetailsCommentsTitle = this.#filmDetailsCommentsWrap.querySelector('.film-details__comments-title');
-
-    this.#filmDetailsContainer.removeChild(filmDetailsInfo);
-    this.#filmDetailsContainer.removeChild(filmDetailsFilterButtons);
-    this.#filmDetailsCommentsWrap.removeChild(filmDetailsCommentsTitle);
-    this.#filmDetailsCommentsList.textContent = '';
-
-    this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
-    this.#closePopupFilmDetailsButton.removeEventListener('click', this.#closeFilmDetailsPopupClickHandler);
-    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+    this.closeFilmDetailsPopup();
   }
 
   #controlButtonsOnTheFilmCardClickHandler = (evt) => {
@@ -326,8 +317,8 @@ class Presenter {
 
   init () {
     this.setComponents();
-    this.selectedElementsBySelectors();
     this.getPrimaryMarkup();
+    this.selectedElementsBySelectors();
 
     this.renderFilmsList(this.#films);
     this.#FilmsListComponent.addEventHandler('click', this.#openFilmDetailsPopupClickHandler);
