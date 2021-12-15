@@ -29,7 +29,7 @@ const createControlButtonOnTheFilmCardTemplate = (film) => `
 </div>
 `;
 
-class ControlButtonOnTheFilmCardMarkup extends AbstractClass {
+class ControlButtonsOnTheFilmCardMarkup extends AbstractClass {
   constructor (filmData) {
     super();
 
@@ -51,4 +51,4 @@ class FilmCardMarkup extends AbstractClass {
   }
 }
 
-export {FilmCardMarkup, ControlButtonOnTheFilmCardMarkup};
+export {FilmCardMarkup, ControlButtonsOnTheFilmCardMarkup};

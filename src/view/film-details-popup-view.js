@@ -161,15 +161,6 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
-class FilmDetailsCardFilterButtons extends AbstractClass {
-  constructor (filmData) {
-    super();
-
-    this._template = createFilmDetailsCardFilterControlButtons;
-    this._element = createNodeElement(this._template(filmData));
-  }
-}
-
 class FilmDetailsPopupMarkup extends AbstractClass {
   constructor () {
     super();
@@ -179,6 +170,17 @@ class FilmDetailsPopupMarkup extends AbstractClass {
   }
 }
 
+
+class FilmDetailsCloseButtonMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createFilmsDetailsCloseButtonMarkup();
+    this._element = createNodeElement(this._template);
+  }
+}
+
+
 class FilmDetailInfoMarkup extends AbstractClass {
   constructor (filmData) {
     super();
@@ -187,6 +189,16 @@ class FilmDetailInfoMarkup extends AbstractClass {
     this._element = createNodeElement(this._template(filmData));
   }
 }
+
+class FilmDetailsCardFilterButtons extends AbstractClass {
+  constructor (filmData) {
+    super();
+
+    this._template = createFilmDetailsCardFilterControlButtons;
+    this._element = createNodeElement(this._template(filmData));
+  }
+}
+
 
 class FilmDetailsCommentsCountMarkup extends AbstractClass {
   constructor (filmData) {
@@ -215,13 +227,5 @@ class FilmDetailsNewCommentMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsCloseButtonMarkup extends AbstractClass {
-  constructor () {
-    super();
-
-    this._template = createFilmsDetailsCloseButtonMarkup();
-    this._element = createNodeElement(this._template);
-  }
-}
 
 export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup};
