@@ -16,7 +16,7 @@ const createNodeElement = (element) => {
   return newElement;
 };
 
-const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.getElement : nodeElement;
+const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.element : nodeElement;
 
 const renderNodeElement = (container, position, element) => {
   switch (position) {

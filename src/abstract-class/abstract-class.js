@@ -9,11 +9,11 @@ class AbstractClass {
     }
   }
 
-  get getTemplate() {
+  get template() {
     return this._template();
   }
 
-  get getElement() {
+  get element() {
     if (this._element === null) {
       this._element = createNodeElement(this.getTemplate);
     }

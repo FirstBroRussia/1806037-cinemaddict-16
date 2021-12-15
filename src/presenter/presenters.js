@@ -313,7 +313,7 @@ class FilmsListPresenter {
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#FilmsListComponent);
 
     if (films.length > INITIAL_FILMS_CARD_COUNT) {
-      const filmsListElement = this.#FilmsListComponent.getElement.querySelector('.films-list');
+      const filmsListElement = this.#FilmsListComponent.element.querySelector('.films-list');
       renderNodeElement(filmsListElement, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
     }
 
