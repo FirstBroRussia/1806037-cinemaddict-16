@@ -1,6 +1,6 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractClass} from '/src/abstract-class/abstract-class.js';
-import {INITIAL_FILMS_CARD_COUNT} from '/src/presenter/presenters.js';
+import {INITIAL_FILMS_CARD_COUNT} from '/src/main.js';
 
 const createShowMoreButtonTemplate = () => `
 <button class="films-list__show-more">Show more</button>
