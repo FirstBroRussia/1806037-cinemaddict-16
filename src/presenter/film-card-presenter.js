@@ -84,7 +84,7 @@ class FilmCardPresenter {
   changeFilmCard = (film) => {
     this.#film = {...film};
 
-    const prevFilmCardComponent = this.#FilmCardComponent;
+    let prevFilmCardComponent = this.#FilmCardComponent;
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
     this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
@@ -101,6 +101,8 @@ class FilmCardPresenter {
     if (this.#FilmDetailsPopupPresenter !== null) {
       this.#FilmDetailsPopupPresenter.filmDetailsPopupUpdateView(this.#film);
     }
+
+    prevFilmCardComponent = null;
   }
 
   #destroyPopupPresenter = () => {
