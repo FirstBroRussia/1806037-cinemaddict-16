@@ -4,8 +4,13 @@ import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
-const createFilmCardTemplate = (film, requiredClass) => `
-<article id="${film.id}" class="film-card ${requiredClass}">
+const createFilmCardTemplate = (film) => `
+<article id="${film.id}" class="film-card">
+
+
+</article>`;
+
+const createFilmCardInfoMarkup = (film) => `
 <a class="film-card__link">
   <h3 class="film-card__title">${film.name}</h3>
   <p class="film-card__rating">${film.rating}</p>
@@ -18,8 +23,7 @@ const createFilmCardTemplate = (film, requiredClass) => `
   <p class="film-card__description">${getConvertedString(film.description, MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD)}</p>
   <span class="film-card__comments">${film.comments.length === 1 ? '1 comment' : `${film.comments.length} comments`}</span>
 </a>
-
-</article>`;
+`;
 
 const createControlButtonOnTheFilmCardTemplate = (film) => `
 <div id="${film.id}" class="film-card__controls">
@@ -38,6 +42,15 @@ class ControlButtonsOnTheFilmCardMarkup extends AbstractClass {
   }
 }
 
+class FilmCardInfoMarkup extends AbstractClass {
+  constructor (filmData) {
+    super();
+
+    this._template = createFilmCardInfoMarkup;
+    this._element = createNodeElement(this._template(filmData));
+  }
+}
+
 class FilmCardMarkup extends AbstractClass {
   constructor (filmData, classHidden) {
     super();
@@ -51,4 +64,4 @@ class FilmCardMarkup extends AbstractClass {
   }
 }
 
-export {FilmCardMarkup, ControlButtonsOnTheFilmCardMarkup};
+export {FilmCardMarkup, ControlButtonsOnTheFilmCardMarkup, FilmCardInfoMarkup};
