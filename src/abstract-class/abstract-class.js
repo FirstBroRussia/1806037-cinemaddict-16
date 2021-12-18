@@ -45,8 +45,9 @@ class AbstractClass {
     this._callback.respectiveHandler(evt);
   };
 
-  removeElement() {
+  remove() {
     this._element.remove();
+    this._element = null;
   }
 }
 

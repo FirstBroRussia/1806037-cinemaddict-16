@@ -1,66 +1,69 @@
-import {FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
-import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
+import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
+import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 import {onEscKeydown} from '/src/utils/util.js';
-import {bodyElement} from '/src/main.js';
+import {footerBodyElement, controlButtons} from '/src/main.js';
+
 
 class FilmDetailsPopupPresenter {
   _callbacks = {};
   #id = null;
-  #films = null;
+  #film = null;
+
+  #FilmDetailsPopupComponent = null;
 
   #FilmDetailsCloseButtonComponent = null;
 
   #FilmDetailsInfoComponent = null;
   #FilmDetailsFilterButtonsComponent = null;
-  #FilmDetailsFilmsCountComponent = null;
+  #FilmDetailsCommentsCountComponent = null;
   #FilmDetailsCommentsComponent = null;
   #FilmDetailsNewCommentComponent = null;
 
-  #filmDetailsPopupElement = null;
-  #filmDetailsContainerElement = null;
-  #filmDetailsCommentsWrapElement = null;
+  #filmDetailsTopContainerElement = null;
+  #filmDetailsBottonContainerElement = null;
 
-  constructor (callbacks) {
-    this._callbacks = callbacks;
+  constructor (film, changeMasterData, currentPresenter) {
+    this.#film = {...film};
+    this.#id = Number(this.#film.id);
+    this._callbacks.changeMasterData = changeMasterData;
+    this._callbacks.destroyCurrentPresenter = currentPresenter;
 
-    this.#filmDetailsPopupElement = document.querySelector('.film-details');
-    this.#filmDetailsContainerElement = this.#filmDetailsPopupElement.querySelector('.film-details__top-container');
-    this.#filmDetailsCommentsWrapElement = this.#filmDetailsPopupElement.querySelector('.film-details__comments-wrap');
-
+    this.#FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
+
+    this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#film);
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film, this.#controlButtonsClickHandler);
+    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
+    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
+
+    this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
+    this.#filmDetailsBottonContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
   }
 
-  init (id, films) {
-    this.#id = id;
-    this.#films = films;
-    this.#openFilmDetailsPopup();
-  }
-
-  #openFilmDetailsPopup = () => {
-    this.#filmDetailsPopupElement.classList.remove('hidden');
-
-    for (const film of this.#films) {
-      if (film.id === this.#id) {
-        this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(film);
-        this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(film);
-        this.#FilmDetailsFilmsCountComponent = new FilmDetailsCommentsCountMarkup(film);
-        this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(film);
-        this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
-
-        renderNodeElement(this.#filmDetailsContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
-        renderNodeElement(this.#filmDetailsContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
-        renderNodeElement(this.#filmDetailsContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsFilterButtonsComponent);
-        renderNodeElement(this.#filmDetailsCommentsWrapElement, positionMarkup.AFTER_BEGIN, this.#FilmDetailsFilmsCountComponent);
-        renderNodeElement(this.#filmDetailsCommentsWrapElement, positionMarkup.BEFORE_END, this.#FilmDetailsCommentsComponent);
-        renderNodeElement(this.#filmDetailsCommentsWrapElement, positionMarkup.BEFORE_END, this.#FilmDetailsNewCommentComponent);
-
-        break;
-      }
-    }
-
-    document.addEventListener('click', this.#closeFilmDetailsPopupClickHandler);
+  render () {
     document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-    document.addEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
+    this.#FilmDetailsCloseButtonComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+
+    renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
+    renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
+    renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsFilterButtonsComponent);
+
+    renderNodeElement(this.#filmDetailsBottonContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCommentsCountComponent);
+    renderNodeElement(this.#filmDetailsBottonContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCommentsComponent);
+    renderNodeElement(this.#filmDetailsBottonContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsNewCommentComponent);
+
+    renderNodeElement(footerBodyElement, positionMarkup.BEFORE_END, this.#FilmDetailsPopupComponent);
+  }
+
+
+  #controlButtonsChangeData = (controlButton) => {
+    switch (controlButton) {
+      case 'isWatchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
+      case 'isWatched' : return ({...this.#film, isWatched : !this.#film.isWatched});
+      case 'isFavorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
+    }
   }
 
   #closeFilmDetailsPopupClickHandler = (evt) => {
@@ -79,7 +82,7 @@ class FilmDetailsPopupPresenter {
     this.closeFilmDetailsPopup();
   }
 
-  #controlButtonsOnTheFilmDetailsPopupClickHandler = (evt) => {
+  #controlButtonsClickHandler = (evt) => {
     if (!evt.target.closest('.film-details__control-button')) {
       return;
     }
@@ -88,49 +91,45 @@ class FilmDetailsPopupPresenter {
     const currentClickedWatchedButton = evt.target.closest('.film-details__control-button--watched');
     const currentClickedFavouriteButton = evt.target.closest('.film-details__control-button--favorite');
 
-    let id;
-    let currentButtonValueAndUpdatedData;
-
     if (currentClickedWatchlistButton) {
-      id = +currentClickedWatchlistButton.closest('.film-details__controls').id;
-      currentButtonValueAndUpdatedData = this._callbacks.controlButtonsChangeData(id, 'isWatchlist');
-      this.#films = currentButtonValueAndUpdatedData[1];
-      this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedWatchlistButton, currentButtonValueAndUpdatedData[0]);
+      const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
+      this._callbacks.changeMasterData(this.#id, changedData);
     }
     if (currentClickedWatchedButton) {
-      id = +currentClickedWatchedButton.closest('.film-details__controls').id;
-      currentButtonValueAndUpdatedData = this._callbacks.controlButtonsChangeData(id, 'isWatched');
-      this.#films = currentButtonValueAndUpdatedData[1];
-      this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedWatchedButton, currentButtonValueAndUpdatedData[0]);
+      const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
+      this._callbacks.changeMasterData(this.#id, changedData);
     }
     if (currentClickedFavouriteButton) {
-      id = +currentClickedFavouriteButton.closest('.film-details__controls').id;
-      currentButtonValueAndUpdatedData = this._callbacks.controlButtonsChangeData(id, 'isFavorite');
-      this.#films = currentButtonValueAndUpdatedData[1];
-      this.controlItemButtonOnTheFilmDetailsPopupToggleClass(currentClickedFavouriteButton, currentButtonValueAndUpdatedData[0]);
+      const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
+      this._callbacks.changeMasterData(this.#id, changedData);
     }
-
-    this._callbacks.controlButtonsUpdateView(id);
-    this._callbacks.navigationMenuUpdateView();
   };
 
-  closeFilmDetailsPopup = () => {
-    bodyElement.classList.remove('hide-overflow');
-    this.#filmDetailsPopupElement.classList.add('hidden');
 
-    this.#filmDetailsContainerElement.textContent = '';
-    this.#filmDetailsCommentsWrapElement.textContent = '';
+  filmDetailsPopupUpdateView = (film) => {
+    this.#film = {...film};
 
-    document.removeEventListener('click', this.#closeFilmDetailsPopupClickHandler);
-    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-    document.removeEventListener('click', this.#controlButtonsOnTheFilmDetailsPopupClickHandler);
+    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
+    const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
+    const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
+
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
+    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
+
+
+    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+
+    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
+    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
+    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
   }
 
-  controlItemButtonOnTheFilmDetailsPopupToggleClass = (currentClickedButton, value) =>
-    value ?
-      currentClickedButton.classList.add('film-details__control-button--active') :
-      currentClickedButton.classList.remove('film-details__control-button--active');
-
+  closeFilmDetailsPopup = () => {
+    this.#FilmDetailsPopupComponent.remove();
+    this._callbacks.destroyCurrentPresenter();
+    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+  };
 
 }
 

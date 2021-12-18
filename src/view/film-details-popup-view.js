@@ -1,29 +1,27 @@
-import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import { createNodeElement } from '/src/utils/render-html-element.js';
+import { AbstractClass } from '/src/abstract-class/abstract-class.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
-<section class="film-details hidden">
-<form class="film-details__inner" action="" method="get">
-  <div class="film-details__top-container">
+<section class="film-details">
+  <form class="film-details__inner" action="" method="get">
+    <div class="film-details__top-container">
 
 
-  </div>
-
-  <div class="film-details__bottom-container">
-    <section class="film-details__comments-wrap">
+    </div>
 
 
-    </section>
-  </div>
-</form>
+    <div class="film-details__bottom-container">
+
+    </div>
+  </form>
 </section>
 `;
 
 
 const createFilmDetailsInfoMarkupTemplate = (film) => {
   let textMarkupToGenresList = '';
-  film.genre.forEach( (item) => {
+  film.genre.forEach((item) => {
     textMarkupToGenresList += `<span class="film-details__genre">${item}</span>\n`;
   });
 
@@ -84,7 +82,8 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
     </div>
 
 
-`;};
+`;
+};
 
 const createFilmDetailsCardFilterControlButtons = (film) => `
 <section id="${film.id}" class="film-details__controls">
@@ -100,7 +99,7 @@ const filmDetailsCommentsCount = (filmData) => `
 
 const createFilmDetailsCommentsMarkup = (film) => {
   let htmlTextMarkup = '';
-  film.comments.forEach( (item) => {
+  film.comments.forEach((item) => {
     htmlTextMarkup += `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
@@ -162,7 +161,7 @@ const createFilmsDetailsCloseButtonMarkup = () => `
 `;
 
 class FilmDetailsPopupMarkup extends AbstractClass {
-  constructor () {
+  constructor() {
     super();
 
     this._template = createFilmDetailsPopupTemplate;
@@ -172,7 +171,7 @@ class FilmDetailsPopupMarkup extends AbstractClass {
 
 
 class FilmDetailsCloseButtonMarkup extends AbstractClass {
-  constructor () {
+  constructor() {
     super();
 
     this._template = createFilmsDetailsCloseButtonMarkup();
@@ -182,7 +181,7 @@ class FilmDetailsCloseButtonMarkup extends AbstractClass {
 
 
 class FilmDetailInfoMarkup extends AbstractClass {
-  constructor (filmData) {
+  constructor(filmData) {
     super();
 
     this._template = createFilmDetailsInfoMarkupTemplate;
@@ -191,7 +190,7 @@ class FilmDetailInfoMarkup extends AbstractClass {
 }
 
 class FilmDetailsCardFilterButtons extends AbstractClass {
-  constructor (filmData) {
+  constructor(filmData) {
     super();
 
     this._template = createFilmDetailsCardFilterControlButtons;
@@ -201,7 +200,7 @@ class FilmDetailsCardFilterButtons extends AbstractClass {
 
 
 class FilmDetailsCommentsCountMarkup extends AbstractClass {
-  constructor (filmData) {
+  constructor(filmData) {
     super();
 
     this._template = filmDetailsCommentsCount;
@@ -210,7 +209,7 @@ class FilmDetailsCommentsCountMarkup extends AbstractClass {
 }
 
 class FilmDetailsCommentMarkup extends AbstractClass {
-  constructor (filmData) {
+  constructor(filmData) {
     super();
 
     this._template = createFilmDetailsCommentsMarkup;
@@ -219,7 +218,7 @@ class FilmDetailsCommentMarkup extends AbstractClass {
 }
 
 class FilmDetailsNewCommentMarkup extends AbstractClass {
-  constructor () {
+  constructor() {
     super();
 
     this._template = createFolmDetailsNewCommentMarkup();
@@ -228,4 +227,4 @@ class FilmDetailsNewCommentMarkup extends AbstractClass {
 }
 
 
-export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup};
+export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };
