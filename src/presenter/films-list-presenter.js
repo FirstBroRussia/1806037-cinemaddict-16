@@ -139,7 +139,7 @@ class FilmsListPresenter {
   #updateView = (id) => {
     this.#navigationMenuUpdateView();
 
-    this.#renderedFilmCardUpdateView(id);
+    this.#filmCardUpdateView(id);
   }
 
 
@@ -154,7 +154,7 @@ class FilmsListPresenter {
     replaceNodeElement(mainElement, this.#NavigationMenuComponent, currentNavigationMenuElement);
   }
 
-  #renderedFilmCardUpdateView = (id) => {
+  #filmCardUpdateView = (id) => {
     const rightFilm = this.#films.find( (film) => film.id === id);
 
     for (const film of this.#GeneralFilmCardPresentersMap) {
