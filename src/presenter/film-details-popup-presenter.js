@@ -74,11 +74,7 @@ class FilmDetailsPopupPresenter {
     }
   }
 
-  #closeFilmDetailsPopupClickHandler = (evt) => {
-    if (!evt.target.closest('.film-details__close-btn')) {
-      return;
-    }
-
+  #closeFilmDetailsPopupClickHandler = () => {
     this.closeFilmDetailsPopup();
   }
 

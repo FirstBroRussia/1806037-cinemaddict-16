@@ -40,6 +40,46 @@ class ControlButtonsOnTheFilmCardMarkup extends AbstractClass {
     this._template = createControlButtonOnTheFilmCardTemplate;
     this._element = createNodeElement(this._template(filmData));
   }
+
+  setWatchlistClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.watchlistClick = callback;
+    this._element.querySelector('.film-card__controls-item--add-to-watchlist').addEventListener(event, this.#hangWatchlistButtonClickHandler);
+  }
+
+  setWatchedClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.watchedClick = callback;
+    this._element.querySelector('.film-card__controls-item--mark-as-watched').addEventListener(event, this.#hangWatchedButtonClickHandler);
+  }
+
+  setFavoriteClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.FavoriteClick = callback;
+    this._element.querySelector('.film-card__controls-item--favorite').addEventListener(event, this.#hangFavoriteButtonClickHandler);
+  }
+
+  #hangWatchlistButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick(evt);
+  };
+
+  #hangWatchedButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchedClick(evt);
+  };
+
+  #hangFavoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.FavoriteClick(evt);
+  };
+
 }
 
 class FilmCardInfoMarkup extends AbstractClass {
@@ -62,6 +102,23 @@ class FilmCardMarkup extends AbstractClass {
       this._element = createNodeElement(this._template(filmData));
     }
   }
+
+  addEventHandler(event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.respectiveHandler = callback;
+    this._element.addEventListener(event, this.#hangFunctionHandler);
+  }
+
+
+  #hangFunctionHandler = (evt) => {
+    evt.preventDefault();
+    if (evt.target.closest('.film-card__controls')) {
+      return;
+    }
+    this._callback.respectiveHandler(evt);
+  };
 }
 
 export {FilmCardMarkup, ControlButtonsOnTheFilmCardMarkup, FilmCardInfoMarkup};

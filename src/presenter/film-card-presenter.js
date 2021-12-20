@@ -7,6 +7,7 @@ import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-prese
 
 class FilmCardPresenter {
   #film = null;
+  #id = null;
   _callbacks = {};
 
   #FilmCardComponent = null;
@@ -22,11 +23,13 @@ class FilmCardPresenter {
   render (film) {
     if (this.#film !== null) {
       this.#film = {...film};
+      this.#id = this.#film.id;
       this.updateFilmCardView();
       return;
     }
 
     this.#film = {...film};
+    this.#id = this.#film.id;
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
     this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
@@ -35,7 +38,9 @@ class FilmCardPresenter {
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardInfoComponent);
 
     this.#FilmCardControlButtonsComponent = new ControlButtonsOnTheFilmCardMarkup(this.#film);
-    this.#FilmCardControlButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+    this.#FilmCardControlButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmCardControlButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmCardControlButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardControlButtonsComponent);
 
     return this.#FilmCardComponent;
@@ -50,39 +55,23 @@ class FilmCardPresenter {
     }
   }
 
-  #controlButtonsClickHandler = (evt) => {
-    if (!evt.target.closest('.film-card__controls-item')) {
-      return;
-    }
+  #watchlistButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
-    const currentClickedWatchlistButton = evt.target.closest('.film-card__controls-item--add-to-watchlist');
-    const currentClickedWatchedButton = evt.target.closest('.film-card__controls-item--mark-as-watched');
-    const currentClickedFavouriteButton = evt.target.closest('.film-card__controls-item--favorite');
-    let id;
+  #watchedButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
-    if (currentClickedWatchlistButton) {
-      id = Number(currentClickedWatchlistButton.closest('article').id);
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
-      this._callbacks.changeMasterData(id, changedData);
-    }
-    if (currentClickedWatchedButton) {
-      id = Number(currentClickedWatchedButton.closest('article').id);
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
-      this._callbacks.changeMasterData(id, changedData);
-    }
-    if (currentClickedFavouriteButton) {
-      id = Number(currentClickedFavouriteButton.closest('article').id);
-      const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
-      this._callbacks.changeMasterData(id, changedData);
-    }
-  };
+  #favoriteButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
 
-  #openPopupClickHandler = (evt) => {
-    if (evt.target.closest('.film-card__controls-item') || !evt.target.closest('article[class^="film-card"]')) {
-      return;
-    }
-
+  #openPopupClickHandler = () => {
     this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#destroyPopupPresenter);
     this.#FilmDetailsPopupPresenter.render(this.#film);
   }
@@ -98,7 +87,10 @@ class FilmCardPresenter {
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardInfoComponent);
 
     this.#FilmCardControlButtonsComponent = new ControlButtonsOnTheFilmCardMarkup(this.#film);
-    this.#FilmCardControlButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+    this.#FilmCardControlButtonsComponent = new ControlButtonsOnTheFilmCardMarkup(this.#film);
+    this.#FilmCardControlButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmCardControlButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmCardControlButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardControlButtonsComponent);
 
     replaceNodeElementWithoutParent(this.#FilmCardComponent, prevFilmCardComponent);
