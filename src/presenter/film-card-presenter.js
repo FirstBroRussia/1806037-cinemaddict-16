@@ -15,20 +15,27 @@ class FilmCardPresenter {
 
   #FilmDetailsPopupPresenter = null;
 
-  constructor (film, changeMasterData) {
-    this.#film = {...film};
+  constructor (changeMasterData) {
     this._callbacks.changeMasterData = changeMasterData;
-
-    this.#FilmCardComponent = new FilmCardMarkup(this.#film);
-    this.#FilmCardInfoComponent = new FilmCardInfoMarkup(this.#film);
-    this.#FilmCardControlButtonsComponent = new ControlButtonsOnTheFilmCardMarkup(this.#film);
   }
 
-  render () {
-    this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
-    this.#FilmCardControlButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+  render (film) {
+    if (this.#film !== null) {
+      this.#film = {...film};
+      this.updateFilmCardView();
+      return;
+    }
 
+    this.#film = {...film};
+
+    this.#FilmCardComponent = new FilmCardMarkup(this.#film);
+    this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
+
+    this.#FilmCardInfoComponent = new FilmCardInfoMarkup(this.#film);
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardInfoComponent);
+
+    this.#FilmCardControlButtonsComponent = new ControlButtonsOnTheFilmCardMarkup(this.#film);
+    this.#FilmCardControlButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardControlButtonsComponent);
 
     return this.#FilmCardComponent;
@@ -76,15 +83,13 @@ class FilmCardPresenter {
       return;
     }
 
-    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#film, this._callbacks.changeMasterData, this.#destroyPopupPresenter);
-    this.#FilmDetailsPopupPresenter.render();
+    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#destroyPopupPresenter);
+    this.#FilmDetailsPopupPresenter.render(this.#film);
   }
 
 
-  changeFilmCard = (film) => {
-    this.#film = {...film};
-
-    let prevFilmCardComponent = this.#FilmCardComponent;
+  updateFilmCardView = () => {
+    const prevFilmCardComponent = this.#FilmCardComponent;
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
     this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
@@ -99,10 +104,8 @@ class FilmCardPresenter {
     replaceNodeElementWithoutParent(this.#FilmCardComponent, prevFilmCardComponent);
 
     if (this.#FilmDetailsPopupPresenter !== null) {
-      this.#FilmDetailsPopupPresenter.filmDetailsPopupUpdateView(this.#film);
+      this.#FilmDetailsPopupPresenter.render(this.#film);
     }
-
-    prevFilmCardComponent = null;
   }
 
   #destroyPopupPresenter = () => {

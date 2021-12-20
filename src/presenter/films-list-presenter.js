@@ -83,9 +83,9 @@ class FilmsListPresenter {
     }
 
     for (let index = 0; index < this.#showFilmsCount; index++) {
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#films[index], this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
       this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
-      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render());
+      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
     }
 
   }
@@ -93,16 +93,16 @@ class FilmsListPresenter {
   renderExtraFilmsList () {
     const topRatedSortFilms = this.#films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2);
     topRatedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(film, this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
       this.#TopRatedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
-      renderNodeElement(this.#topRatedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render());
+      renderNodeElement(this.#topRatedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
 
     const mostCommentedSortFilms = this.#films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2);
     mostCommentedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(film, this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
       this.#MostCommentedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
-      renderNodeElement(this.#mostCommentedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render());
+      renderNodeElement(this.#mostCommentedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
   }
 
@@ -116,9 +116,9 @@ class FilmsListPresenter {
       if (this.#films[index] === undefined) {
         return;
       }
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#films[index], this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
       this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
-      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render());
+      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
     }
 
     this.#showFilmsCount += INITIAL_FILMS_CARD_COUNT;
@@ -161,17 +161,17 @@ class FilmsListPresenter {
       const currentIdFilm = film[0];
       if (currentIdFilm === id) {
         const currentValueFilm = film[1];
-        currentValueFilm.changeFilmCard(rightFilm);
+        currentValueFilm.render(rightFilm);
         break;
       }
     }
 
     this.#TopRatedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.changeFilmCard(rightFilm);}
+      if (key === id) {film.render(rightFilm);}
     });
 
     this.#MostCommentedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.changeFilmCard(rightFilm);}
+      if (key === id) {film.render(rightFilm);}
     });
   }
 

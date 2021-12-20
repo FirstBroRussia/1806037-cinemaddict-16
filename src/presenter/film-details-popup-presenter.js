@@ -22,11 +22,20 @@ class FilmDetailsPopupPresenter {
   #filmDetailsTopContainerElement = null;
   #filmDetailsBottonContainerElement = null;
 
-  constructor (film, changeMasterData, currentPresenter) {
-    this.#film = {...film};
-    this.#id = Number(this.#film.id);
+  constructor (changeMasterData, currentPresenter) {
     this._callbacks.changeMasterData = changeMasterData;
     this._callbacks.destroyCurrentPresenter = currentPresenter;
+  }
+
+  render (film) {
+    if (this.#film !== null) {
+      this.#film = {...film};
+      this.#id = Number(this.#film.id);
+      this.filmDetailsPopupUpdateView();
+      return;
+    }
+    this.#film = {...film};
+    this.#id = Number(this.#film.id);
 
     this.#FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
@@ -39,9 +48,8 @@ class FilmDetailsPopupPresenter {
 
     this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
     this.#filmDetailsBottonContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
-  }
 
-  render () {
+
     document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
     this.#FilmDetailsCloseButtonComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
     this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
@@ -106,9 +114,7 @@ class FilmDetailsPopupPresenter {
   };
 
 
-  filmDetailsPopupUpdateView = (film) => {
-    this.#film = {...film};
-
+  filmDetailsPopupUpdateView = () => {
     const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
     const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
     const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
