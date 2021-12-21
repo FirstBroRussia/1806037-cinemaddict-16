@@ -1,8 +1,10 @@
+import {controlButtons} from '/src/utils/util.js';
+import {footerBodyElement} from '/src/main.js';
+
+
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 import {onEscKeydown} from '/src/utils/util.js';
-import {footerBodyElement, controlButtons} from '/src/main.js';
-
 
 class FilmDetailsPopupPresenter {
   _callbacks = {};
@@ -41,7 +43,7 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
 
     this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#film);
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film, this.#controlButtonsClickHandler);
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
     this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
     this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
@@ -52,7 +54,9 @@ class FilmDetailsPopupPresenter {
 
     document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
     this.#FilmDetailsCloseButtonComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
 
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
@@ -86,28 +90,20 @@ class FilmDetailsPopupPresenter {
     this.closeFilmDetailsPopup();
   }
 
-  #controlButtonsClickHandler = (evt) => {
-    if (!evt.target.closest('.film-details__control-button')) {
-      return;
-    }
+  #watchlistButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
-    const currentClickedWatchlistButton = evt.target.closest('.film-details__control-button--watchlist');
-    const currentClickedWatchedButton = evt.target.closest('.film-details__control-button--watched');
-    const currentClickedFavouriteButton = evt.target.closest('.film-details__control-button--favorite');
+  #watchedButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
-    if (currentClickedWatchlistButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
-      this._callbacks.changeMasterData(this.#id, changedData);
-    }
-    if (currentClickedWatchedButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
-      this._callbacks.changeMasterData(this.#id, changedData);
-    }
-    if (currentClickedFavouriteButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
-      this._callbacks.changeMasterData(this.#id, changedData);
-    }
-  };
+  #favoriteButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
+    this._callbacks.changeMasterData(this.#id, changedData);
+  }
 
 
   filmDetailsPopupUpdateView = () => {
@@ -120,7 +116,9 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
 
 
-    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
 
     replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
     replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);

@@ -196,6 +196,46 @@ class FilmDetailsCardFilterButtons extends AbstractClass {
     this._template = createFilmDetailsCardFilterControlButtons;
     this._element = createNodeElement(this._template(filmData));
   }
+
+  setWatchlistClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.watchlistClick = callback;
+    this._element.querySelector('.film-details__control-button--watchlist').addEventListener(event, this.#hangWatchlistButtonClickHandler);
+  }
+
+  setWatchedClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.watchedClick = callback;
+    this._element.querySelector('.film-details__control-button--watched').addEventListener(event, this.#hangWatchedButtonClickHandler);
+  }
+
+  setFavoriteClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.FavoriteClick = callback;
+    this._element.querySelector('.film-details__control-button--favorite').addEventListener(event, this.#hangFavoriteButtonClickHandler);
+  }
+
+  #hangWatchlistButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchlistClick(evt);
+  };
+
+  #hangWatchedButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.watchedClick(evt);
+  };
+
+  #hangFavoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.FavoriteClick(evt);
+  };
+
 }
 
 

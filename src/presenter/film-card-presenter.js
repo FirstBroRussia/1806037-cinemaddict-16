@@ -1,9 +1,9 @@
-import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
-import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {controlButtons} from '/src/main.js';
+import {controlButtons} from '/src/utils/util.js';
 
 import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
 
+import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
+import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
 class FilmCardPresenter {
   #film = null;

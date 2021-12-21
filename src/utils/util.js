@@ -20,4 +20,10 @@ const onEscKeydown = (evt) => {
   }
 };
 
-export {getRandomNumber, getConvertedString, onEscKeydown, dayjs};
+const controlButtons = {
+  isWatchlist: 'isWatchlist',
+  isWatched: 'isWatched',
+  isFavorite: 'isFavorite',
+};
+
+export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, controlButtons};

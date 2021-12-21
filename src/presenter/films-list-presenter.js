@@ -1,17 +1,12 @@
-// import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
-// import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
-// import {FilmsCountMarkup} from '/src/view/films-count-view.js';
-// import {FilmDetailsPopupMarkup} from '/src/view/film-details-popup-view.js';
+import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainElement, controlButtons} from '/src/main.js';
+
+import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
 
 import {NavigationMenuMarkup} from '/src/view/navigation-menu-view.js';
 import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup} from '/src/view/films-list-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElement} from '/src/utils/render-html-element.js';
 import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
 import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
-
-import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
-
-import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainElement, controlButtons} from '/src/main.js';
 
 
 class FilmsListPresenter {
