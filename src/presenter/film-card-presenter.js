@@ -21,10 +21,13 @@ class FilmCardPresenter {
   }
 
   render (film) {
+    if (!film) {
+      return this.#FilmCardComponent;
+    }
     if (this.#film !== null) {
       this.#film = {...film};
       this.#id = this.#film.id;
-      this.updateFilmCardView();
+      this.updateCardComponent();
       return;
     }
 
@@ -77,7 +80,7 @@ class FilmCardPresenter {
   }
 
 
-  updateFilmCardView = () => {
+  updateCardComponent = () => {
     const prevFilmCardComponent = this.#FilmCardComponent;
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
@@ -102,6 +105,11 @@ class FilmCardPresenter {
 
   #destroyPopupPresenter = () => {
     this.#FilmDetailsPopupPresenter = null;
+  }
+
+  destroy () {
+    this.#FilmCardComponent.remove();
+    this.#FilmCardComponent = null;
   }
 }
 
