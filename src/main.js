@@ -7,9 +7,9 @@ import {filmsData} from '/src/mock/temporary-data.js';
 import {MainPresenter} from '/src/presenter/main-presenter.js';
 
 const controlButtons = {
-  isWatchlist: 'isWatchlist',
-  isWatched: 'isWatched',
-  isFavorite: 'isFavorite',
+  isWatchlist: 'watchlist',
+  isWatched: 'history',
+  isFavorite: 'favorite',
 };
 
 

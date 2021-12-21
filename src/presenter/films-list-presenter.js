@@ -11,16 +11,17 @@ import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
 import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons} from '/src/main.js';
 
 const filterMode = {
+  ALL_MOVIES: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITE: 'favorite',
 };
 
 class FilmsListPresenter {
-  #FilterMode = false;
-  _callbacks = {};
   #films = null;
   #filteredFilms = null;
+  #FilterMode = null;
+  _callbacks = {};
   #showGeneralFilmsCount = null;
 
   #FilmCardPresenter = null;
@@ -32,10 +33,10 @@ class FilmsListPresenter {
   #SortListComponent = null;
   #ShowMoreButtonComponent = null;
   #LoadingFilmsListComponent = null;
-  #EmptyAllFilmsListComponent = null;
-  #EmptyWatchlistComponent = null;
-  #EmptyWatchedListComponent = null;
-  #EmptyFavoriteListComponent = null;
+  // #EmptyAllFilmsListComponent = null;
+  // #EmptyWatchlistComponent = null;
+  // #EmptyWatchedListComponent = null;
+  // #EmptyFavoriteListComponent = null;
 
 
   #AllFilmsComponent = null;
@@ -69,6 +70,87 @@ class FilmsListPresenter {
     // this.#EmptyWatchedListComponent = new EmptyWatchedMarkup();
     // this.#EmptyFavoriteListComponent = new EmptyFavoriteMarkup();
 
+    // this.#AllFilmsComponent = new AllFilmsMarkup();
+    // this.#GeneralFilmsListComponent = new FilmsListMarkup();
+    // this.#GeneralFilmsListTagComponent = new GeneralAllFilmsListTagMarkup();
+    // this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
+
+    // this.#TopRatedExtraFilmsListComponent = new ExtraFilmsListMarkup();
+    // this.#TopRatedFilmsListTagComponent = new TopRatedListTagMarkup();
+    // this.#TopRatedFilmsListContainerComponent = new TopRatedFilmsListMarkup();
+
+    // this.#MostCommentedExtraFilmsListComponent = new ExtraFilmsListMarkup();
+    // this.#MostCommentedFilmsListTagComponent = new MostCommentedListTagMarkup();
+    // this.#MostCommentedFilmsListContainerComponent = new MostCommentedFilmsListMarkup();
+  }
+
+  init (films, id, filter, currentChange) {
+    console.log(this.#FilterMode);
+    console.log(currentChange);
+    if (this.#films === null) {
+      this.#films = films.slice();
+      this.#FilterMode = filterMode.ALL_MOVIES;
+      this.#renderNewFilmsList(this.#films);
+      return;
+    }
+    if (films && filter) {
+      if (filter === filterMode.ALL_MOVIES) {
+        this.#AllFilmsComponent.remove();
+        this.#FilterMode = filter;
+        this.#films = films.slice();
+        this.#renderNewFilmsList(this.#films);
+        return;
+      }
+      this.#filteredFilms = films.slice();
+      this.#FilterMode = filter;
+      this.#renderFilteredFilmsList(this.#filteredFilms, filter);
+      return;
+    }
+    if (films && id !== undefined && (this.#FilterMode === filterMode.ALL_MOVIES || currentChange !== this.#FilterMode)) {
+      this.#films = films.slice();
+      this.filmCardUpdateView(id);
+      return;
+    }
+    if (films && id !== undefined && this.#FilterMode !== filterMode.ALL_MOVIES && currentChange === this.#FilterMode) {
+      this.#films = films.slice();
+      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
+      this.#filteredFilmsListUpdateView(id);
+      return;
+    }
+  }
+
+  #filteredFilmsListUpdateView = (id) => {
+
+    for (const film of this.#GeneralFilmCardPresentersMap) {
+      if (film[0] === id) {
+        film[1].destroy();
+        this.#GeneralFilmCardPresentersMap.delete(film[0]);
+        break;
+      }
+    }
+
+    if (this.#filteredFilms.length <= INITIAL_FILMS_CARD_COUNT) {
+      if (this.#ShowMoreButtonComponent === null) {
+        return;
+      }
+      this.#ShowMoreButtonComponent.remove();
+      this.#ShowMoreButtonComponent = null;
+    }
+
+    const mapKeys = Array.from(this.#GeneralFilmCardPresentersMap.keys());
+
+    for (const film of this.#filteredFilms) {
+      if (mapKeys.some( (item) => item === film.id)) {
+        continue;
+      }
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData);
+      this.#GeneralFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
+      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
+      break;
+    }
+  }
+
+  #renderNewFilmsList = (films) => {
     this.#AllFilmsComponent = new AllFilmsMarkup();
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
     this.#GeneralFilmsListTagComponent = new GeneralAllFilmsListTagMarkup();
@@ -81,33 +163,6 @@ class FilmsListPresenter {
     this.#MostCommentedExtraFilmsListComponent = new ExtraFilmsListMarkup();
     this.#MostCommentedFilmsListTagComponent = new MostCommentedListTagMarkup();
     this.#MostCommentedFilmsListContainerComponent = new MostCommentedFilmsListMarkup();
-  }
-
-
-  render (films, id, filter) {
-    if (filter && !id) {
-      if (filter === 'all') {
-        this.#FilterMode = false;
-      } else {
-        this.#FilterMode = filter;
-      }
-      this.#filteredFilms = films;
-      this.#rerenderFilmsList(films, filter);
-
-      return;
-    }
-    if (id !== undefined) {
-      this.#films = films.slice();
-
-      this.filmCardUpdateView(id);
-      if (this.#FilterMode) {
-        this.#filteredFilms = this.#FilterItemSwitch(this.#FilterMode);
-        this.#filteredFilmsListUpdateView(id);
-      }
-
-      return;
-    }
-    this.#films = films;
 
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
 
@@ -125,6 +180,21 @@ class FilmsListPresenter {
     renderNodeElement(this.#MostCommentedExtraFilmsListComponent, positionMarkup.BEFORE_END, this.#MostCommentedFilmsListContainerComponent);
     this.renderExtraFilmsList(films);
   }
+
+  #renderFilteredFilmsList = (films, filter) => {
+    this.#GeneralFilmCardPresentersMap = new Map();
+
+    const prevGeneralFilmsListComponent = this.#GeneralFilmsListComponent;
+    this.#GeneralFilmsListComponent = new FilmsListMarkup();
+    this.#GeneralFilmsListTagComponent = this.#generalFilmsListTagSwitch(filter);
+    this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
+    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
+    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
+    this.renderGeneralFilmsList(films);
+
+    replaceNodeElementWithoutParent(this.#GeneralFilmsListComponent, prevGeneralFilmsListComponent);
+  }
+
 
   renderGeneralFilmsList (films) {
     if (films.length > INITIAL_FILMS_CARD_COUNT) {
@@ -184,10 +254,9 @@ class FilmsListPresenter {
 
   #renderFilmCardsToShowMoreButtonClickHandler = () => {
     let currentFilmsList;
-    if (!this.#FilterMode) {
+    if (this.#FilterMode === filterMode.ALL_MOVIES) {
       currentFilmsList = this.#films;
-    }
-    if (this.#FilterMode) {
+    } else {
       currentFilmsList = this.#filteredFilms;
     }
 
@@ -209,62 +278,6 @@ class FilmsListPresenter {
     this.#showGeneralFilmsCount += INITIAL_FILMS_CARD_COUNT;
   }
 
-  #rerenderFilmsList = (films, filter) => {
-    this.#GeneralFilmCardPresentersMap = new Map();
-    if (films.length === 0) {
-      if (filter === 'all') {
-        const prevAllFilmsComponent = this.#AllFilmsComponent;
-        this.#AllFilmsComponent = new AllFilmsMarkup();
-        this.#GeneralFilmsListTagComponent = this.#EmptyGeneralFilmsListSwitch(filter);
-        renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
-
-        replaceNodeElementWithoutParent(this.#AllFilmsComponent, prevAllFilmsComponent);
-        return;
-      }
-
-      const prevGeneralFilmsListComponent = this.#GeneralFilmsListComponent;
-      this.#GeneralFilmsListComponent = new FilmsListMarkup();
-      this.#GeneralFilmsListTagComponent = this.#EmptyGeneralFilmsListSwitch(filter);
-      renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
-
-      replaceNodeElementWithoutParent(this.#GeneralFilmsListComponent, prevGeneralFilmsListComponent);
-      return;
-    }
-
-    const prevGeneralFilmsListComponent = this.#GeneralFilmsListComponent;
-    this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    this.#GeneralFilmsListTagComponent = this.#generalFilmsListTagSwitch(filter);
-    this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
-    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
-    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
-    this.renderGeneralFilmsList(films);
-
-    replaceNodeElementWithoutParent(this.#GeneralFilmsListComponent, prevGeneralFilmsListComponent);
-  }
-
-  #filteredFilmsListUpdateView = (id) => {
-    if (this.#filteredFilms.length <= INITIAL_FILMS_CARD_COUNT) {
-      this.#ShowMoreButtonComponent.remove();
-      this.#ShowMoreButtonComponent = null;
-    }
-
-
-    for (const film of this.#filteredFilms) {
-      if (film.id === id) {
-        if (this.#filterSwitch(this.#FilterMode, film)) {
-          return;
-        }
-      }
-    }
-
-
-    this.#GeneralFilmCardPresentersMap.forEach( (presenter, key, map) => {
-      if (key === id) {
-        presenter.destroy();
-        map.delete(key);
-      }
-    });
-  }
 
   #generalFilmsListTagSwitch = (value) => {
     switch (value) {
@@ -284,9 +297,8 @@ class FilmsListPresenter {
     }
   }
 
-  #FilterItemSwitch = (value) => {
+  #setFilteredFilmsListSwitch = (value) => {
     switch (value) {
-      case 'all' : return this.#films.slice();
       case 'watchlist' : return this.#films.slice().filter( (film) => film.isWatchlist === true);
       case 'history' : return this.#films.slice().filter( (film) => film.isWatched === true);
       case 'favorite' : return this.#films.slice().filter( (film) => film.isFavorite === true);

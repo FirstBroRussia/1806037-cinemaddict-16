@@ -52,25 +52,25 @@ class FilmCardPresenter {
 
   #controlButtonsChangeData = (controlButton) => {
     switch (controlButton) {
-      case 'isWatchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
-      case 'isWatched' : return ({...this.#film, isWatched : !this.#film.isWatched});
-      case 'isFavorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
+      case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
+      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched});
+      case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
     }
   }
 
   #watchlistButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
-    this._callbacks.changeMasterData(this.#id, changedData);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatchlist);
   }
 
   #watchedButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
-    this._callbacks.changeMasterData(this.#id, changedData);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatched);
   }
 
   #favoriteButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
-    this._callbacks.changeMasterData(this.#id, changedData);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
   }
 
 

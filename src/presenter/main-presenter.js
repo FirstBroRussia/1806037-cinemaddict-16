@@ -87,10 +87,10 @@ class MainPresenter {
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
-    this.#FilmsListPresenter.render(this.#films);
+    this.#FilmsListPresenter.init(this.#films);
   }
 
-  #changeMasterData = (id, changedData) => {
+  #changeMasterData = (id, changedData, currentChange) => {
     for (let index = 0; index < this.#films.length; index++) {
       if (this.#films[index].id === id) {
         this.#films[index] = changedData;
@@ -98,14 +98,14 @@ class MainPresenter {
       }
     }
 
-    this.#updateView(id);
+    this.#updateView(id, currentChange);
   }
 
 
-  #updateView = (id) => {
+  #updateView = (id, currentChange) => {
     this.#navigationMenuUpdateView();
 
-    this.#FilmsListPresenter.render(this.#films, id);
+    this.#FilmsListPresenter.init(this.#films, id, undefined, currentChange);
   }
 
   #navigationMenuUpdateView = () => {
@@ -124,12 +124,12 @@ class MainPresenter {
 
 
   #allFilmsFilterClickHandler = () => {
-    this.#FilmsListPresenter.render(this.#films, false, modePresenter.ALL_MOVIES);
+    this.#FilmsListPresenter.init(this.#films, false, modePresenter.ALL_MOVIES);
   }
 
   #watchlistFilterClickHandler = () => {
     this.#watchlistFilms = this.#films.slice().filter( (film) => film.isWatchlist === true);
-    this.#FilmsListPresenter.render(this.#watchlistFilms, false, modePresenter.WATCHLIST);
+    this.#FilmsListPresenter.init(this.#watchlistFilms, false, modePresenter.WATCHLIST);
   }
 
 
