@@ -1,4 +1,4 @@
-import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainElement, controlButtons} from '/src/main.js';
+import {INITIAL_FILMS_CARD_COUNT, mainElement} from '/src/utils/util.js';
 
 import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
 
@@ -173,4 +173,4 @@ class FilmsListPresenter {
 
 }
 
-export {INITIAL_FILMS_CARD_COUNT, FilmsListPresenter, bodyElement, controlButtons};
+export {FilmsListPresenter};

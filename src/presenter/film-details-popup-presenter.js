@@ -1,5 +1,4 @@
-import {controlButtons} from '/src/utils/util.js';
-import {footerBodyElement} from '/src/main.js';
+import {controlButtons, footerBodyElement} from '/src/utils/util.js';
 
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
