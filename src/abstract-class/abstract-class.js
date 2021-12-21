@@ -1,3 +1,5 @@
+import {createNodeElement} from '/src/utils/render-html-element.js';
+
 class AbstractClass {
   _callback = {};
 
@@ -7,11 +9,15 @@ class AbstractClass {
     }
   }
 
-  get getTemplate() {
+  get template() {
     return this._template();
   }
 
-  get getElement() {
+  get element() {
+    if (this._element === null) {
+      this._element = createNodeElement(this.getTemplate);
+    }
+
     return this._element;
   }
 
@@ -39,7 +45,8 @@ class AbstractClass {
     this._callback.respectiveHandler(evt);
   };
 
-  removeElement() {
+  remove() {
+    this._element.remove();
     this._element = null;
   }
 }

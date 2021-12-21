@@ -1,4 +1,19 @@
 /* eslint-disable no-undef */
+const INITIAL_FILMS_CARD_COUNT = 5;
+
+const bodyElement = document.querySelector('body');
+const headerBodyElement = document.querySelector('.header');
+const mainElement = document.querySelector('.main');
+const footerBodyElement = document.querySelector('.footer');
+const footerStatisticBodyElement = document.querySelector('.footer__statistics');
+
+const controlButtons = {
+  isWatchlist: 'isWatchlist',
+  isWatched: 'isWatched',
+  isFavorite: 'isFavorite',
+};
+
+
 const dayjs = require('dayjs');
 const dayjsRandom = require('dayjs-random');
 dayjs.extend(dayjsRandom);
@@ -20,4 +35,4 @@ const onEscKeydown = (evt) => {
   }
 };
 
-export {getRandomNumber, getConvertedString, onEscKeydown, dayjs};
+export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainElement, footerBodyElement, footerStatisticBodyElement, controlButtons};

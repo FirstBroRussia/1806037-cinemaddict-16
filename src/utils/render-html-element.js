@@ -16,9 +16,9 @@ const createNodeElement = (element) => {
   return newElement;
 };
 
-const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.getElement : nodeElement;
+const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.element : nodeElement;
 
-const renderMarkupHtmlElement = (container, position, element) => {
+const renderNodeElement = (container, position, element) => {
   switch (position) {
     case 'beforebegin': return getNodeElement(container).before(getNodeElement(element));
     case 'afterbegin': return getNodeElement(container).prepend(getNodeElement(element));
@@ -32,4 +32,8 @@ const replaceNodeElement = (parentNodeElement, newChildElement, oldChildElement)
   getNodeElement(parentNodeElement).replaceChild(getNodeElement(newChildElement), getNodeElement(oldChildElement));
 };
 
-export {positionMarkup, createNodeElement, renderMarkupHtmlElement, replaceNodeElement};
+const replaceNodeElementWithoutParent = (newChildElement, oldChildElement) => {
+  getNodeElement(oldChildElement).replaceWith(getNodeElement(newChildElement));
+};
+
+export {positionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent};
