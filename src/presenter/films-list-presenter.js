@@ -118,12 +118,9 @@ class FilmsListPresenter {
     }
     // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES, ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
     if (films && id !== undefined && this.#FilterMode !== filterMode.ALL_MOVIES && currentChangeControlButton === this.#FilterMode) {
-      console.log(this.#filteredFilms.length);
       const prevFilteredFilmsList = this.#filteredFilms.slice();
-      console.log(prevFilteredFilmsList.length);
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      console.log(this.#filteredFilms.length);
       this.#filmCardUpdateView(id);
       if (this.#filteredFilms.length > prevFilteredFilmsList.length) {
         return;

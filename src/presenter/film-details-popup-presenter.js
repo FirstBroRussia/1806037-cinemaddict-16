@@ -1,9 +1,8 @@
-import {controlButtons, footerBodyElement} from '/src/utils/util.js';
-
+import {footerBodyElement, controlButtons, onEscKeydown} from '/src/utils/util.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {footerBodyElement, controlButtons, onEscKeydown} from '/src/utils/util.js';
+
 
 class FilmDetailsPopupPresenter {
   _callbacks = {};
