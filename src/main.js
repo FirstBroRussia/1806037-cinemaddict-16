@@ -11,4 +11,3 @@ PrimaryActions
   .then( (data) => {
     new MainPresenter(data).init();
   });
-
