@@ -105,9 +105,6 @@ class FilmsListPresenter {
     // ВИДОИЗМЕНЕНИЕ ОТРИСОВАННОГО СПИСКА ALL MOVIES
     if (films && id !== undefined && this.#FilterMode === filterMode.ALL_MOVIES) {
       this.#films = films.slice();
-      if (this.#SortMode === sortMode.ON) {
-        this.#noSortStockList = this.#films.slice();
-      }
       this.#filmCardUpdateView(id);
       return;
     }
@@ -115,18 +112,20 @@ class FilmsListPresenter {
     if (films && id !== undefined && currentChangeControlButton !== this.#FilterMode) {
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      if (this.#SortMode === sortMode.ON) {
-        this.#noSortStockList = this.#filteredFilms.slice();
-      }
       this.#filmCardUpdateView(id);
       return;
     }
     // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES, ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
     if (films && id !== undefined && this.#FilterMode !== filterMode.ALL_MOVIES && currentChangeControlButton === this.#FilterMode) {
+      console.log(this.#filteredFilms.length);
+      const prevFilteredFilmsList = this.#filteredFilms.slice();
+      console.log(prevFilteredFilmsList.length);
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      if (this.#SortMode === sortMode.ON) {
-        this.#noSortStockList = this.#filteredFilms.slice();
+      console.log(this.#filteredFilms.length);
+      this.#filmCardUpdateView(id);
+      if (this.#filteredFilms.length > prevFilteredFilmsList.length) {
+        return;
       }
       this.#filteredFilmsListUpdateView(id);
     }
@@ -237,6 +236,7 @@ class FilmsListPresenter {
 
   #filteredFilmsListUpdateView = (id) => {
 
+
     for (const film of this.#GeneralFilmCardPresentersMap) {
       if (film[0] === id) {
         film[1].destroy();
@@ -256,6 +256,10 @@ class FilmsListPresenter {
       }
       this.#ShowMoreButtonComponent.remove();
       this.#ShowMoreButtonComponent = null;
+    }
+
+    if (this.#GeneralFilmCardPresentersMap.size === INITIAL_FILMS_CARD_COUNT) {
+      return;
     }
 
     const mapKeys = Array.from(this.#GeneralFilmCardPresentersMap.keys());
