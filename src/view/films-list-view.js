@@ -1,9 +1,14 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
-const createFilmsListTemplate = () => `
+const createAllFilmsMarkupTemplate = () => `
 <section class="films">
-    <section class="films-list">
+
+  </section>
+`;
+
+const createFilmsListTemplate = () => `
+<section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
 
       <div class="films-list__container">
@@ -12,8 +17,10 @@ const createFilmsListTemplate = () => `
       </div>
      <!-- Кнопка ShowMoreButton -->
     </section>
+`;
 
-    <section class="films-list films-list--extra">
+const createTopRatedFilmsListTemplate = () => `
+<section class="films-list films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
 
       <div class="films-list__container top-rated">
@@ -21,8 +28,10 @@ const createFilmsListTemplate = () => `
 
       </div>
       </section>
+`;
 
-      <section class="films-list films-list--extra">
+const createMostCommentedFilmsListTemplate = () => `
+<section class="films-list films-list--extra">
       <h2 class="films-list__title">Most commented</h2>
 
       <div class="films-list__container most-commented">
@@ -30,8 +39,25 @@ const createFilmsListTemplate = () => `
 
       </div>
     </section>
-  </section>
 `;
+
+class MostCommentedFilmsListMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createMostCommentedFilmsListTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class TopRatedFilmsListMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createTopRatedFilmsListTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
 
 class FilmsListMarkup extends AbstractClass {
   constructor () {
@@ -42,4 +68,13 @@ class FilmsListMarkup extends AbstractClass {
   }
 }
 
-export {FilmsListMarkup};
+class AllFilmsMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createAllFilmsMarkupTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+export {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup};

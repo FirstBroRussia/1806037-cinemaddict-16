@@ -5,6 +5,7 @@ const createShowMoreButtonTemplate = () => `
 <button class="films-list__show-more">Show more</button>
 `;
 
+
 class ShowMoreButtonMarkup extends AbstractClass {
   constructor () {
     super();
