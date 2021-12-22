@@ -90,6 +90,8 @@ class FilmsListPresenter {
         this.#films = films.slice();
         this.#sortFilms = this.#setSortFilmsListSwitch(this.#films, this.#SortMode);
         if (this.#TopRatedExtraFilmsListComponent !== null && this.#MostCommentedExtraFilmsListComponent !== null) {
+          this.#TopRatedFilmCardPresentersMap = new Map();
+          this.#MostCommentedFilmCardPresentersMap = new Map();
           this.#TopRatedExtraFilmsListComponent.remove();
           this.#TopRatedExtraFilmsListComponent = null;
           this.#MostCommentedExtraFilmsListComponent.remove();
@@ -102,6 +104,8 @@ class FilmsListPresenter {
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
       if (this.#TopRatedExtraFilmsListComponent !== null && this.#MostCommentedExtraFilmsListComponent !== null) {
+        this.#TopRatedFilmCardPresentersMap = new Map();
+        this.#MostCommentedFilmCardPresentersMap = new Map();
         this.#TopRatedExtraFilmsListComponent.remove();
         this.#TopRatedExtraFilmsListComponent = null;
         this.#MostCommentedExtraFilmsListComponent.remove();
