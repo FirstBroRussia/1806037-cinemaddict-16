@@ -89,12 +89,24 @@ class FilmsListPresenter {
         this.#FilterMode = selectedFilter;
         this.#films = films.slice();
         this.#sortFilms = this.#setSortFilmsListSwitch(this.#films, this.#SortMode);
+        if (this.#TopRatedExtraFilmsListComponent !== null && this.#MostCommentedExtraFilmsListComponent !== null) {
+          this.#TopRatedExtraFilmsListComponent.remove();
+          this.#TopRatedExtraFilmsListComponent = null;
+          this.#MostCommentedExtraFilmsListComponent.remove();
+          this.#MostCommentedExtraFilmsListComponent = null;
+        }
         this.#renderFilteredFilmsList(this.#sortFilms, selectedFilter);
         return;
       }
       this.#FilterMode = selectedFilter;
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
+      if (this.#TopRatedExtraFilmsListComponent !== null && this.#MostCommentedExtraFilmsListComponent !== null) {
+        this.#TopRatedExtraFilmsListComponent.remove();
+        this.#TopRatedExtraFilmsListComponent = null;
+        this.#MostCommentedExtraFilmsListComponent.remove();
+        this.#MostCommentedExtraFilmsListComponent = null;
+      }
       if (this.#SortMode !== sortMode.DEFAULT) {
         this.#sortFilms = this.#setSortFilmsListSwitch(this.#filteredFilms, this.#SortMode);
         this.#renderFilteredFilmsList(this.#sortFilms, selectedFilter);
@@ -118,13 +130,9 @@ class FilmsListPresenter {
     }
     // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES, ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
     if (films && id !== undefined && this.#FilterMode !== filterMode.ALL_MOVIES && currentChangeControlButton === this.#FilterMode) {
-      const prevFilteredFilmsList = this.#filteredFilms.slice();
       this.#films = films.slice();
       this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
       this.#filmCardUpdateView(id);
-      if (this.#filteredFilms.length > prevFilteredFilmsList.length) {
-        return;
-      }
       this.#filteredFilmsListUpdateView(id);
     }
   }
@@ -233,8 +241,6 @@ class FilmsListPresenter {
   };
 
   #filteredFilmsListUpdateView = (id) => {
-
-
     for (const film of this.#GeneralFilmCardPresentersMap) {
       if (film[0] === id) {
         film[1].destroy();
@@ -254,10 +260,6 @@ class FilmsListPresenter {
       }
       this.#ShowMoreButtonComponent.remove();
       this.#ShowMoreButtonComponent = null;
-    }
-
-    if (this.#GeneralFilmCardPresentersMap.size === INITIAL_FILMS_CARD_COUNT) {
-      return;
     }
 
     const mapKeys = Array.from(this.#GeneralFilmCardPresentersMap.keys());
