@@ -15,19 +15,19 @@ const createFilmsListTemplate = () => `
 `;
 
 const createGeneralAllFilmsListTagTemplate = () => `
-<h2 class="films-list__title">All movies.</h2>
+<h2 class="films-list__title">All movies</h2>
 `;
 
 const createGeneralWatchlistTagTemplate = () => `
-<h2 class="films-list__title">List of movies to watch.</h2>
+<h2 class="films-list__title">List of movies to watch</h2>
 `;
 
 const createGeneralWatchedListTagTemplate = () => `
-<h2 class="films-list__title">History viewed movies.</h2>
+<h2 class="films-list__title">History viewed movies</h2>
 `;
 
 const createGeneralFavoriteListTemplate = () => `
-<h2 class="films-list__title ">Favorite list movies.</h2>
+<h2 class="films-list__title ">Favorite list movies</h2>
 `;
 
 const createGeneralFilmsListContainerTemplate = () => `

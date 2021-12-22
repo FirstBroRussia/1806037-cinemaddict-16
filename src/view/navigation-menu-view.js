@@ -237,6 +237,24 @@ class HistoryFilterMarkup extends AbstractClass {
     this._template = createWatchedFilmsFilterTemplate;
     this._element = createNodeElement(this._template(filmsData));
   }
+
+  setHistoryFilterClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.historyFilterClick = callback;
+    this._element.addEventListener(event, this.#hangHistoryHandler);
+  }
+
+  #hangHistoryHandler = (evt) => {
+    if (evt.target.closest('.main-navigation__item--active')) {
+      return;
+    }
+    NavigationMenuMarkup.setCurrentActiveButton(this._element);
+    this._element.classList.add('main-navigation__item--active');
+    evt.preventDefault();
+    this._callback.historyFilterClick(evt);
+  }
 }
 
 class FavoriteFilmsFilterMarkup extends AbstractClass {
@@ -245,6 +263,24 @@ class FavoriteFilmsFilterMarkup extends AbstractClass {
 
     this._template = createFavoriteFilmsFilterTemplate;
     this._element = createNodeElement(this._template(filmsData));
+  }
+
+  setFavoritesFilterClickHandler (event, callback) {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.favoriteFilterClick = callback;
+    this._element.addEventListener(event, this.#hangFavoritesHandler);
+  }
+
+  #hangFavoritesHandler = (evt) => {
+    if (evt.target.closest('.main-navigation__item--active')) {
+      return;
+    }
+    NavigationMenuMarkup.setCurrentActiveButton(this._element);
+    this._element.classList.add('main-navigation__item--active');
+    evt.preventDefault();
+    this._callback.favoriteFilterClick(evt);
   }
 }
 
@@ -255,6 +291,7 @@ class StatsMarkup extends AbstractClass {
     this._template = createStatsTemplate;
     this._element = createNodeElement(this._template());
   }
+
 }
 
 

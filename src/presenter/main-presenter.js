@@ -1,33 +1,17 @@
+import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode} from '/src/utils/util.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
-import {FilmsCountMarkup} from '/src/view/films-count-view.js';
-import {positionMarkup, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-
-
-import {NavigationMenuMarkup, FilterWrapMarkup, AllFilmsFilterMarkup, WatchlistFilmsFilterMarkup, HistoryFilterMarkup, FavoriteFilmsFilterMarkup, StatsMarkup, WatchlistFilmsCountMarkup, WatchedFilmsCountMarkup, FavoriteFilmsCountMarkup} from '/src/view/navigation-menu-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
-import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup} from '/src/view/films-list-view.js';
-
-import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
-import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
-import {EmptyFilmsListMarkup} from '/src/view/empty-films-list-view.js';
-
+import {FilmsCountMarkup} from '/src/view/films-count-view.js';
+import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
+import {NavigationMenuMarkup, FilterWrapMarkup, AllFilmsFilterMarkup, WatchlistFilmsFilterMarkup, HistoryFilterMarkup, FavoriteFilmsFilterMarkup, StatsMarkup, WatchlistFilmsCountMarkup, WatchedFilmsCountMarkup, FavoriteFilmsCountMarkup} from '/src/view/navigation-menu-view.js';
 
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 
-import {INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons} from '/src/main.js';
-
-const modePresenter = {
-  ALL_MOVIES: 'all',
-  WATCHLIST: 'watchlist',
-  HISTORY: 'history',
-  FAVORITE: 'favorite',
-};
-
 class MainPresenter {
   #films = null;
-  #watchlistFilms = null;
-  #watchedFilms = null;
-  #favoriteFilms = null;
+
+  #selectedFilter = null;
+  #selectedSort = null;
 
   #FilmsListPresenter = null;
 
@@ -43,6 +27,8 @@ class MainPresenter {
   #FavoriteFilmsFilterComponent = null;
   #FavoriteFilmsCountComponent = null;
   #StatsComponent = null;
+
+  #SortListComponent = null;
 
   #FilmsCountComponent = null;
 
@@ -61,6 +47,7 @@ class MainPresenter {
     this.#FavoriteFilmsFilterComponent = new FavoriteFilmsFilterMarkup();
     this.#FavoriteFilmsCountComponent = new FavoriteFilmsCountMarkup(this.#films);
     this.#StatsComponent = new StatsMarkup();
+    this.#SortListComponent = new SortListMarkup();
     this.#FilmsCountComponent = new FilmsCountMarkup(this.#films.length);
   }
 
@@ -78,16 +65,22 @@ class MainPresenter {
     renderNodeElement(this.#FilterWrapComponent, positionMarkup.BEFORE_END, this.#FavoriteFilmsFilterComponent);
     renderNodeElement(this.#FavoriteFilmsFilterComponent, positionMarkup.BEFORE_END, this.#FavoriteFilmsCountComponent);
 
+    renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#SortListComponent);
+
+    this.#SortListComponent.setDefaultSortClickHandler('click', this.#defaultSortClickHandler);
+    this.#SortListComponent.setDateSortClickHandler('click', this.#dataSortClickHandler);
+    this.#SortListComponent.setRatingSortClickHandler('click', this.#ratingSortClickHandler);
 
     this.#AllFilmsFilterComponent.setAllMoviesFilterClickHandler('click', this.#allFilmsFilterClickHandler);
     this.#WatchlistFilterComponent.setWatchlistFilterClickHandler('click', this.#watchlistFilterClickHandler);
-    // this.#HistoryFilmsFilterComponent.setWatchlistFilterClickHandler('click', this.#watchlistFilterClickHandler);
-    // this.#FavoriteFilmsFilterComponent.setWatchlistFilterClickHandler('click', this.#watchlistFilterClickHandler);
+    this.#HistoryFilmsFilterComponent.setHistoryFilterClickHandler('click', this.#historyFilterClickHandler);
+    this.#FavoriteFilmsFilterComponent.setFavoritesFilterClickHandler('click', this.#favoriteFilterClickHandler);
 
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
-    this.#FilmsListPresenter.init(this.#films);
+    this.#FilmsListPresenter.init(this.#films, undefined, filterMode.ALL_MOVIES);
+    this.#selectedFilter = filterMode.ALL_MOVIES;
   }
 
   #changeMasterData = (id, changedData, currentChange) => {
@@ -124,20 +117,39 @@ class MainPresenter {
 
 
   #allFilmsFilterClickHandler = () => {
-    this.#FilmsListPresenter.init(this.#films, false, modePresenter.ALL_MOVIES);
+    this.#selectedFilter = filterMode.ALL_MOVIES;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
   }
 
   #watchlistFilterClickHandler = () => {
-    this.#watchlistFilms = this.#films.slice().filter( (film) => film.isWatchlist === true);
-    this.#FilmsListPresenter.init(this.#watchlistFilms, false, modePresenter.WATCHLIST);
+    this.#selectedFilter = filterMode.WATCHLIST;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
   }
 
+  #historyFilterClickHandler = () => {
+    this.#selectedFilter = filterMode.HISTORY;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+  }
 
+  #favoriteFilterClickHandler = () => {
+    this.#selectedFilter = filterMode.FAVORITE;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+  }
 
+  #defaultSortClickHandler = () => {
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+  }
 
+  #dataSortClickHandler = () => {
+    this.#selectedSort = sortMode.DATE;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+  }
 
-
-
+  #ratingSortClickHandler = () => {
+    this.#selectedSort = sortMode.RATING;
+    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+  }
 
 }
 

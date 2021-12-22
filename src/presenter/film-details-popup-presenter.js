@@ -1,7 +1,6 @@
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {onEscKeydown} from '/src/utils/util.js';
-import {footerBodyElement, controlButtons} from '/src/main.js';
+import {footerBodyElement, controlButtons, onEscKeydown} from '/src/utils/util.js';
 
 
 class FilmDetailsPopupPresenter {
@@ -52,7 +51,9 @@ class FilmDetailsPopupPresenter {
 
     document.addEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
     this.#FilmDetailsCloseButtonComponent.addEventHandler('click', this.#closeFilmDetailsPopupClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
 
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
@@ -86,6 +87,46 @@ class FilmDetailsPopupPresenter {
     this.closeFilmDetailsPopup();
   }
 
+
+  filmDetailsPopupUpdateView = () => {
+    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
+    const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
+    const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
+
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
+    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
+
+    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
+
+    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
+    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
+    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
+  }
+
+  closeFilmDetailsPopup = () => {
+    this.#FilmDetailsPopupComponent.remove();
+    this._callbacks.destroyCurrentPresenter();
+    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+  };
+
+  #watchlistButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatchlist);
+  }
+
+  #watchedButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatched);
+  }
+
+  #favoriteButtonClickHandler = () => {
+    const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
+    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
+  }
+
   #controlButtonsClickHandler = (evt) => {
     if (!evt.target.closest('.film-details__control-button')) {
       return;
@@ -108,31 +149,6 @@ class FilmDetailsPopupPresenter {
       this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
     }
   };
-
-
-  filmDetailsPopupUpdateView = () => {
-    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
-    const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
-    const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
-
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
-    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
-    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
-
-
-    this.#FilmDetailsFilterButtonsComponent.addEventHandler('click', this.#controlButtonsClickHandler);
-
-    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
-    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
-    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
-  }
-
-  closeFilmDetailsPopup = () => {
-    this.#FilmDetailsPopupComponent.remove();
-    this._callbacks.destroyCurrentPresenter();
-    document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-  };
-
 }
 
 export {FilmDetailsPopupPresenter};

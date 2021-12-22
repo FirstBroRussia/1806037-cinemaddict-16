@@ -10,11 +10,13 @@ const createSortListMenuTemplate = () => `
 `;
 
 class SortListMarkup extends AbstractClass {
+  _currentActiveButton = null;
   constructor () {
     super();
 
     this._template = createSortListMenuTemplate;
     this._element = createNodeElement(this._template());
+    this._currentActiveButton = this._element.querySelector('.sort__button--active');
   }
 
   setDefaultSortClickHandler (event, callback) {
@@ -30,7 +32,7 @@ class SortListMarkup extends AbstractClass {
       throw new Error('Параметр "event" должен быть типом данных "string"');
     }
     this._callback.dateSortClick = callback;
-    this._element.querySelector('a[href="#default"]').addEventListener(event, this.#hangDateSortHandler);
+    this._element.querySelector('a[href="#date"]').addEventListener(event, this.#hangDateSortHandler);
   }
 
   setRatingSortClickHandler (event, callback) {
@@ -38,21 +40,39 @@ class SortListMarkup extends AbstractClass {
       throw new Error('Параметр "event" должен быть типом данных "string"');
     }
     this._callback.ratingSortClick = callback;
-    this._element.querySelector('a[href="#default"]').addEventListener(event, this.#hangRatingSortHandler);
+    this._element.querySelector('a[href="#rating"]').addEventListener(event, this.#hangRatingSortHandler);
   }
 
   #hangDefaultSortHandler = (evt) => {
     evt.preventDefault();
+    if (evt.target.closest('.sort__button--active')) {
+      return;
+    }
+    this._currentActiveButton.classList.remove('sort__button--active');
+    this._currentActiveButton = evt.target.closest('.sort__button');
+    this._currentActiveButton.classList.add('sort__button--active');
     this._callback.defaultSortClick(evt);
   }
 
   #hangDateSortHandler = (evt) => {
     evt.preventDefault();
+    if (evt.target.closest('.sort__button--active')) {
+      return;
+    }
+    this._currentActiveButton.classList.remove('sort__button--active');
+    this._currentActiveButton = evt.target.closest('.sort__button');
+    this._currentActiveButton.classList.add('sort__button--active');
     this._callback.dateSortClick(evt);
   }
 
   #hangRatingSortHandler = (evt) => {
     evt.preventDefault();
+    if (evt.target.closest('.sort__button--active')) {
+      return;
+    }
+    this._currentActiveButton.classList.remove('sort__button--active');
+    this._currentActiveButton = evt.target.closest('.sort__button');
+    this._currentActiveButton.classList.add('sort__button--active');
     this._callback.ratingSortClick(evt);
   }
 
