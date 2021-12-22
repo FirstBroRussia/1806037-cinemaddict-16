@@ -1,7 +1,9 @@
+import {controlButtons, footerBodyElement} from '/src/utils/util.js';
+
+
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 import {footerBodyElement, controlButtons, onEscKeydown} from '/src/utils/util.js';
-
 
 class FilmDetailsPopupPresenter {
   _callbacks = {};
@@ -40,7 +42,7 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
 
     this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#film);
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film, this.#controlButtonsClickHandler);
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
     this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
     this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
@@ -86,7 +88,6 @@ class FilmDetailsPopupPresenter {
 
     this.closeFilmDetailsPopup();
   }
-
 
   filmDetailsPopupUpdateView = () => {
     const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
