@@ -79,11 +79,13 @@ class MainPresenter {
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
-    this.#FilmsListPresenter.init(this.#films, undefined, filterMode.ALL_MOVIES);
     this.#selectedFilter = filterMode.ALL_MOVIES;
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
+
   }
 
-  #changeMasterData = (id, changedData, currentChange) => {
+  #changeMasterData = (id, changedData, currentAction) => {
     for (let index = 0; index < this.#films.length; index++) {
       if (this.#films[index].id === id) {
         this.#films[index] = changedData;
@@ -91,14 +93,14 @@ class MainPresenter {
       }
     }
 
-    this.#updateView(id, currentChange);
+    this.#updateView(id, currentAction);
   }
 
 
   #updateView = (id, currentChange) => {
     this.#navigationMenuUpdateView();
 
-    this.#FilmsListPresenter.init(this.#films, id, undefined, currentChange);
+    this.#FilmsListPresenter.init(this.#films, undefined, undefined, id, currentChange);
   }
 
   #navigationMenuUpdateView = () => {
@@ -118,37 +120,37 @@ class MainPresenter {
 
   #allFilmsFilterClickHandler = () => {
     this.#selectedFilter = filterMode.ALL_MOVIES;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
   }
 
   #watchlistFilterClickHandler = () => {
     this.#selectedFilter = filterMode.WATCHLIST;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
   }
 
   #historyFilterClickHandler = () => {
     this.#selectedFilter = filterMode.HISTORY;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
   }
 
   #favoriteFilterClickHandler = () => {
     this.#selectedFilter = filterMode.FAVORITE;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
   }
 
   #defaultSortClickHandler = () => {
     this.#selectedSort = sortMode.DEFAULT;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #dataSortClickHandler = () => {
     this.#selectedSort = sortMode.DATE;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #ratingSortClickHandler = () => {
     this.#selectedSort = sortMode.RATING;
-    this.#FilmsListPresenter.init(this.#films, undefined, this.#selectedFilter, undefined, this.#selectedSort);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
 }

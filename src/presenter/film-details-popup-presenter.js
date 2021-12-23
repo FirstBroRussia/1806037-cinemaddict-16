@@ -1,4 +1,4 @@
-import {footerBodyElement, controlButtons, onEscKeydown} from '/src/utils/util.js';
+import {footerBodyElement, controlButtons, onEscKeydown, closeButtonAction} from '/src/utils/util.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
@@ -22,9 +22,12 @@ class FilmDetailsPopupPresenter {
   #filmDetailsTopContainerElement = null;
   #filmDetailsBottonContainerElement = null;
 
-  constructor (changeMasterData, currentPresenter) {
+  constructor (changeMasterData, getClearCurrentPresenter, getOpenPopupElement) {
     this._callbacks.changeMasterData = changeMasterData;
-    this._callbacks.destroyCurrentPresenter = currentPresenter;
+    this._callbacks.destroyCurrentPresenter = getClearCurrentPresenter;
+    this._callbacks.getOpenPopupElement = getOpenPopupElement;
+
+    // document.styleSheets[0].addRule('* body *:not(.film-details)','pointer-events: none;');
   }
 
   render (film) {
@@ -107,48 +110,44 @@ class FilmDetailsPopupPresenter {
   }
 
   closeFilmDetailsPopup = () => {
+    this._callbacks.changeMasterData(this.#id, this.#film, closeButtonAction);
+    this._callbacks.getOpenPopupElement(null);
     this.#FilmDetailsPopupComponent.remove();
     this._callbacks.destroyCurrentPresenter();
     document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
+
   };
 
   #watchlistButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
-    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatchlist);
+    this.#insideUpdateData(changedData);
   }
 
   #watchedButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
-    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatched);
+    this.#insideUpdateData(changedData);
   }
 
   #favoriteButtonClickHandler = () => {
     const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
-    this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
+    this.#insideUpdateData(changedData);
   }
 
-  #controlButtonsClickHandler = (evt) => {
-    if (!evt.target.closest('.film-details__control-button')) {
-      return;
-    }
-
-    const currentClickedWatchlistButton = evt.target.closest('.film-details__control-button--watchlist');
-    const currentClickedWatchedButton = evt.target.closest('.film-details__control-button--watched');
-    const currentClickedFavouriteButton = evt.target.closest('.film-details__control-button--favorite');
-
-    if (currentClickedWatchlistButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
-      this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatchlist);
-    }
-    if (currentClickedWatchedButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
-      this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatched);
-    }
-    if (currentClickedFavouriteButton) {
-      const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
-      this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
-    }
+  #insideUpdateData = (film) => {
+    this.#film = {...film};
+    this.#insideUpdateView();
   };
+
+  #insideUpdateView = () => {
+    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
+    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#watchlistButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#watchedButtonClickHandler);
+    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#favoriteButtonClickHandler);
+    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
+  };
+
+
 }
 
 export {FilmDetailsPopupPresenter};

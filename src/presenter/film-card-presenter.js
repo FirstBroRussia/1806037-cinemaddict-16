@@ -16,8 +16,9 @@ class FilmCardPresenter {
 
   #FilmDetailsPopupPresenter = null;
 
-  constructor (changeMasterData) {
+  constructor (changeMasterData, getOpenPopupElement) {
     this._callbacks.changeMasterData = changeMasterData;
+    this._callbacks.getOpenPopupElement = getOpenPopupElement;
   }
 
   render (film) {
@@ -50,8 +51,8 @@ class FilmCardPresenter {
   }
 
 
-  #controlButtonsChangeData = (controlButton) => {
-    switch (controlButton) {
+  #controlButtonsChangeDataSwitch = (value) => {
+    switch (value) {
       case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
       case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched});
       case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
@@ -59,24 +60,30 @@ class FilmCardPresenter {
   }
 
   #watchlistButtonClickHandler = () => {
-    const changedData = this.#controlButtonsChangeData(controlButtons.isWatchlist);
+    const changedData = this.#controlButtonsChangeDataSwitch(controlButtons.isWatchlist);
     this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatchlist);
   }
 
   #watchedButtonClickHandler = () => {
-    const changedData = this.#controlButtonsChangeData(controlButtons.isWatched);
+    const changedData = this.#controlButtonsChangeDataSwitch(controlButtons.isWatched);
     this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isWatched);
   }
 
   #favoriteButtonClickHandler = () => {
-    const changedData = this.#controlButtonsChangeData(controlButtons.isFavorite);
+    const changedData = this.#controlButtonsChangeDataSwitch(controlButtons.isFavorite);
     this._callbacks.changeMasterData(this.#id, changedData, controlButtons.isFavorite);
   }
 
 
   #openPopupClickHandler = () => {
-    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#destroyPopupPresenter);
+    if (this._callbacks.getOpenPopupElement() !== null) {
+      this._callbacks.getOpenPopupElement().closeFilmDetailsPopup();
+      this._callbacks.getOpenPopupElement(null);
+    }
+    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#clearPopupPresenter, this._callbacks.getOpenPopupElement);
+    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#clearPopupPresenter, this._callbacks.getOpenPopupElement);
     this.#FilmDetailsPopupPresenter.render(this.#film);
+    this._callbacks.getOpenPopupElement(this.#FilmDetailsPopupPresenter);
   }
 
 
@@ -103,7 +110,7 @@ class FilmCardPresenter {
     }
   }
 
-  #destroyPopupPresenter = () => {
+  #clearPopupPresenter = () => {
     this.#FilmDetailsPopupPresenter = null;
   }
 
