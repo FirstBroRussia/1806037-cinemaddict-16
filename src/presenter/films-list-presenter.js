@@ -12,7 +12,6 @@ const NO_FILMS_VALUE = 0;
 
 
 class FilmsListPresenter {
-  #primaryInit = null;
   #films = null;
   #convertedFilms = null;
   #prevConvertedFilms = null;
@@ -57,6 +56,7 @@ class FilmsListPresenter {
 
   init (films, selectedFilter, selectedSort, id, currentAction) {
     this._callbacks.sortListComponent.element.classList.remove('hidden');
+
     this.#films = films.slice();
 
     if (selectedFilter) {
@@ -67,18 +67,9 @@ class FilmsListPresenter {
       this.#SortMode = selectedSort;
     }
 
-    // САМАЯ ПЕРВАЯ ОТРИСОВКА ПРИ ЗАПУСКЕ САЙТА
-    if (this.#primaryInit === null) {
-      this.#primaryInit = true;
-      this.#renderGeneralFilmsList(films);
-      this.#renderExtraFilmsList(films);
-      return;
-    }
-
     this.#prevConvertedFilms = this.#convertedFilms;
-    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#FilterMode);
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#FilterMode);
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#SortMode);
-
 
     if (id !== undefined) {
       this.#filmsListUpdateViewByID(id, currentAction);
@@ -91,27 +82,22 @@ class FilmsListPresenter {
     }
   }
 
-
   #renderGeneralFilmsList = (films) => {
-    if (films.length === NO_FILMS_VALUE && this.#FilterMode === filterMode.ALL_MOVIES) {
-      this._callbacks.sortListComponent.element.classList.add('hidden');
-      this.#renderEmptyAllFilmsList();
-      return;
-    }
-    if (films.length === NO_FILMS_VALUE && this.#FilterMode !== filterMode.ALL_MOVIES) {
-      this._callbacks.sortListComponent.element.classList.add('hidden');
-      this.#renderEmptyFilteredFilmsList();
-      return;
-    }
-
-    let prevAllFilmsComponent;
     if (this.#AllFilmsComponent !== null) {
-      prevAllFilmsComponent = this.#AllFilmsComponent;
+      this.#AllFilmsComponent.remove();
     }
     this.#AllFilmsComponent = new AllFilmsMarkup();
 
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    this.#GeneralFilmsListTagComponent = new GeneralAllFilmsListTagMarkup();
+    if (films.length === NO_FILMS_VALUE) {
+      this._callbacks.sortListComponent.element.classList.add('hidden');
+      this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
+      renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
+      renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
+      renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
+      return;
+    }
+    this.#GeneralFilmsListTagComponent = this.#generalFilmsListTagSwitch(this.#FilterMode);
     this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
 
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
@@ -120,9 +106,6 @@ class FilmsListPresenter {
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
     this.renderGeneralFilmsCard(films);
-    if (prevAllFilmsComponent !== undefined) {
-      replaceNodeElementWithoutParent(this.#AllFilmsComponent, prevAllFilmsComponent);
-    }
   }
 
   #renderExtraFilmsList = (films) => {
@@ -229,8 +212,7 @@ class FilmsListPresenter {
     }
 
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
-      this._callbacks.sortListComponent.element.classList.add('hidden');
-      this.#renderEmptyFilteredFilmsList();
+      this.#renderGeneralFilmsList(this.#convertedFilms);
       return;
     }
 
@@ -301,31 +283,13 @@ class FilmsListPresenter {
     }
   }
 
-  #getFilteredFilmsListSwitch = (value) => {
+  #getFilteredFilmsListSwitch = (films, value) => {
     switch (value) {
-      case 'all' : return this.#films.slice();
-      case 'watchlist' : return this.#films.slice().filter( (film) => film.isWatchlist === true);
-      case 'history' : return this.#films.slice().filter( (film) => film.isWatched === true);
-      case 'favorite' : return this.#films.slice().filter( (film) => film.isFavorite === true);
+      case 'all' : return films.slice();
+      case 'watchlist' : return films.slice().filter( (film) => film.isWatchlist === true);
+      case 'history' : return films.slice().filter( (film) => film.isWatched === true);
+      case 'favorite' : return films.slice().filter( (film) => film.isFavorite === true);
     }
-  }
-
-  #renderEmptyAllFilmsList = () => {
-    const prevAllFilmsComponent = this.#AllFilmsComponent;
-    this.#AllFilmsComponent = new AllFilmsMarkup();
-    this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
-    renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
-    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
-    replaceNodeElementWithoutParent(this.#AllFilmsComponent, prevAllFilmsComponent);
-  }
-
-  #renderEmptyFilteredFilmsList = () => {
-    const prevGeneralFilmsListComponent = this.#GeneralFilmsListComponent;
-    this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
-    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
-    replaceNodeElementWithoutParent(this.#GeneralFilmsListComponent, prevGeneralFilmsListComponent);
   }
 
   #getSortFilmsListSwitch = (films, sort) => {
