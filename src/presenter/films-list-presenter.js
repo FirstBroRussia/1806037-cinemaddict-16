@@ -119,39 +119,8 @@ class FilmsListPresenter {
       return;
     }
 
-    // ВИДОИЗМЕНЕНИЕ ОТРИСОВАННОГО СПИСКА ALL MOVIES
-    if (this.#FilterMode === filterMode.ALL_MOVIES && id !== undefined) {
-      this.#filmCardUpdateView(id);
-      return;
-    }
-
-    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES,
-    // ГДЕ НЕ НАЖИМАЛИ НА КАРТОЧКЕ СООТВЕТСТВУЮЩУЮ ВЫБРАННОМУ ФИЛЬТРУ КНОПКУ(ТО ЕСТЬ ТУТ КАРТОЧКА НЕ ИСЧЕЗАЕТ ИЗ СПИСКА)
-    if (id !== undefined && currentAction !== this.#FilterMode && currentAction !== closeButtonAction) {
-      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      this.#filmCardUpdateView(id);
-      return;
-    }
-
-    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES,
-    // ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
-    if (id !== undefined && currentAction === this.#FilterMode && this.#FilterMode !== filterMode.ALL_MOVIES) {
-      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      this.#filmCardUpdateView(id);
-      this.#filteredFilmsListUpdateView(id);
-      return;
-    }
-
-    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES !!!ПРИ ЗАКРЫТИИ ПОПАПА!!!
-    // ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
-    if (id !== undefined && currentAction === closeButtonAction && this.#FilterMode !== filterMode.ALL_MOVIES) {
-      const prevFilteredFilms = this.#filteredFilms;
-      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
-      this.#filmCardUpdateView(id);
-      if (!(this.#filteredFilms.length < prevFilteredFilms.length)) {
-        return;
-      }
-      this.#filteredFilmsListUpdateView(id);
+    if (id !== undefined) {
+      this.#filmsListUpdateViewByID(id, currentAction);
     }
   }
 
@@ -235,6 +204,43 @@ class FilmsListPresenter {
       renderNodeElement(this.#MostCommentedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
   }
+
+  #filmsListUpdateViewByID = (id, currentAction) => {
+    // ВИДОИЗМЕНЕНИЕ ОТРИСОВАННОГО СПИСКА ALL MOVIES
+    if (this.#FilterMode === filterMode.ALL_MOVIES) {
+      this.#filmCardUpdateView(id);
+      return;
+    }
+
+    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES,
+    // ГДЕ НЕ НАЖИМАЛИ НА КАРТОЧКЕ СООТВЕТСТВУЮЩУЮ ВЫБРАННОМУ ФИЛЬТРУ КНОПКУ(ТО ЕСТЬ ТУТ КАРТОЧКА НЕ ИСЧЕЗАЕТ ИЗ СПИСКА)
+    if (currentAction !== this.#FilterMode && currentAction !== closeButtonAction) {
+      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
+      this.#filmCardUpdateView(id);
+      return;
+    }
+
+    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES,
+    // ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
+    if (currentAction === this.#FilterMode && this.#FilterMode !== filterMode.ALL_MOVIES) {
+      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
+      this.#filmCardUpdateView(id);
+      this.#filteredFilmsListUpdateView(id);
+      return;
+    }
+
+    // ВИДОИЗМЕНЕНИЕ СПИСКА ПРИ ЛЮБОМ ВЫБРАННОМ ФИЛЬТРЕ КРОМЕ ALL MOVIES !!!ПРИ ЗАКРЫТИИ ПОПАПА!!!
+    // ГДЕ КАРТОЧКА ИСЧЕЗАЕТ И ОТРИСОВЫВАЕТСЯ НОВАЯ ИЗ СПИСКА СООТВЕТСТВУЮЩЕГО ДАННОМУ ФИЛЬТРУ
+    if (currentAction === closeButtonAction && this.#FilterMode !== filterMode.ALL_MOVIES) {
+      const prevFilteredFilms = this.#filteredFilms;
+      this.#filteredFilms = this.#setFilteredFilmsListSwitch(this.#FilterMode);
+      this.#filmCardUpdateView(id);
+      if (!(this.#filteredFilms.length < prevFilteredFilms.length)) {
+        return;
+      }
+      this.#filteredFilmsListUpdateView(id);
+    }
+  };
 
 
   #filmCardUpdateView = (id) => {
