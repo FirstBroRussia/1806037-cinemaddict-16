@@ -26,8 +26,6 @@ class FilmDetailsPopupPresenter {
     this._callbacks.changeMasterData = changeMasterData;
     this._callbacks.destroyCurrentPresenter = getClearCurrentPresenter;
     this._callbacks.getOpenPopupElement = getOpenPopupElement;
-
-    // document.styleSheets[0].addRule('* body *:not(.film-details)','pointer-events: none;');
   }
 
   render (film) {

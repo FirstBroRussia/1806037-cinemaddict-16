@@ -19,6 +19,18 @@ class SortListMarkup extends AbstractClass {
     this._currentActiveButton = this._element.querySelector('.sort__button--active');
   }
 
+  defaultSortButtonClickSimulation () {
+    this._element.querySelector('a[href="#default"]').click();
+  }
+
+  hideComponent () {
+    this._element.classList.add('hidden');
+  }
+
+  showComponent () {
+    this._element.classList.remove('hidden');
+  }
+
   setDefaultSortClickHandler (event, callback) {
     if (typeof event !== 'string') {
       throw new Error('Параметр "event" должен быть типом данных "string"');

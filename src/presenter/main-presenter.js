@@ -78,7 +78,7 @@ class MainPresenter {
 
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
-    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
+    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#SortListComponent);
     this.#selectedFilter = filterMode.ALL_MOVIES;
     this.#selectedSort = sortMode.DEFAULT;
     this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
@@ -120,22 +120,30 @@ class MainPresenter {
 
   #allFilmsFilterClickHandler = () => {
     this.#selectedFilter = filterMode.ALL_MOVIES;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#SortListComponent.defaultSortButtonClickSimulation();
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #watchlistFilterClickHandler = () => {
     this.#selectedFilter = filterMode.WATCHLIST;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#SortListComponent.defaultSortButtonClickSimulation();
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #historyFilterClickHandler = () => {
     this.#selectedFilter = filterMode.HISTORY;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#SortListComponent.defaultSortButtonClickSimulation();
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #favoriteFilterClickHandler = () => {
     this.#selectedFilter = filterMode.FAVORITE;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter);
+    this.#selectedSort = sortMode.DEFAULT;
+    this.#SortListComponent.defaultSortButtonClickSimulation();
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
   #defaultSortClickHandler = () => {

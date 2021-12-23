@@ -81,7 +81,6 @@ class FilmCardPresenter {
       this._callbacks.getOpenPopupElement(null);
     }
     this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#clearPopupPresenter, this._callbacks.getOpenPopupElement);
-    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#clearPopupPresenter, this._callbacks.getOpenPopupElement);
     this.#FilmDetailsPopupPresenter.render(this.#film);
     this._callbacks.getOpenPopupElement(this.#FilmDetailsPopupPresenter);
   }
