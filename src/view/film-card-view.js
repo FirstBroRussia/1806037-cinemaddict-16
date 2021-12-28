@@ -1,7 +1,7 @@
 import {controlButtons} from '/src/utils/util.js';
 import {getConvertedString} from '../utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
@@ -34,7 +34,7 @@ const createControlButtonOnTheFilmCardTemplate = (film) => `
 </div>
 `;
 
-class ControlButtonsOnTheFilmCardMarkup extends AbstractClass {
+class ControlButtonsOnTheFilmCardMarkup extends AbstractView {
   constructor (filmData) {
     super();
 
@@ -83,7 +83,7 @@ class ControlButtonsOnTheFilmCardMarkup extends AbstractClass {
 
 }
 
-class FilmCardInfoMarkup extends AbstractClass {
+class FilmCardInfoMarkup extends AbstractView {
   constructor (filmData) {
     super();
 
@@ -92,7 +92,7 @@ class FilmCardInfoMarkup extends AbstractClass {
   }
 }
 
-class FilmCardMarkup extends AbstractClass {
+class FilmCardMarkup extends AbstractView {
   constructor (filmData, classHidden) {
     super();
 

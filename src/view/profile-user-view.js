@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 const createTitleProfileUserTemplate = () => `
 <section class="header__profile profile">
@@ -8,7 +8,7 @@ const createTitleProfileUserTemplate = () => `
 </section>
 `;
 
-class ProfileUserMarkup extends AbstractClass {
+class ProfileUserMarkup extends AbstractView {
   constructor () {
     super();
 

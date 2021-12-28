@@ -1,6 +1,6 @@
 import {filterMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 const createNavigationMenuTemplate = () => `
 <nav class="main-navigation">
@@ -47,7 +47,7 @@ const createFavoriteFilmsCountTemplate = (filmsData) => `
 `;
 
 
-class NavigationMenuMarkup extends AbstractClass {
+class NavigationMenuMarkup extends AbstractView {
   _currentActiveButton = null;
 
   constructor (filmData) {
@@ -68,7 +68,7 @@ class NavigationMenuMarkup extends AbstractClass {
 
 }
 
-class WatchlistFilmsCountMarkup extends AbstractClass {
+class WatchlistFilmsCountMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -77,7 +77,7 @@ class WatchlistFilmsCountMarkup extends AbstractClass {
   }
 }
 
-class WatchedFilmsCountMarkup extends AbstractClass {
+class WatchedFilmsCountMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -86,7 +86,7 @@ class WatchedFilmsCountMarkup extends AbstractClass {
   }
 }
 
-class FavoriteFilmsCountMarkup extends AbstractClass {
+class FavoriteFilmsCountMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -95,7 +95,7 @@ class FavoriteFilmsCountMarkup extends AbstractClass {
   }
 }
 
-class FilterWrapMarkup extends AbstractClass {
+class FilterWrapMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -104,7 +104,7 @@ class FilterWrapMarkup extends AbstractClass {
   }
 }
 
-class AllFilmsFilterMarkup extends AbstractClass {
+class AllFilmsFilterMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -132,7 +132,7 @@ class AllFilmsFilterMarkup extends AbstractClass {
   }
 }
 
-class WatchlistFilmsFilterMarkup extends AbstractClass {
+class WatchlistFilmsFilterMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -159,7 +159,7 @@ class WatchlistFilmsFilterMarkup extends AbstractClass {
   }
 }
 
-class HistoryFilterMarkup extends AbstractClass {
+class HistoryFilterMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -186,7 +186,7 @@ class HistoryFilterMarkup extends AbstractClass {
   }
 }
 
-class FavoriteFilmsFilterMarkup extends AbstractClass {
+class FavoriteFilmsFilterMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -213,7 +213,7 @@ class FavoriteFilmsFilterMarkup extends AbstractClass {
   }
 }
 
-class StatsMarkup extends AbstractClass {
+class StatsMarkup extends AbstractView {
   constructor () {
     super();
 

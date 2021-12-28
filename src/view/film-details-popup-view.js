@@ -1,6 +1,6 @@
 import {controlButtons} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -161,7 +161,7 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
-class FilmDetailsPopupMarkup extends AbstractClass {
+class FilmDetailsPopupMarkup extends AbstractView {
   constructor() {
     super();
 
@@ -171,7 +171,7 @@ class FilmDetailsPopupMarkup extends AbstractClass {
 }
 
 
-class FilmDetailsCloseButtonMarkup extends AbstractClass {
+class FilmDetailsCloseButtonMarkup extends AbstractView {
   constructor() {
     super();
 
@@ -181,7 +181,7 @@ class FilmDetailsCloseButtonMarkup extends AbstractClass {
 }
 
 
-class FilmDetailInfoMarkup extends AbstractClass {
+class FilmDetailInfoMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -190,7 +190,7 @@ class FilmDetailInfoMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsCardFilterButtons extends AbstractClass {
+class FilmDetailsCardFilterButtons extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -239,7 +239,7 @@ class FilmDetailsCardFilterButtons extends AbstractClass {
 }
 
 
-class FilmDetailsCommentsCountMarkup extends AbstractClass {
+class FilmDetailsCommentsCountMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -248,7 +248,7 @@ class FilmDetailsCommentsCountMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsCommentMarkup extends AbstractClass {
+class FilmDetailsCommentMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -257,7 +257,7 @@ class FilmDetailsCommentMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsNewCommentMarkup extends AbstractClass {
+class FilmDetailsNewCommentMarkup extends AbstractView {
   constructor() {
     super();
 

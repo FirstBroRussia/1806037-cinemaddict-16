@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 const createStatisticMenuTemplate = () => `
 <section class="statistic">
@@ -53,7 +53,7 @@ const createStatisticMenuTemplate = () => `
 </section>
 `;
 
-class StatisticMenuMarkup extends AbstractClass {
+class StatisticMenuMarkup extends AbstractView {
   constructor () {
     super();
 

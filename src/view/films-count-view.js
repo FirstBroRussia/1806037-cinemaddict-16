@@ -1,11 +1,11 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-class.js';
 
 const createFilmsCountTemplate = (value) => `
 <p>${value} movies inside</p>
 `;
 
-class FilmsCountMarkup extends AbstractClass {
+class FilmsCountMarkup extends AbstractView {
   constructor (value) {
     super();
 
