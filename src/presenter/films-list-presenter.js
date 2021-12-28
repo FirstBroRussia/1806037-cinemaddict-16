@@ -45,15 +45,14 @@ class FilmsListPresenter {
   #MostCommentedFilmsListContainerComponent = null;
 
 
-  constructor (changeMasterData, sortListComponent) {
+  constructor (changeMasterData) {
     this._callbacks.changeMasterData = changeMasterData;
-    this._callbacks.sortListComponent = sortListComponent;
 
     this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   }
 
   init (films, selectedFilter, selectedSort, id) {
-    this._callbacks.sortListComponent.element.classList.remove('hidden');
+    this.#films = films.slice();
 
     if (selectedFilter) {
       this.#FilterMode = selectedFilter;
@@ -62,12 +61,6 @@ class FilmsListPresenter {
     if (selectedSort) {
       this.#SortMode = selectedSort;
     }
-
-    let convertedFilms;
-    convertedFilms = this.#getFilteredFilmsListSwitch(films, this.#FilterMode);
-    convertedFilms = this.#getSortFilmsListSwitch(convertedFilms, this.#SortMode);
-
-    this.#films = convertedFilms.slice();
 
     this.#renderGeneralFilmsList(this.#films, id);
     if (this.#SortMode === sortMode.DEFAULT && this.#FilterMode === filterMode.ALL_MOVIES) {
@@ -83,7 +76,6 @@ class FilmsListPresenter {
 
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
     if (films.length === NO_FILMS_VALUE) {
-      this._callbacks.sortListComponent.element.classList.add('hidden');
       this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
       renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
       renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
@@ -218,23 +210,6 @@ class FilmsListPresenter {
       case 'watchlist' : return new EmptyWatchlistMarkup();
       case 'history' : return new EmptyWatchedMarkup();
       case 'favorite' : return new EmptyFavoriteMarkup();
-    }
-  }
-
-  #getFilteredFilmsListSwitch = (films, value) => {
-    switch (value) {
-      case 'all' : return films.slice();
-      case 'watchlist' : return films.slice().filter( (film) => film.isWatchlist === true);
-      case 'history' : return films.slice().filter( (film) => film.isWatched === true);
-      case 'favorite' : return films.slice().filter( (film) => film.isFavorite === true);
-    }
-  }
-
-  #getSortFilmsListSwitch = (films, sort) => {
-    switch (sort) {
-      case 'default' : return films.slice();
-      case 'date' : return films.slice().sort( (itemA, itemB) => itemB.releaseYear - itemA.releaseYear);
-      case 'rating' : return films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating);
     }
   }
 

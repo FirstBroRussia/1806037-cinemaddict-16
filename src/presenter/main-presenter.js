@@ -7,8 +7,11 @@ import {NavigationMenuMarkup, FilterWrapMarkup, AllFilmsFilterMarkup, WatchlistF
 
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 
+const NO_FILMS_VALUE = 0;
+
 class MainPresenter {
   #films = null;
+  #convertedFilms = null;
 
   #selectedFilter = null;
   #selectedSort = null;
@@ -78,7 +81,7 @@ class MainPresenter {
 
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
-    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#SortListComponent);
+    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
     this.#selectedFilter = filterMode.ALL_MOVIES;
     this.#selectedSort = sortMode.DEFAULT;
     this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
@@ -96,11 +99,16 @@ class MainPresenter {
     this.#updateView(id);
   }
 
-
   #updateView = (id) => {
+    this.#SortListComponent.showComponent();
     this.#navigationMenuUpdateView();
 
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort, id);
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
+    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    if (this.#convertedFilms.length === NO_FILMS_VALUE) {
+      this.#SortListComponent.hideComponent();
+    }
+    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort, id);
   }
 
   #navigationMenuUpdateView = () => {
@@ -118,15 +126,46 @@ class MainPresenter {
   }
 
   #filterButtonClickHandler = (clickButton) => {
+    this.#SortListComponent.showComponent();
     this.#selectedFilter = clickButton;
     this.#selectedSort = sortMode.DEFAULT;
     this.#SortListComponent.defaultSortButtonClickSimulation();
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
+
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
+    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    if (this.#convertedFilms.length === NO_FILMS_VALUE) {
+      this.#SortListComponent.hideComponent();
+    }
+    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
 
   #sortButtonClickHandler = (clickButton) => {
+    this.#SortListComponent.showComponent();
     this.#selectedSort = clickButton;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
+
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
+    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    if (this.#convertedFilms.length === NO_FILMS_VALUE) {
+      this.#SortListComponent.hideComponent();
+    }
+    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
+  }
+
+  #getFilteredFilmsListSwitch = (films, value) => {
+    switch (value) {
+      case 'all' : return films.slice();
+      case 'watchlist' : return films.slice().filter( (film) => film.isWatchlist === true);
+      case 'history' : return films.slice().filter( (film) => film.isWatched === true);
+      case 'favorite' : return films.slice().filter( (film) => film.isFavorite === true);
+    }
+  }
+
+  #getSortFilmsListSwitch = (films, sort) => {
+    switch (sort) {
+      case 'default' : return films.slice();
+      case 'date' : return films.slice().sort( (itemA, itemB) => itemB.releaseYear - itemA.releaseYear);
+      case 'rating' : return films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating);
+    }
   }
 
 }
