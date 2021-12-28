@@ -103,8 +103,7 @@ class MainPresenter {
     this.#SortListComponent.showComponent();
     this.#navigationMenuUpdateView();
 
-    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
-    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    this.#setConvertedFilms(this.#films);
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
@@ -131,8 +130,7 @@ class MainPresenter {
     this.#selectedSort = sortMode.DEFAULT;
     this.#SortListComponent.defaultSortButtonClickSimulation();
 
-    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
-    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    this.#setConvertedFilms(this.#films);
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
@@ -143,8 +141,7 @@ class MainPresenter {
     this.#SortListComponent.showComponent();
     this.#selectedSort = clickButton;
 
-    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
-    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+    this.#setConvertedFilms(this.#films);
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
@@ -166,6 +163,11 @@ class MainPresenter {
       case 'date' : return films.slice().sort( (itemA, itemB) => itemB.releaseYear - itemA.releaseYear);
       case 'rating' : return films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating);
     }
+  }
+
+  #setConvertedFilms = (films) => {
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(films, this.#selectedFilter);
+    this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
 }
