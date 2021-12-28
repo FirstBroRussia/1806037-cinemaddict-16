@@ -119,7 +119,6 @@ class FilmsListPresenter {
     this.#GeneralFilmCardPresentersMap = new Map();
 
     if (id !== undefined) {
-      this.#ShowMoreButtonComponent = null;
       const prevShowGeneralFilmsCount = this.#showGeneralFilmsCount;
 
       if (prevShowGeneralFilmsCount < films.length) {
@@ -130,22 +129,15 @@ class FilmsListPresenter {
       } else {
         this.#showGeneralFilmsCount = films.length;
       }
-
-      for (let index = 0; index < this.#showGeneralFilmsCount; index++) {
-        this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
-        this.#GeneralFilmCardPresentersMap.set(films[index].id, this.#FilmCardPresenter);
-        renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(films[index]));
-      }
-      return;
-    }
-
-    if (films.length > INITIAL_FILMS_CARD_COUNT) {
-      this.#showGeneralFilmsCount = INITIAL_FILMS_CARD_COUNT;
-      this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
-      this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
-      renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
     } else {
-      this.#showGeneralFilmsCount = films.length;
+      if (films.length > INITIAL_FILMS_CARD_COUNT) {
+        this.#showGeneralFilmsCount = INITIAL_FILMS_CARD_COUNT;
+        this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+        this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
+        renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
+      } else {
+        this.#showGeneralFilmsCount = films.length;
+      }
     }
 
     for (let index = 0; index < this.#showGeneralFilmsCount; index++) {
