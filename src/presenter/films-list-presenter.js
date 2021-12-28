@@ -1,19 +1,25 @@
-import {INITIAL_FILMS_CARD_COUNT, mainElement} from '/src/utils/util.js';
+import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode} from '/src/utils/util.js';
+import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-view.js';
+import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
+
+import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
+import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
+import {EmptyAllFilmsListMarkup, EmptyWatchlistMarkup, EmptyWatchedMarkup, EmptyFavoriteMarkup} from '/src/view/empty-films-list-view.js';
 
 import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
 
-import {NavigationMenuMarkup} from '/src/view/navigation-menu-view.js';
-import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup} from '/src/view/films-list-view.js';
-import {positionMarkup, renderNodeElement, replaceNodeElement} from '/src/utils/render-html-element.js';
-import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
-import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
+const NO_FILMS_VALUE = 0;
 
 
 class FilmsListPresenter {
   #films = null;
-  #filteredFilms = null;
 
-  #showFilmsCount = null;
+  #currentOpenPopupElement = null;
+
+  #FilterMode = null;
+  #SortMode = null;
+  _callbacks = {};
+  #showGeneralFilmsCount = null;
 
   #FilmCardPresenter = null;
 
@@ -21,156 +27,192 @@ class FilmsListPresenter {
   #TopRatedFilmCardPresentersMap = null;
   #MostCommentedFilmCardPresentersMap = null;
 
-  #AllFilmsComponent = null;
-  #GeneralFilmsListComponent = null;
-  #TopRatedFilmsListComponent = null;
-  #MostCommentedFilmsListComponent = null;
-
-  #generalFilmsListContainer = null;
-  #topRatedFilmsListContainer = null;
-  #mostCommentedFilmsListContainer = null;
-
-  #NavigationMenuComponent = null;
-
   #ShowMoreButtonComponent = null;
   #LoadingFilmsListComponent = null;
 
+  #AllFilmsComponent = null;
 
-  constructor (data) {
-    this.#films = data.slice();
+  #GeneralFilmsListComponent = null;
+  #GeneralFilmsListTagComponent = null;
+  #GeneralFilmsListContainerComponent = null;
 
-    this.#GeneralFilmCardPresentersMap = new Map();
-    this.#TopRatedFilmCardPresentersMap = new Map();
-    this.#MostCommentedFilmCardPresentersMap = new Map();
+  #TopRatedExtraFilmsListComponent = null;
+  #TopRatedFilmsListTagComponent = null;
+  #TopRatedFilmsListContainerComponent = null;
 
-    this.#AllFilmsComponent = new AllFilmsMarkup();
-    this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    this.#TopRatedFilmsListComponent = new TopRatedFilmsListMarkup();
-    this.#MostCommentedFilmsListComponent = new MostCommentedFilmsListMarkup();
+  #MostCommentedExtraFilmsListComponent = null;
+  #MostCommentedFilmsListTagComponent = null;
+  #MostCommentedFilmsListContainerComponent = null;
 
-    this.#generalFilmsListContainer = this.#GeneralFilmsListComponent.element.querySelector('.films-list__container');
-    this.#topRatedFilmsListContainer = this.#TopRatedFilmsListComponent.element.querySelector('.films-list__container');
-    this.#mostCommentedFilmsListContainer = this.#MostCommentedFilmsListComponent.element.querySelector('.films-list__container');
 
+  constructor (changeMasterData) {
+    this._callbacks.changeMasterData = changeMasterData;
 
     this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   }
 
-  render () {
-    this.renderGeneralFilmsList();
-    this.renderExtraFilmsList();
+  init (films, selectedFilter, selectedSort, id) {
+    this.#films = films.slice();
 
-    renderNodeElement(mainElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
+    if (selectedFilter) {
+      this.#FilterMode = selectedFilter;
+    }
+
+    if (selectedSort) {
+      this.#SortMode = selectedSort;
+    }
+
+    this.#renderGeneralFilmsList(this.#films, id);
+    if (this.#SortMode === sortMode.DEFAULT && this.#FilterMode === filterMode.ALL_MOVIES) {
+      this.#renderExtraFilmsList(this.#films);
+    }
+  }
+
+  #renderGeneralFilmsList = (films, id) => {
+    if (this.#AllFilmsComponent !== null) {
+      this.#AllFilmsComponent.remove();
+    }
+    this.#AllFilmsComponent = new AllFilmsMarkup();
+
+    this.#GeneralFilmsListComponent = new FilmsListMarkup();
+    if (films.length === NO_FILMS_VALUE) {
+      this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
+      renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
+      renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
+      renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
+      return;
+    }
+    this.#GeneralFilmsListTagComponent = this.#generalFilmsListTagSwitch(this.#FilterMode);
+    this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
+
+    renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
 
     renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
-
-    renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#TopRatedFilmsListComponent);
-    renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#MostCommentedFilmsListComponent);
+    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
+    renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
+    this.renderGeneralFilmsCard(films, id);
   }
 
-  renderGeneralFilmsList () {
-    if (this.#films.length > INITIAL_FILMS_CARD_COUNT) {
-      this.#showFilmsCount = INITIAL_FILMS_CARD_COUNT;
-
-      this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
-      this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
-      renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
+  #renderExtraFilmsList = (films) => {
+    if (films.length === NO_FILMS_VALUE) {
+      return;
     }
+    this.#TopRatedExtraFilmsListComponent = new ExtraFilmsListMarkup();
+    this.#TopRatedFilmsListTagComponent = new TopRatedListTagMarkup();
+    this.#TopRatedFilmsListContainerComponent = new TopRatedFilmsListMarkup();
 
-    for (let index = 0; index < this.#showFilmsCount; index++) {
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
-      this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
-      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
-    }
+    this.#MostCommentedExtraFilmsListComponent = new ExtraFilmsListMarkup();
+    this.#MostCommentedFilmsListTagComponent = new MostCommentedListTagMarkup();
+    this.#MostCommentedFilmsListContainerComponent = new MostCommentedFilmsListMarkup();
 
+    renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#TopRatedExtraFilmsListComponent);
+    renderNodeElement(this.#TopRatedExtraFilmsListComponent, positionMarkup.BEFORE_END, this.#TopRatedFilmsListTagComponent);
+    renderNodeElement(this.#TopRatedExtraFilmsListComponent, positionMarkup.BEFORE_END, this.#TopRatedFilmsListContainerComponent);
+
+    renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#MostCommentedExtraFilmsListComponent);
+    renderNodeElement(this.#MostCommentedExtraFilmsListComponent, positionMarkup.BEFORE_END, this.#MostCommentedFilmsListTagComponent);
+    renderNodeElement(this.#MostCommentedExtraFilmsListComponent, positionMarkup.BEFORE_END, this.#MostCommentedFilmsListContainerComponent);
+    this.renderExtraFilmsCard(films);
   }
 
-  renderExtraFilmsList () {
-    const topRatedSortFilms = this.#films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2);
+  renderGeneralFilmsCard (films, id) {
+    this.#GeneralFilmCardPresentersMap = new Map();
+
+    if (id !== undefined) {
+      const prevShowGeneralFilmsCount = this.#showGeneralFilmsCount;
+
+      if (prevShowGeneralFilmsCount < films.length) {
+        this.#showGeneralFilmsCount = prevShowGeneralFilmsCount;
+        this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+        this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
+        renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
+      } else {
+        this.#showGeneralFilmsCount = films.length;
+      }
+    } else {
+      if (films.length > INITIAL_FILMS_CARD_COUNT) {
+        this.#showGeneralFilmsCount = INITIAL_FILMS_CARD_COUNT;
+        this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+        this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
+        renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
+      } else {
+        this.#showGeneralFilmsCount = films.length;
+      }
+    }
+
+    for (let index = 0; index < this.#showGeneralFilmsCount; index++) {
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#GeneralFilmCardPresentersMap.set(films[index].id, this.#FilmCardPresenter);
+      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(films[index]));
+    }
+  }
+
+  renderExtraFilmsCard (films) {
+    this.#TopRatedFilmCardPresentersMap = new Map();
+    this.#MostCommentedFilmCardPresentersMap = new Map();
+
+    const topRatedSortFilms = films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2);
     topRatedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
       this.#TopRatedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
-      renderNodeElement(this.#topRatedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
+      renderNodeElement(this.#TopRatedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
 
-    const mostCommentedSortFilms = this.#films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2);
+    const mostCommentedSortFilms = films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2);
     mostCommentedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
       this.#MostCommentedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
-      renderNodeElement(this.#mostCommentedFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
+      renderNodeElement(this.#MostCommentedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
   }
 
   #renderFilmCardsToShowMoreButtonClickHandler = () => {
-    if (this.#films.length - this.#showFilmsCount <= INITIAL_FILMS_CARD_COUNT) {
+    if (this.#films.length - this.#showGeneralFilmsCount <= INITIAL_FILMS_CARD_COUNT) {
       this.#ShowMoreButtonComponent.remove();
+      this.#ShowMoreButtonComponent = null;
     }
 
-    for (let index = this.#showFilmsCount; index < this.#showFilmsCount + INITIAL_FILMS_CARD_COUNT; index++) {
-
-      if (this.#films[index] === undefined) {
-        return;
-      }
-      this.#FilmCardPresenter = new FilmCardPresenter(this.#changeMasterData);
-      this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
-      renderNodeElement(this.#generalFilmsListContainer, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
-    }
-
-    this.#showFilmsCount += INITIAL_FILMS_CARD_COUNT;
-  }
-
-
-  #changeMasterData = (id, changedData) => {
-    for (let index = 0; index < this.#films.length; index++) {
-      if (this.#films[index].id === id) {
-        this.#films[index] = changedData;
-        break;
-      }
-    }
-
-    this.#updateView(id);
-  }
-
-  #updateView = (id) => {
-    this.#navigationMenuUpdateView();
-
-    this.#filmCardUpdateView(id);
-  }
-
-
-  #navigationMenuUpdateView = () => {
-    let currentNavigationMenuElement;
-    if (this.#NavigationMenuComponent === null) {
-      currentNavigationMenuElement = document.querySelector('.main-navigation');
+    const prevShowGeneralFilmsCount = this.#showGeneralFilmsCount;
+    if (this.#showGeneralFilmsCount + INITIAL_FILMS_CARD_COUNT <= this.#films.length) {
+      this.#showGeneralFilmsCount += INITIAL_FILMS_CARD_COUNT;
     } else {
-      currentNavigationMenuElement = this.#NavigationMenuComponent.element;
-    }
-    this.#NavigationMenuComponent = new NavigationMenuMarkup(this.#films);
-    replaceNodeElement(mainElement, this.#NavigationMenuComponent, currentNavigationMenuElement);
-  }
-
-  #filmCardUpdateView = (id) => {
-    const rightFilm = this.#films.find( (film) => film.id === id);
-
-    for (const film of this.#GeneralFilmCardPresentersMap) {
-      const currentIdFilm = film[0];
-      if (currentIdFilm === id) {
-        const currentValueFilm = film[1];
-        currentValueFilm.render(rightFilm);
-        break;
-      }
+      this.#showGeneralFilmsCount += this.#films.length - this.#showGeneralFilmsCount;
     }
 
-    this.#TopRatedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.render(rightFilm);}
-    });
-
-    this.#MostCommentedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.render(rightFilm);}
-    });
+    for (let index = prevShowGeneralFilmsCount; index < this.#showGeneralFilmsCount; index++) {
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
+      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
+    }
   }
 
+
+  #generalFilmsListTagSwitch = (value) => {
+    switch (value) {
+      case 'all' : return new GeneralAllFilmsListTagMarkup();
+      case 'watchlist' : return new GeneralWatchlistFilmsListTagMarkup();
+      case 'history' : return new GeneralWatchedFilmsListTagMarkup();
+      case 'favorite' : return new GeneralFavoriteFilmsListTagMarkup();
+    }
+  }
+
+  #emptyGeneralFilmsListSwitch = (value) => {
+    switch (value) {
+      case 'all' : return new EmptyAllFilmsListMarkup();
+      case 'watchlist' : return new EmptyWatchlistMarkup();
+      case 'history' : return new EmptyWatchedMarkup();
+      case 'favorite' : return new EmptyFavoriteMarkup();
+    }
+  }
+
+  #getCurrentOpenPopupElement = (value) => {
+    if (value !== undefined) {
+      this.#currentOpenPopupElement = value;
+      return;
+    }
+    return this.#currentOpenPopupElement;
+  }
 
 }
 
-export {FilmsListPresenter};
+export {INITIAL_FILMS_CARD_COUNT, FilmsListPresenter, bodyElement, controlButtons};

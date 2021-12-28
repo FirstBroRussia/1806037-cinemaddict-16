@@ -3,16 +3,28 @@ const INITIAL_FILMS_CARD_COUNT = 5;
 
 const bodyElement = document.querySelector('body');
 const headerBodyElement = document.querySelector('.header');
-const mainElement = document.querySelector('.main');
+const mainBodyElement = document.querySelector('.main');
 const footerBodyElement = document.querySelector('.footer');
 const footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
 const controlButtons = {
-  isWatchlist: 'isWatchlist',
-  isWatched: 'isWatched',
-  isFavorite: 'isFavorite',
+  isWatchlist: 'watchlist',
+  isWatched: 'history',
+  isFavorite: 'favorite',
 };
 
+const filterMode = {
+  ALL_MOVIES: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITE: 'favorite',
+};
+
+const sortMode = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
 
 const dayjs = require('dayjs');
 const dayjsRandom = require('dayjs-random');
@@ -35,4 +47,4 @@ const onEscKeydown = (evt) => {
   }
 };
 
-export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainElement, footerBodyElement, footerStatisticBodyElement, controlButtons};
+export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode};
