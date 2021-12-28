@@ -1,5 +1,6 @@
-import { createNodeElement } from '/src/utils/render-html-element.js';
-import { AbstractClass } from '/src/abstract-class/abstract-class.js';
+import {controlButtons} from '/src/utils/util.js';
+import {createNodeElement} from '/src/utils/render-html-element.js';
+import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -223,17 +224,17 @@ class FilmDetailsCardFilterButtons extends AbstractClass {
 
   #hangWatchlistButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick(evt);
+    this._callback.watchlistClick(controlButtons.isWatchlist);
   };
 
   #hangWatchedButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick(evt);
+    this._callback.watchedClick(controlButtons.isWatched);
   };
 
   #hangFavoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.FavoriteClick(evt);
+    this._callback.FavoriteClick(controlButtons.isFavorite);
   };
 }
 

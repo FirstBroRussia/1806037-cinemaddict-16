@@ -1,3 +1,4 @@
+import {filterMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
@@ -65,79 +66,7 @@ class NavigationMenuMarkup extends AbstractClass {
     this._currentActiveButton = element;
   }
 
-  setAllMoviesFilterClickHandler (event, callback) {
-    if (typeof event !== 'string') {
-      throw new Error('Параметр "event" должен быть типом данных "string"');
-    }
-    this._callback.allMoviesFilterClick = callback;
-    this._element.querySelector('a[href="#all"]').addEventListener(event, this.#hangAllMoviesHandler);
-  }
-
-  setWatchlistFilterClickHandler (event, callback) {
-    if (typeof event !== 'string') {
-      throw new Error('Параметр "event" должен быть типом данных "string"');
-    }
-    this._callback.watchlistFilterClick = callback;
-    this._element.querySelector('a[href="#watchlist"]').addEventListener(event, this.#hangAWatchlistHandler);
-  }
-
-  setHistoryFilterClickHandler (event, callback) {
-    if (typeof event !== 'string') {
-      throw new Error('Параметр "event" должен быть типом данных "string"');
-    }
-    this._callback.historyFilterClick = callback;
-    this._element.querySelector('a[href="#history"]').addEventListener(event, this.#hangHistoryHandler);
-  }
-
-  setFavoritesFilterClickHandler (event, callback) {
-    if (typeof event !== 'string') {
-      throw new Error('Параметр "event" должен быть типом данных "string"');
-    }
-    this._callback.favoriteFilterClick = callback;
-    this._element.querySelector('a[href="#favorites"]').addEventListener(event, this.#hangFavoritesHandler);
-  }
-
-  #hangAllMoviesHandler = (evt) => {
-    if (evt.target.closest('.main-navigation__item--active')) {
-      return;
-    }
-    this._currentActiveButton.classList.remove('main-navigation__item--active');
-    this._currentActiveButton = this._element.querySelector('a[href="#all"]').classList.add('main-navigation__item--active');
-    evt.preventDefault();
-    this._callback.allMoviesFilterClick(evt);
-  }
-
-  #hangAWatchlistHandler = (evt) => {
-    if (evt.target.closest('.main-navigation__item--active')) {
-      return;
-    }
-    this._currentActiveButton.classList.remove('main-navigation__item--active');
-    this._currentActiveButton = this._element.querySelector('a[href="#watchlist"]').classList.add('main-navigation__item--active');
-    evt.preventDefault();
-    this._callback.watchlistFilterClick(evt);
-  }
-
-  #hangHistoryHandler = (evt) => {
-    if (evt.target.closest('.main-navigation__item--active')) {
-      return;
-    }
-    this._currentActiveButton.classList.remove('main-navigation__item--active');
-    this._currentActiveButton = this._element.querySelector('a[href="#history"]').classList.add('main-navigation__item--active');
-    evt.preventDefault();
-    this._callback.historyFilterClick(evt);
-  }
-
-  #hangFavoritesHandler = (evt) => {
-    if (evt.target.closest('.main-navigation__item--active')) {
-      return;
-    }
-    this._currentActiveButton.classList.remove('main-navigation__item--active');
-    this._currentActiveButton = this._element.querySelector('a[href="#favorites"]').classList.add('main-navigation__item--active');
-    evt.preventDefault();
-    this._callback.favoriteFilterClick(evt);
-  }
 }
-
 
 class WatchlistFilmsCountMarkup extends AbstractClass {
   constructor (filmsData) {
@@ -199,7 +128,7 @@ class AllFilmsFilterMarkup extends AbstractClass {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.allMoviesFilterClick(evt);
+    this._callback.allMoviesFilterClick(filterMode.ALL_MOVIES);
   }
 }
 
@@ -226,7 +155,7 @@ class WatchlistFilmsFilterMarkup extends AbstractClass {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.watchlistFilterClick(evt);
+    this._callback.watchlistFilterClick(filterMode.WATCHLIST);
   }
 }
 
@@ -253,7 +182,7 @@ class HistoryFilterMarkup extends AbstractClass {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.historyFilterClick(evt);
+    this._callback.historyFilterClick(filterMode.HISTORY);
   }
 }
 
@@ -280,7 +209,7 @@ class FavoriteFilmsFilterMarkup extends AbstractClass {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.favoriteFilterClick(evt);
+    this._callback.favoriteFilterClick(filterMode.FAVORITE);
   }
 }
 

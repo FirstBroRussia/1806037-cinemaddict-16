@@ -1,4 +1,4 @@
-import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode, closeButtonAction} from '/src/utils/util.js';
+import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode} from '/src/utils/util.js';
 import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 
@@ -14,12 +14,11 @@ const NO_FILMS_VALUE = 0;
 class FilmsListPresenter {
   #films = null;
   #convertedFilms = null;
-  #prevConvertedFilms = null;
 
   #currentOpenPopupElement = null;
 
-  #FilterMode = 'all';
-  #SortMode = 'default';
+  #FilterMode = null;
+  #SortMode = null;
   _callbacks = {};
   #showGeneralFilmsCount = null;
 
@@ -54,7 +53,7 @@ class FilmsListPresenter {
     this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   }
 
-  init (films, selectedFilter, selectedSort, id, currentAction) {
+  init (films, selectedFilter, selectedSort, id) {
     this._callbacks.sortListComponent.element.classList.remove('hidden');
 
     this.#films = films.slice();
@@ -67,22 +66,16 @@ class FilmsListPresenter {
       this.#SortMode = selectedSort;
     }
 
-    this.#prevConvertedFilms = this.#convertedFilms;
     this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#FilterMode);
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#SortMode);
 
-    if (id !== undefined) {
-      this.#filmsListUpdateViewByID(id, currentAction);
-      return;
-    }
-
-    this.#renderGeneralFilmsList(this.#convertedFilms);
+    this.#renderGeneralFilmsList(this.#convertedFilms, id);
     if (this.#SortMode === sortMode.DEFAULT && this.#FilterMode === filterMode.ALL_MOVIES) {
       this.#renderExtraFilmsList(this.#convertedFilms);
     }
   }
 
-  #renderGeneralFilmsList = (films) => {
+  #renderGeneralFilmsList = (films, id) => {
     if (this.#AllFilmsComponent !== null) {
       this.#AllFilmsComponent.remove();
     }
@@ -105,7 +98,7 @@ class FilmsListPresenter {
     renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
-    this.renderGeneralFilmsCard(films);
+    this.renderGeneralFilmsCard(films, id);
   }
 
   #renderExtraFilmsList = (films) => {
@@ -130,12 +123,32 @@ class FilmsListPresenter {
     this.renderExtraFilmsCard(films);
   }
 
-  renderGeneralFilmsCard (films) {
+  renderGeneralFilmsCard (films, id) {
     this.#GeneralFilmCardPresentersMap = new Map();
+
+    if (id !== undefined) {
+      this.#ShowMoreButtonComponent = null;
+      const prevShowGeneralFilmsCount = this.#showGeneralFilmsCount;
+
+      if (prevShowGeneralFilmsCount < films.length) {
+        this.#showGeneralFilmsCount = prevShowGeneralFilmsCount;
+        this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
+        this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
+        renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
+      } else {
+        this.#showGeneralFilmsCount = films.length;
+      }
+
+      for (let index = 0; index < this.#showGeneralFilmsCount; index++) {
+        this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+        this.#GeneralFilmCardPresentersMap.set(films[index].id, this.#FilmCardPresenter);
+        renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(films[index]));
+      }
+      return;
+    }
 
     if (films.length > INITIAL_FILMS_CARD_COUNT) {
       this.#showGeneralFilmsCount = INITIAL_FILMS_CARD_COUNT;
-
       this.#ShowMoreButtonComponent = new ShowMoreButtonMarkup();
       this.#ShowMoreButtonComponent.addEventHandler('click', this.#renderFilmCardsToShowMoreButtonClickHandler);
       renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#ShowMoreButtonComponent);
@@ -169,99 +182,24 @@ class FilmsListPresenter {
     });
   }
 
-  #filmsListUpdateViewByID = (id, currentAction) => {
-    this.#filmCardUpdateView(id);
-    if (this.#FilterMode !== filterMode.ALL_MOVIES && currentAction === this.#FilterMode) {
-      this.#filteredFilmsListUpdateView(id);
-      return;
-    }
-    if (this.#FilterMode !== filterMode.ALL_MOVIES && currentAction === closeButtonAction && (this.#convertedFilms.length < this.#prevConvertedFilms.length)) {
-      this.#filteredFilmsListUpdateView(id);
-    }
-  };
-
-
-  #filmCardUpdateView = (id) => {
-    const rightFilm = this.#films.find( (film) => film.id === id);
-
-    for (const film of this.#GeneralFilmCardPresentersMap) {
-      const currentIdFilm = film[0];
-      if (currentIdFilm === id) {
-        const currentValueFilm = film[1];
-        currentValueFilm.render(rightFilm);
-        break;
-      }
-    }
-
-    this.#TopRatedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.render(rightFilm);}
-    });
-
-    this.#MostCommentedFilmCardPresentersMap.forEach( (film, key) => {
-      if (key === id) {film.render(rightFilm);}
-    });
-  };
-
-  #filteredFilmsListUpdateView = (id) => {
-    for (const film of this.#GeneralFilmCardPresentersMap) {
-      if (film[0] === id) {
-        film[1].destroy();
-        this.#GeneralFilmCardPresentersMap.delete(film[0]);
-        break;
-      }
-    }
-
-    if (this.#convertedFilms.length === NO_FILMS_VALUE) {
-      this.#renderGeneralFilmsList(this.#convertedFilms);
-      return;
-    }
-
-    if (this.#convertedFilms.length <= INITIAL_FILMS_CARD_COUNT) {
-      if (this.#ShowMoreButtonComponent === null) {
-        return;
-      }
-      this.#ShowMoreButtonComponent.remove();
-      this.#ShowMoreButtonComponent = null;
-    }
-
-    const mapKeys = Array.from(this.#GeneralFilmCardPresentersMap.keys());
-
-    for (const film of this.#convertedFilms) {
-      if (mapKeys.some( (item) => item === film.id)) {
-        continue;
-      }
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
-      this.#GeneralFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
-      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
-      break;
-    }
-  }
-
   #renderFilmCardsToShowMoreButtonClickHandler = () => {
-    let currentFilmsList;
-    if (this.#FilterMode === filterMode.ALL_MOVIES) {
-      currentFilmsList = this.#films;
-    }
-    if (this.#FilterMode !== filterMode.ALL_MOVIES) {
-      currentFilmsList = this.#convertedFilms;
-    }
-
-    if (currentFilmsList.length - this.#showGeneralFilmsCount <= INITIAL_FILMS_CARD_COUNT) {
+    if (this.#convertedFilms.length - this.#showGeneralFilmsCount <= INITIAL_FILMS_CARD_COUNT) {
       this.#ShowMoreButtonComponent.remove();
       this.#ShowMoreButtonComponent = null;
     }
 
-    for (let index = this.#showGeneralFilmsCount; index < this.#showGeneralFilmsCount + INITIAL_FILMS_CARD_COUNT; index++) {
-      if (currentFilmsList[index] === undefined) {
-        this.#showGeneralFilmsCount += currentFilmsList.length - this.#showGeneralFilmsCount;
-        return;
-      }
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
-      this.#GeneralFilmCardPresentersMap.set(currentFilmsList[index].id, this.#FilmCardPresenter);
-      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(currentFilmsList[index]));
+    const prevShowGeneralFilmsCount = this.#showGeneralFilmsCount;
+    if (this.#showGeneralFilmsCount + INITIAL_FILMS_CARD_COUNT <= this.#convertedFilms.length) {
+      this.#showGeneralFilmsCount += INITIAL_FILMS_CARD_COUNT;
+    } else {
+      this.#showGeneralFilmsCount += this.#convertedFilms.length - this.#showGeneralFilmsCount;
     }
 
-    this.#showGeneralFilmsCount += INITIAL_FILMS_CARD_COUNT;
+    for (let index = prevShowGeneralFilmsCount; index < this.#showGeneralFilmsCount; index++) {
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#GeneralFilmCardPresentersMap.set(this.#convertedFilms[index].id, this.#FilmCardPresenter);
+      renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#convertedFilms[index]));
+    }
   }
 
 

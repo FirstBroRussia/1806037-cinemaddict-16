@@ -1,3 +1,4 @@
+import {sortMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractClass} from '/src/abstract-class/abstract-class.js';
 
@@ -63,7 +64,7 @@ class SortListMarkup extends AbstractClass {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.defaultSortClick(evt);
+    this._callback.defaultSortClick(sortMode.DEFAULT);
   }
 
   #hangDateSortHandler = (evt) => {
@@ -74,7 +75,7 @@ class SortListMarkup extends AbstractClass {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.dateSortClick(evt);
+    this._callback.dateSortClick(sortMode.DATE);
   }
 
   #hangRatingSortHandler = (evt) => {
@@ -85,7 +86,7 @@ class SortListMarkup extends AbstractClass {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.ratingSortClick(evt);
+    this._callback.ratingSortClick(sortMode.RATING);
   }
 
 }

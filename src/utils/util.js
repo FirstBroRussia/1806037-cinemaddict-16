@@ -26,8 +26,6 @@ const sortMode = {
   RATING: 'rating',
 };
 
-const closeButtonAction = 'closeButton';
-
 const dayjs = require('dayjs');
 const dayjsRandom = require('dayjs-random');
 dayjs.extend(dayjsRandom);
@@ -49,4 +47,4 @@ const onEscKeydown = (evt) => {
   }
 };
 
-export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, closeButtonAction};
+export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode};

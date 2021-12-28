@@ -67,14 +67,14 @@ class MainPresenter {
 
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#SortListComponent);
 
-    this.#SortListComponent.setDefaultSortClickHandler('click', this.#defaultSortClickHandler);
-    this.#SortListComponent.setDateSortClickHandler('click', this.#dataSortClickHandler);
-    this.#SortListComponent.setRatingSortClickHandler('click', this.#ratingSortClickHandler);
+    this.#SortListComponent.setDefaultSortClickHandler('click', this.#sortButtonClickHandler);
+    this.#SortListComponent.setDateSortClickHandler('click', this.#sortButtonClickHandler);
+    this.#SortListComponent.setRatingSortClickHandler('click', this.#sortButtonClickHandler);
 
-    this.#AllFilmsFilterComponent.setAllMoviesFilterClickHandler('click', this.#allFilmsFilterClickHandler);
-    this.#WatchlistFilterComponent.setWatchlistFilterClickHandler('click', this.#watchlistFilterClickHandler);
-    this.#HistoryFilmsFilterComponent.setHistoryFilterClickHandler('click', this.#historyFilterClickHandler);
-    this.#FavoriteFilmsFilterComponent.setFavoritesFilterClickHandler('click', this.#favoriteFilterClickHandler);
+    this.#AllFilmsFilterComponent.setAllMoviesFilterClickHandler('click', this.#filterButtonClickHandler);
+    this.#WatchlistFilterComponent.setWatchlistFilterClickHandler('click', this.#filterButtonClickHandler);
+    this.#HistoryFilmsFilterComponent.setHistoryFilterClickHandler('click', this.#filterButtonClickHandler);
+    this.#FavoriteFilmsFilterComponent.setFavoritesFilterClickHandler('click', this.#filterButtonClickHandler);
 
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
@@ -85,7 +85,7 @@ class MainPresenter {
 
   }
 
-  #changeMasterData = (id, changedData, currentAction) => {
+  #changeMasterData = (id, changedData) => {
     for (let index = 0; index < this.#films.length; index++) {
       if (this.#films[index].id === id) {
         this.#films[index] = changedData;
@@ -93,14 +93,14 @@ class MainPresenter {
       }
     }
 
-    this.#updateView(id, currentAction);
+    this.#updateView(id);
   }
 
 
-  #updateView = (id, currentChange) => {
+  #updateView = (id) => {
     this.#navigationMenuUpdateView();
 
-    this.#FilmsListPresenter.init(this.#films, undefined, undefined, id, currentChange);
+    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort, id);
   }
 
   #navigationMenuUpdateView = () => {
@@ -117,47 +117,15 @@ class MainPresenter {
     replaceNodeElementWithoutParent(this.#FavoriteFilmsCountComponent, prevFavoriteFilmsCountComponent);
   }
 
-
-  #allFilmsFilterClickHandler = () => {
-    this.#selectedFilter = filterMode.ALL_MOVIES;
+  #filterButtonClickHandler = (clickButton) => {
+    this.#selectedFilter = clickButton;
     this.#selectedSort = sortMode.DEFAULT;
     this.#SortListComponent.defaultSortButtonClickSimulation();
     this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
-  #watchlistFilterClickHandler = () => {
-    this.#selectedFilter = filterMode.WATCHLIST;
-    this.#selectedSort = sortMode.DEFAULT;
-    this.#SortListComponent.defaultSortButtonClickSimulation();
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
-  }
-
-  #historyFilterClickHandler = () => {
-    this.#selectedFilter = filterMode.HISTORY;
-    this.#selectedSort = sortMode.DEFAULT;
-    this.#SortListComponent.defaultSortButtonClickSimulation();
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
-  }
-
-  #favoriteFilterClickHandler = () => {
-    this.#selectedFilter = filterMode.FAVORITE;
-    this.#selectedSort = sortMode.DEFAULT;
-    this.#SortListComponent.defaultSortButtonClickSimulation();
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
-  }
-
-  #defaultSortClickHandler = () => {
-    this.#selectedSort = sortMode.DEFAULT;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
-  }
-
-  #dataSortClickHandler = () => {
-    this.#selectedSort = sortMode.DATE;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
-  }
-
-  #ratingSortClickHandler = () => {
-    this.#selectedSort = sortMode.RATING;
+  #sortButtonClickHandler = (clickButton) => {
+    this.#selectedSort = clickButton;
     this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
   }
 
