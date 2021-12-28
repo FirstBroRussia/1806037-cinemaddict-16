@@ -9,36 +9,60 @@ const createAllFilmsMarkupTemplate = () => `
 
 const createFilmsListTemplate = () => `
 <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
 
-      <div class="films-list__container">
-
-
-      </div>
      <!-- Кнопка ShowMoreButton -->
     </section>
 `;
 
-const createTopRatedFilmsListTemplate = () => `
+const createGeneralAllFilmsListTagTemplate = () => `
+<h2 class="films-list__title">All movies</h2>
+`;
+
+const createGeneralWatchlistTagTemplate = () => `
+<h2 class="films-list__title">List of movies to watch</h2>
+`;
+
+const createGeneralWatchedListTagTemplate = () => `
+<h2 class="films-list__title">History viewed movies</h2>
+`;
+
+const createGeneralFavoriteListTemplate = () => `
+<h2 class="films-list__title ">Favorite list movies</h2>
+`;
+
+const createGeneralFilmsListContainerTemplate = () => `
+<div class="films-list__container">
+
+
+</div>
+`;
+
+const createMostCommentedTagTemplate = () => `
+<h2 class="films-list__title">Most commented</h2>
+`;
+
+const createTopRatedTagTemplate = () => `
+<h2 class="films-list__title">Top rated</h2>
+`;
+
+const createExtraFilmsListTemplate = () => `
 <section class="films-list films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
 
-      <div class="films-list__container top-rated">
+</section>
+`;
+
+const createTopRatedFilmsListTemplate = () => `
+<div class="films-list__container top-rated">
 
 
-      </div>
-      </section>
+</div>
 `;
 
 const createMostCommentedFilmsListTemplate = () => `
-<section class="films-list films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-
-      <div class="films-list__container most-commented">
+<div class="films-list__container most-commented">
 
 
-      </div>
-    </section>
+</div>
 `;
 
 class MostCommentedFilmsListMarkup extends AbstractClass {
@@ -55,6 +79,78 @@ class TopRatedFilmsListMarkup extends AbstractClass {
     super();
 
     this._template = createTopRatedFilmsListTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class MostCommentedListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createMostCommentedTagTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class TopRatedListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createTopRatedTagTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class ExtraFilmsListMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createExtraFilmsListTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class GeneralFilmsListContainerMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createGeneralFilmsListContainerTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class GeneralFavoriteFilmsListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createGeneralFavoriteListTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class GeneralWatchedFilmsListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createGeneralWatchedListTagTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class GeneralWatchlistFilmsListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createGeneralWatchlistTagTemplate;
+    this._element = createNodeElement(this._template());
+  }
+}
+
+class GeneralAllFilmsListTagMarkup extends AbstractClass {
+  constructor () {
+    super();
+
+    this._template = createGeneralAllFilmsListTagTemplate;
     this._element = createNodeElement(this._template());
   }
 }
@@ -77,4 +173,4 @@ class AllFilmsMarkup extends AbstractClass {
   }
 }
 
-export {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup};
+export {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup};

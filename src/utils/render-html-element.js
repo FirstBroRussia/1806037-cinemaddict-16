@@ -36,4 +36,8 @@ const replaceNodeElementWithoutParent = (newChildElement, oldChildElement) => {
   getNodeElement(oldChildElement).replaceWith(getNodeElement(newChildElement));
 };
 
-export {positionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent};
+const removeNodeElement = (parentNodeElement, childElement) => {
+  getNodeElement(parentNodeElement).removeChild(getNodeElement(childElement));
+};
+
+export {positionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent, removeNodeElement};
