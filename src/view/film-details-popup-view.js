@@ -163,7 +163,6 @@ const createFilmsDetailsCloseButtonMarkup = () => `
 `;
 
 class FilmDetailsNewCommentMarkup extends AbstractView {
-  _data = {};
   #currentCheckedButton = null;
 
   constructor(callback) {
