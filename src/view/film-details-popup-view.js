@@ -165,12 +165,11 @@ const createFilmsDetailsCloseButtonMarkup = () => `
 class FilmDetailsNewCommentMarkup extends AbstractView {
   #currentCheckedButton = null;
 
-  constructor(callback) {
+  constructor() {
     super();
 
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
-    this._callback.submitNewCommentForm = callback;
   }
 
   #smileButtonClickHandler = (evt) => {
