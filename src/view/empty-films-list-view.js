@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const createEmptyAllFilmsListTemplate = () => `
 <h2 class="films-list__title">There are no movies in our database</h2>

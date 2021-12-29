@@ -1,6 +1,6 @@
 import {filterMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const createNavigationMenuTemplate = () => `
 <nav class="main-navigation">

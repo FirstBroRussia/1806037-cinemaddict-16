@@ -1,6 +1,7 @@
 import {controlButtons} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -161,6 +162,44 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
+class FilmDetailsNewCommentMarkup extends AbstractView {
+  _data = {};
+  #currentCheckedButton = null;
+
+  constructor(callback) {
+    super();
+
+    this._template = createFolmDetailsNewCommentMarkup();
+    this._element = createNodeElement(this._template);
+    this._callback.submitNewCommentForm = callback;
+  }
+
+  #smileButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    if (this.#currentCheckedButton !== null) {
+      this.#currentCheckedButton.checked = false;
+    }
+    const inputElement = evt.target.closest('label').control;
+    inputElement.checked = true;
+    this.#currentCheckedButton = inputElement;
+
+    const bigEmojiLabel = this._element.querySelector('.film-details__add-emoji-label');
+    const currentEmojiLabel = evt.target.closest('img');
+
+    const newImgElement = document.createElement('img');
+    newImgElement.setAttribute('src', currentEmojiLabel.getAttribute('src'));
+    newImgElement.classList.add('limitation-border');
+
+    bigEmojiLabel.textContent = '';
+    renderNodeElement(bigEmojiLabel, positionMarkup.BEFORE_END, newImgElement);
+  }
+
+  initSmileButtonsClickHandler = () => {
+    this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
+  }
+
+}
+
 class FilmDetailsPopupMarkup extends AbstractView {
   constructor() {
     super();
@@ -256,15 +295,5 @@ class FilmDetailsCommentMarkup extends AbstractView {
     this._element = createNodeElement(this._template(filmData));
   }
 }
-
-class FilmDetailsNewCommentMarkup extends AbstractView {
-  constructor() {
-    super();
-
-    this._template = createFolmDetailsNewCommentMarkup();
-    this._element = createNodeElement(this._template);
-  }
-}
-
 
 export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };
