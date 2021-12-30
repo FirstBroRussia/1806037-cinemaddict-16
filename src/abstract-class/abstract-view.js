@@ -1,10 +1,10 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
-class AbstractClass {
+class AbstractView {
   _callback = {};
 
   constructor () {
-    if (new.target === AbstractClass) {
+    if (new.target === AbstractView) {
       throw new Error('Нельзя создать экземпляр от данного Абстрактного класса, вы можете только создать потомков от него!');
     }
   }
@@ -51,4 +51,4 @@ class AbstractClass {
   }
 }
 
-export {AbstractClass};
+export {AbstractView};

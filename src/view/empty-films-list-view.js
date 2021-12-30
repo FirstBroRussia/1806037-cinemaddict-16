@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const createEmptyAllFilmsListTemplate = () => `
 <h2 class="films-list__title">There are no movies in our database</h2>
@@ -17,7 +17,7 @@ const createEmptyFavoriteListTemplate = () => `
 <h2 class="films-list__title">There are no favorite movies now</h2>
 `;
 
-class EmptyFavoriteMarkup extends AbstractClass {
+class EmptyFavoriteMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -26,7 +26,7 @@ class EmptyFavoriteMarkup extends AbstractClass {
   }
 }
 
-class EmptyWatchedMarkup extends AbstractClass {
+class EmptyWatchedMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -35,7 +35,7 @@ class EmptyWatchedMarkup extends AbstractClass {
   }
 }
 
-class EmptyWatchlistMarkup extends AbstractClass {
+class EmptyWatchlistMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -44,7 +44,7 @@ class EmptyWatchlistMarkup extends AbstractClass {
   }
 }
 
-class EmptyAllFilmsListMarkup extends AbstractClass {
+class EmptyAllFilmsListMarkup extends AbstractView {
   constructor () {
     super();
 

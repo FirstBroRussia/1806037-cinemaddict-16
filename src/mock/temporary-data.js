@@ -52,13 +52,13 @@ const genre = [
 ];
 
 const duration = [
-  '1h 40m',
-  '1h 16m',
-  '54m',
-  '1h 21m',
-  '1h 55m',
-  '1h 18m',
-  '1h 59m'
+  '60',
+  '77',
+  '213',
+  '123',
+  '47',
+  '80',
+  '90'
 ];
 
 const comments = [
@@ -145,7 +145,6 @@ function getRandomCommentsListForRandomFilm() {
   return Array.from({ length: getRandomNumber(MIN_LENGTH_COMMENTS_LIST, MAX_LENGTH_COMMENTS_LIST) })
     .map(() => comments[getRandomNumber(0, comments.length - 1)]);
 }
-
 
 const createFilmsData = () => Array.from({length: getRandomNumber(MIN_LENGTH_DATA_FILMS, MAX_LENGTH_DATA_FILMS)})
   .map( (item, index) => ({

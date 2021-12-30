@@ -29,6 +29,8 @@ const sortMode = {
 const dayjs = require('dayjs');
 const dayjsRandom = require('dayjs-random');
 dayjs.extend(dayjsRandom);
+const duration = require('dayjs/plugin/duration');
+dayjs.extend(duration);
 
 function getRandomNumber(min, max, fixed) {
   if (fixed) {
