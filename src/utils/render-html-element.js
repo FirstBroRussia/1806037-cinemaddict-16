@@ -1,4 +1,4 @@
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const positionMarkup = {
   BEFORE_BEGIN: 'beforebegin',
@@ -16,7 +16,7 @@ const createNodeElement = (element) => {
   return newElement;
 };
 
-const getNodeElement = (nodeElement) => nodeElement instanceof AbstractClass ? nodeElement.element : nodeElement;
+const getNodeElement = (nodeElement) => nodeElement instanceof AbstractView ? nodeElement.element : nodeElement;
 
 const renderNodeElement = (container, position, element) => {
   switch (position) {

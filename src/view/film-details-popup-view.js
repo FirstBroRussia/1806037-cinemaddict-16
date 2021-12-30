@@ -1,6 +1,7 @@
 import {controlButtons} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -161,7 +162,43 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
-class FilmDetailsPopupMarkup extends AbstractClass {
+class FilmDetailsNewCommentMarkup extends AbstractView {
+  #currentCheckedButton = null;
+
+  constructor() {
+    super();
+
+    this._template = createFolmDetailsNewCommentMarkup();
+    this._element = createNodeElement(this._template);
+  }
+
+  #smileButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    if (this.#currentCheckedButton !== null) {
+      this.#currentCheckedButton.checked = false;
+    }
+    const inputElement = evt.target.closest('label').control;
+    inputElement.checked = true;
+    this.#currentCheckedButton = inputElement;
+
+    const bigEmojiLabel = this._element.querySelector('.film-details__add-emoji-label');
+    const currentEmojiLabel = evt.target.closest('img');
+
+    const newImgElement = document.createElement('img');
+    newImgElement.setAttribute('src', currentEmojiLabel.getAttribute('src'));
+    newImgElement.classList.add('limitation-border');
+
+    bigEmojiLabel.textContent = '';
+    renderNodeElement(bigEmojiLabel, positionMarkup.BEFORE_END, newImgElement);
+  }
+
+  initSmileButtonsClickHandler = () => {
+    this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
+  }
+
+}
+
+class FilmDetailsPopupMarkup extends AbstractView {
   constructor() {
     super();
 
@@ -171,7 +208,7 @@ class FilmDetailsPopupMarkup extends AbstractClass {
 }
 
 
-class FilmDetailsCloseButtonMarkup extends AbstractClass {
+class FilmDetailsCloseButtonMarkup extends AbstractView {
   constructor() {
     super();
 
@@ -181,7 +218,7 @@ class FilmDetailsCloseButtonMarkup extends AbstractClass {
 }
 
 
-class FilmDetailInfoMarkup extends AbstractClass {
+class FilmDetailInfoMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -190,7 +227,7 @@ class FilmDetailInfoMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsCardFilterButtons extends AbstractClass {
+class FilmDetailsCardFilterButtons extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -239,7 +276,7 @@ class FilmDetailsCardFilterButtons extends AbstractClass {
 }
 
 
-class FilmDetailsCommentsCountMarkup extends AbstractClass {
+class FilmDetailsCommentsCountMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -248,7 +285,7 @@ class FilmDetailsCommentsCountMarkup extends AbstractClass {
   }
 }
 
-class FilmDetailsCommentMarkup extends AbstractClass {
+class FilmDetailsCommentMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -256,15 +293,5 @@ class FilmDetailsCommentMarkup extends AbstractClass {
     this._element = createNodeElement(this._template(filmData));
   }
 }
-
-class FilmDetailsNewCommentMarkup extends AbstractClass {
-  constructor() {
-    super();
-
-    this._template = createFolmDetailsNewCommentMarkup();
-    this._element = createNodeElement(this._template);
-  }
-}
-
 
 export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };

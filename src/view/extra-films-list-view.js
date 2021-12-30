@@ -1,6 +1,6 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {getConvertedString} from '../utils/util.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
@@ -26,7 +26,7 @@ const createExtraFilmCardTemplate = (film) => `
   </article>
 `;
 
-class ExtraFilmCardMarkup extends AbstractClass {
+class ExtraFilmCardMarkup extends AbstractView {
   constructor (filmData) {
     super();
 

@@ -1113,3 +1113,8 @@ button {
 .hidden {
   display: none;
 }
+
+.limitation-border {
+  max-height:90%;
+  max-width:90%;
+}

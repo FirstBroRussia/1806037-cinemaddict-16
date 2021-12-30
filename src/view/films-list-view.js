@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractClass} from '/src/abstract-class/abstract-class.js';
+import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
 const createAllFilmsMarkupTemplate = () => `
 <section class="films">
@@ -65,7 +65,7 @@ const createMostCommentedFilmsListTemplate = () => `
 </div>
 `;
 
-class MostCommentedFilmsListMarkup extends AbstractClass {
+class MostCommentedFilmsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -74,7 +74,7 @@ class MostCommentedFilmsListMarkup extends AbstractClass {
   }
 }
 
-class TopRatedFilmsListMarkup extends AbstractClass {
+class TopRatedFilmsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -83,7 +83,7 @@ class TopRatedFilmsListMarkup extends AbstractClass {
   }
 }
 
-class MostCommentedListTagMarkup extends AbstractClass {
+class MostCommentedListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -92,7 +92,7 @@ class MostCommentedListTagMarkup extends AbstractClass {
   }
 }
 
-class TopRatedListTagMarkup extends AbstractClass {
+class TopRatedListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -101,7 +101,7 @@ class TopRatedListTagMarkup extends AbstractClass {
   }
 }
 
-class ExtraFilmsListMarkup extends AbstractClass {
+class ExtraFilmsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -110,7 +110,7 @@ class ExtraFilmsListMarkup extends AbstractClass {
   }
 }
 
-class GeneralFilmsListContainerMarkup extends AbstractClass {
+class GeneralFilmsListContainerMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -119,7 +119,7 @@ class GeneralFilmsListContainerMarkup extends AbstractClass {
   }
 }
 
-class GeneralFavoriteFilmsListTagMarkup extends AbstractClass {
+class GeneralFavoriteFilmsListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -128,7 +128,7 @@ class GeneralFavoriteFilmsListTagMarkup extends AbstractClass {
   }
 }
 
-class GeneralWatchedFilmsListTagMarkup extends AbstractClass {
+class GeneralWatchedFilmsListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -137,7 +137,7 @@ class GeneralWatchedFilmsListTagMarkup extends AbstractClass {
   }
 }
 
-class GeneralWatchlistFilmsListTagMarkup extends AbstractClass {
+class GeneralWatchlistFilmsListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -146,7 +146,7 @@ class GeneralWatchlistFilmsListTagMarkup extends AbstractClass {
   }
 }
 
-class GeneralAllFilmsListTagMarkup extends AbstractClass {
+class GeneralAllFilmsListTagMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -155,7 +155,7 @@ class GeneralAllFilmsListTagMarkup extends AbstractClass {
   }
 }
 
-class FilmsListMarkup extends AbstractClass {
+class FilmsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -164,7 +164,7 @@ class FilmsListMarkup extends AbstractClass {
   }
 }
 
-class AllFilmsMarkup extends AbstractClass {
+class AllFilmsMarkup extends AbstractView {
   constructor () {
     super();
 
