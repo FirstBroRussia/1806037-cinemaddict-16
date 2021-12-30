@@ -49,4 +49,22 @@ const onEscKeydown = (evt) => {
   }
 };
 
-export {getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode};
+const getDurationFormatTime = (value) => {
+  const HOUR_IN_MINUTES = 60;
+  const time = Number(value);
+
+  if (time < HOUR_IN_MINUTES) {
+    return dayjs.duration(time, 'minutes').format('mm[m]');
+  }
+  if ((time % HOUR_IN_MINUTES) === 0) {
+    return dayjs.duration(time, 'minutes').format('H[h]');
+  }
+  return dayjs.duration(time, 'minutes').format('H[h] mm[m]');
+};
+
+const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY');
+
+const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
+
+
+export {getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode};
