@@ -1,8 +1,9 @@
 import {he, dayjs, controlButtons} from '/src/utils/util.js';
-import {twoKeysPressFunction, removeEnterOrControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
+import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
+import {setNewCommentElementValid} from '/src/helpers/new-comment-submit-validation.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -164,8 +165,10 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
   #data = {};
   #commentsCount = null;
   #newComment = {};
+
   #currentCheckedButton = null;
-  #currentTextCommentFieldValue = null;
+  #newCommentTextInputElement = null;
+  #bigEmojiElement = null;
 
   constructor(data, callback) {
     super();
@@ -175,6 +178,8 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     this._callback.changeData = callback;
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
+    this.#bigEmojiElement = this._element.querySelector('.film-details__add-emoji-label');
+    this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
   }
 
   #smileButtonClickHandler = (evt) => {
@@ -189,38 +194,45 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     inputElement.checked = true;
     this.#currentCheckedButton = inputElement;
 
-    const bigEmojiLabel = this._element.querySelector('.film-details__add-emoji-label');
     const currentEmojiLabel = evt.target.closest('img');
 
     const newImgElement = document.createElement('img');
     newImgElement.setAttribute('src', currentEmojiLabel.getAttribute('src'));
     newImgElement.classList.add('limitation-border');
 
-    bigEmojiLabel.textContent = '';
-    renderNodeElement(bigEmojiLabel, positionMarkup.BEFORE_END, newImgElement);
+    this.#bigEmojiElement.textContent = '';
+    renderNodeElement(this.#bigEmojiElement, positionMarkup.BEFORE_END, newImgElement);
   }
 
-  #newCommentTextFieldFocusOutHandler = (evt) => {
+  #newCommentTextInputHandler = (evt) => {
     evt.preventDefault();
-    this.#currentTextCommentFieldValue = this._element.querySelector('.film-details__comment-input').value;
+    this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
+  }
+
+  #validationCheck = (newCommentInputElement, currentCheckedEmotionButton) => {
+    setNewCommentElementValid(newCommentInputElement, currentCheckedEmotionButton);
+    if (!newCommentInputElement.validity.valid) {
+      return false;
+    }
+    return true;
   }
 
   #submitNewComment = () => {
-    if (this.#currentCheckedButton === null || this.#currentTextCommentFieldValue === null || this.#currentTextCommentFieldValue.length === 0) {
+    if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
       return;
     }
     const id = Number(this.#commentsCount + 1);
     const emotion = this.#currentCheckedButton.value;
-    const comment = this.#currentTextCommentFieldValue;
+    const comment = this.#newCommentTextInputElement.value;
     this.#newComment = {...this.#newComment, id: id, author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
     const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
-    removeEnterOrControlKeyUpDownHandlers();
+    removeEnterAndControlKeyUpDownHandlers();
     this._callback.changeData(changedData);
   }
 
   addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
-    this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextFieldFocusOutHandler);
+    this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextInputHandler);
     twoKeysPressFunction(this.#submitNewComment);
   }
 

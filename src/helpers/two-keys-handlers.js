@@ -54,7 +54,7 @@ const addEnterOrControlKeyUpDownHandlers = () => {
   document.addEventListener('keydown', checkPressingOfTwoKeysHandler);
 };
 
-const removeEnterOrControlKeyUpDownHandlers = () => {
+const removeEnterAndControlKeyUpDownHandlers = () => {
   document.removeEventListener('keydown', enterKeyDownTrueHandler);
   document.removeEventListener('keydown', controlKeyDownTrueHandler);
   document.removeEventListener('keyup', enterKeyDownFalseHandler);
@@ -68,4 +68,4 @@ const twoKeysPressFunction = (callback) => {
   addEnterOrControlKeyUpDownHandlers();
 };
 
-export {addEnterOrControlKeyUpDownHandlers, removeEnterOrControlKeyUpDownHandlers, twoKeysPressFunction};
+export {addEnterOrControlKeyUpDownHandlers, removeEnterAndControlKeyUpDownHandlers, twoKeysPressFunction};

@@ -1,5 +1,5 @@
 import {footerBodyElement, onEscKeydown} from '/src/utils/util.js';
-import {removeEnterOrControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
+import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
@@ -133,7 +133,7 @@ class FilmDetailsPopupPresenter {
     this._callbacks.changeMasterData(this.#id, this.#film);
     this.#FilmDetailsPopupComponent.remove();
     document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-    removeEnterOrControlKeyUpDownHandlers();
+    removeEnterAndControlKeyUpDownHandlers();
     this._callbacks.popupElement(methodsForPopup.DELETE);
   };
 
