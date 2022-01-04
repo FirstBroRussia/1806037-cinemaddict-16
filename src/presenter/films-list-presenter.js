@@ -14,7 +14,7 @@ const NO_FILMS_VALUE = 0;
 class FilmsListPresenter {
   #films = null;
 
-  #currentOpenPopupElement = null;
+  // #currentOpenPopupElement = null;
 
   #FilterMode = null;
   #SortMode = null;
@@ -45,8 +45,9 @@ class FilmsListPresenter {
   #MostCommentedFilmsListContainerComponent = null;
 
 
-  constructor (changeMasterData) {
+  constructor (changeMasterData, popupElement) {
     this._callbacks.changeMasterData = changeMasterData;
+    this._callbacks.popupElement = popupElement;
 
     this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   }
@@ -141,7 +142,7 @@ class FilmsListPresenter {
     }
 
     for (let index = 0; index < this.#showGeneralFilmsCount; index++) {
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#GeneralFilmCardPresentersMap.set(films[index].id, this.#FilmCardPresenter);
       renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(films[index]));
     }
@@ -153,14 +154,14 @@ class FilmsListPresenter {
 
     const topRatedSortFilms = films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2);
     topRatedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#TopRatedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
       renderNodeElement(this.#TopRatedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
 
     const mostCommentedSortFilms = films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2);
     mostCommentedSortFilms.forEach( (film) => {
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#MostCommentedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
       renderNodeElement(this.#MostCommentedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
@@ -180,7 +181,7 @@ class FilmsListPresenter {
     }
 
     for (let index = prevShowGeneralFilmsCount; index < this.#showGeneralFilmsCount; index++) {
-      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this.#getCurrentOpenPopupElement);
+      this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#GeneralFilmCardPresentersMap.set(this.#films[index].id, this.#FilmCardPresenter);
       renderNodeElement(this.#GeneralFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(this.#films[index]));
     }
@@ -203,14 +204,6 @@ class FilmsListPresenter {
       case 'history' : return new EmptyWatchedMarkup();
       case 'favorite' : return new EmptyFavoriteMarkup();
     }
-  }
-
-  #getCurrentOpenPopupElement = (value) => {
-    if (value !== undefined) {
-      this.#currentOpenPopupElement = value;
-      return;
-    }
-    return this.#currentOpenPopupElement;
   }
 
 }

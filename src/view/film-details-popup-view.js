@@ -1,4 +1,5 @@
-import {controlButtons} from '/src/utils/util.js';
+import {he, dayjs, controlButtons} from '/src/utils/util.js';
+import {twoKeysPressFunction, removeEnterOrControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
@@ -99,30 +100,27 @@ const filmDetailsCommentsCount = (filmData) => `
 <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmData.comments.length}</span></h3>
 `;
 
-const createFilmDetailsCommentsMarkup = (film) => {
-  let htmlTextMarkup = '';
-  film.comments.forEach((item) => {
-    htmlTextMarkup += `<li class="film-details__comment">
+const createFilmDetailsCommentsMarkup = () => `
+  <ul class="film-details__comments-list">
+
+  </ul>
+`;
+
+const createFilmDetailsCommentFromDataMarkup = (item) => `
+<li id="${item.id}"class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
     </span>
     <div>
-      <p class="film-details__comment-text">${item}</p>
+      <p class="film-details__comment-text">${he.encode(item.comment)}</p>
       <p class="film-details__comment-info">
-        <span class="film-details__comment-author">Tim Macoveev</span>
-        <span class="film-details__comment-day">2019/12/31 23:59</span>
+        <span class="film-details__comment-author">${item.author}</span>
+        <span class="film-details__comment-day">${item.date}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
-   </li>\n`;
-  });
-
-  return `
-  <ul class="film-details__comments-list">
-    ${htmlTextMarkup}
-  </ul>
-  `;
-};
+   </li>\n
+`;
 
 const createFolmDetailsNewCommentMarkup = () => `
 <div class="film-details__new-comment">
@@ -163,17 +161,27 @@ const createFilmsDetailsCloseButtonMarkup = () => `
 `;
 
 class FilmDetailsNewCommentMarkup extends AbstractView {
+  #data = {};
+  #commentsCount = null;
+  #newComment = {};
   #currentCheckedButton = null;
+  #currentTextCommentFieldValue = null;
 
-  constructor() {
+  constructor(data, callback) {
     super();
 
+    this.#data = {...data};
+    this.#commentsCount = this.#data.comments.length;
+    this._callback.changeData = callback;
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
   }
 
   #smileButtonClickHandler = (evt) => {
     evt.preventDefault();
+    if (!evt.target.closest('label')) {
+      return;
+    }
     if (this.#currentCheckedButton !== null) {
       this.#currentCheckedButton.checked = false;
     }
@@ -192,8 +200,28 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     renderNodeElement(bigEmojiLabel, positionMarkup.BEFORE_END, newImgElement);
   }
 
-  initSmileButtonsClickHandler = () => {
+  #newCommentTextFieldFocusOutHandler = (evt) => {
+    evt.preventDefault();
+    this.#currentTextCommentFieldValue = this._element.querySelector('.film-details__comment-input').value;
+  }
+
+  #submitNewComment = () => {
+    if (this.#currentCheckedButton === null || this.#currentTextCommentFieldValue === null || this.#currentTextCommentFieldValue.length === 0) {
+      return;
+    }
+    const id = Number(this.#commentsCount + 1);
+    const emotion = this.#currentCheckedButton.value;
+    const comment = this.#currentTextCommentFieldValue;
+    this.#newComment = {...this.#newComment, id: id, author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
+    const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
+    removeEnterOrControlKeyUpDownHandlers();
+    this._callback.changeData(changedData);
+  }
+
+  addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
+    this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextFieldFocusOutHandler);
+    twoKeysPressFunction(this.#submitNewComment);
   }
 
 }
@@ -207,7 +235,6 @@ class FilmDetailsPopupMarkup extends AbstractView {
   }
 }
 
-
 class FilmDetailsCloseButtonMarkup extends AbstractView {
   constructor() {
     super();
@@ -216,7 +243,6 @@ class FilmDetailsCloseButtonMarkup extends AbstractView {
     this._element = createNodeElement(this._template);
   }
 }
-
 
 class FilmDetailInfoMarkup extends AbstractView {
   constructor(filmData) {
@@ -275,7 +301,6 @@ class FilmDetailsCardFilterButtons extends AbstractView {
   };
 }
 
-
 class FilmDetailsCommentsCountMarkup extends AbstractView {
   constructor(filmData) {
     super();
@@ -286,12 +311,33 @@ class FilmDetailsCommentsCountMarkup extends AbstractView {
 }
 
 class FilmDetailsCommentMarkup extends AbstractView {
-  constructor(filmData) {
+  constructor() {
     super();
 
     this._template = createFilmDetailsCommentsMarkup;
-    this._element = createNodeElement(this._template(filmData));
+    this._element = createNodeElement(this._template());
   }
 }
 
-export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };
+class FilmDetailsCommentFromDataMarkup extends AbstractView {
+  #id = null;
+  constructor(commentData, callback) {
+    super();
+
+    this.#id = commentData.id;
+    this._callback.changeData = callback;
+    this._template = createFilmDetailsCommentFromDataMarkup;
+    this._element = createNodeElement(this._template(commentData));
+  }
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.changeData(this.#id);
+  };
+
+  addHandlers() {
+    this._element.querySelector('.film-details__comment-delete').addEventListener('click', this.#deleteButtonClickHandler);
+  }
+}
+
+export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };

@@ -1,4 +1,13 @@
 /* eslint-disable no-undef */
+const he = require('he');
+
+const dayjs = require('dayjs');
+const dayjsRandom = require('dayjs-random');
+dayjs.extend(dayjsRandom);
+const duration = require('dayjs/plugin/duration');
+dayjs.extend(duration);
+
+
 const INITIAL_FILMS_CARD_COUNT = 5;
 
 const bodyElement = document.querySelector('body');
@@ -26,11 +35,11 @@ const sortMode = {
   RATING: 'rating',
 };
 
-const dayjs = require('dayjs');
-const dayjsRandom = require('dayjs-random');
-dayjs.extend(dayjsRandom);
-const duration = require('dayjs/plugin/duration');
-dayjs.extend(duration);
+const methodsForPopup = {
+  CREATE: 'create',
+  DELETE: 'delete',
+  EDIT: 'edit',
+};
 
 function getRandomNumber(min, max, fixed) {
   if (fixed) {
@@ -66,5 +75,4 @@ const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY')
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-
-export {getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode};
+export {he, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup};
