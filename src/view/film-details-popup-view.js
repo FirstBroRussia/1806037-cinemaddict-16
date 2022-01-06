@@ -180,6 +180,8 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     this._element = createNodeElement(this._template);
     this.#bigEmojiElement = this._element.querySelector('.film-details__add-emoji-label');
     this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
+
+    this.addHandlers();
   }
 
   #smileButtonClickHandler = (evt) => {
@@ -340,6 +342,8 @@ class FilmDetailsCommentFromDataMarkup extends AbstractView {
     this._callback.changeData = callback;
     this._template = createFilmDetailsCommentFromDataMarkup;
     this._element = createNodeElement(this._template(commentData));
+
+    this.addDeleteCommentButtonClickHandler();
   }
 
   #deleteButtonClickHandler = (evt) => {
@@ -347,7 +351,7 @@ class FilmDetailsCommentFromDataMarkup extends AbstractView {
     this._callback.changeData(this.#id);
   };
 
-  addHandlers() {
+  addDeleteCommentButtonClickHandler() {
     this._element.querySelector('.film-details__comment-delete').addEventListener('click', this.#deleteButtonClickHandler);
   }
 }

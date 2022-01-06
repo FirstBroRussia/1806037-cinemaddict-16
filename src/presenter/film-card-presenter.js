@@ -64,12 +64,7 @@ class FilmCardPresenter {
 
 
   #openPopupClickHandler = () => {
-    let popupElement = this._callbacks.popupElement();
-    if (popupElement !== null) {
-      popupElement.closeFilmDetailsPopup();
-    }
-    popupElement = this._callbacks.popupElement(methodsForPopup.CREATE, this.#id, this._callbacks.changeMasterData, this._callbacks.popupElement);
-    popupElement.render(this.#film);
+    this._callbacks.popupElement(methodsForPopup.CREATE, this.#film, this.#id, this._callbacks.changeMasterData, this._callbacks.popupElement);
   }
 
 

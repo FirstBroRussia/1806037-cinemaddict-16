@@ -50,7 +50,6 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
     this.#film.comments.forEach( (item) => {
       this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
-      this.#FilmDetailsCommentFromDataComponent.addHandlers();
       renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
     });
 
@@ -65,7 +64,6 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsNewCommentComponent.addHandlers();
 
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
@@ -113,7 +111,6 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
     this.#film.comments.forEach( (item) => {
       this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
-      this.#FilmDetailsCommentFromDataComponent.addHandlers();
       renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
     });
     this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#film, this.#changeData);
@@ -121,7 +118,6 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsNewCommentComponent.addHandlers();
 
     replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
     replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);

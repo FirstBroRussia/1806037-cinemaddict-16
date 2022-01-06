@@ -1,4 +1,4 @@
-import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode} from '/src/utils/util.js';
+import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode, methodsForPopup} from '/src/utils/util.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
 import {FilmsCountMarkup} from '/src/view/films-count-view.js';
@@ -109,14 +109,12 @@ class MainPresenter {
       this.#primaryInit();
       return;
     }
-    if (this.#films !== null) {
-      if (films !== undefined) {
-        this.#films = films.slice();
-      } else {
-        this.#films = await this.#MainModel.getData();
-      }
-      this.#updateView(id);
+    if (films !== undefined) {
+      this.#films = films.slice();
+    } else {
+      this.#films = await this.#MainModel.getData();
     }
+    this.#updateView(id);
   }
 
   redrawView = (films, id) => {
@@ -212,27 +210,21 @@ class MainPresenter {
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
-  #methodsSwitch = (value, ...cb) => {
-    switch (value) {
-      case 'create' : {
-        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
-        return this.#FilmDetailsPopupPresenter;
-      }
-      case 'delete' : {
-        this.#FilmDetailsPopupPresenter = null;
-      }
-    }
-  }
 
-  #popupPresenter = (methods, id, ...cb) => {
-    if (methods !== undefined) {
-      if (id !== undefined) {
-        this.#IdFilmCardPopupElement = Number(id);
+  #popupPresenter = (method, film, id, ...cb) => {
+    if (method === methodsForPopup.CREATE) {
+      this.#IdFilmCardPopupElement = Number(id);
+      if (this.#FilmDetailsPopupPresenter !== null) {
+        this.#FilmDetailsPopupPresenter.closeFilmDetailsPopup();
+        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
+        this.#FilmDetailsPopupPresenter.render(film);
+        return;
       }
-      const popupPresenter = this.#methodsSwitch(methods, ...cb);
-      return popupPresenter;
+      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
+      this.#FilmDetailsPopupPresenter.render(film);
+    } else if (method === methodsForPopup.DELETE) {
+      this.#FilmDetailsPopupPresenter = null;
     }
-    return this.#FilmDetailsPopupPresenter;
   }
 
 }
