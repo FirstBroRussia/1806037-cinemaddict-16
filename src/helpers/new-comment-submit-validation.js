@@ -12,6 +12,7 @@ const setNewCommentElementValid = (inputElement, currentCheckedEmotionButton) =>
     return;
   }
   inputElement.setCustomValidity('');
+  //inputElement.reportValidity();
 };
 
 

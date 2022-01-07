@@ -1113,3 +1113,7 @@ button {
 .no-scroll {
   overflow-y: hidden;
 }
+
+.stats__button--active {
+  color: #ffe800;
+}

@@ -41,7 +41,7 @@ const pathForPicture = [
   'the-man-with-the-golden-arm.jpg'
 ];
 
-const genre = [
+const genres = [
   'Melodrama',
   'Cartoon',
   'Comedy',
@@ -153,7 +153,7 @@ const getRandomActorsList = () => Array.from({length: getRandomNumber(MIN_LENGTH
   .join(', ');
 
 const getRandomGenresList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_GENRES, MAX_LENGTH_STRING_GENRES)})
-  .map( () => genre[getRandomNumber(0, genre.length - 1)])
+  .map( () => genres[getRandomNumber(0, genres.length - 1)])
   .join(', ');
 
 
@@ -190,8 +190,9 @@ const createFilmsData = () => Array.from({length: getRandomNumber(MIN_LENGTH_DAT
     isWatchlist: Boolean(getRandomNumber(0,1)),
     isWatched: Boolean(getRandomNumber(0,1)),
     isFavorite: Boolean(getRandomNumber(0,1)),
+    watchingDate: dayjs.between('2021', '2022').format('DD MMMM YYYY'),
   }));
 
 const filmsData = createFilmsData();
 
-export {filmsData};
+export {filmsData, genres};
