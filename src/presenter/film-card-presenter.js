@@ -1,7 +1,7 @@
 import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
-import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
+import {methodsForPopup} from '../utils/util';
 
 
 class FilmCardPresenter {
@@ -13,11 +13,10 @@ class FilmCardPresenter {
   #FilmCardInfoComponent = null;
   #FilmCardControlButtonsComponent = null;
 
-  #FilmDetailsPopupPresenter = null;
 
-  constructor (changeMasterData, getOpenPopupElement) {
+  constructor (changeMasterData, popupElement) {
     this._callbacks.changeMasterData = changeMasterData;
-    this._callbacks.getOpenPopupElement = getOpenPopupElement;
+    this._callbacks.popupElement = popupElement;
   }
 
   render (film) {
@@ -65,13 +64,7 @@ class FilmCardPresenter {
 
 
   #openPopupClickHandler = () => {
-    if (this._callbacks.getOpenPopupElement() !== null) {
-      this._callbacks.getOpenPopupElement().closeFilmDetailsPopup();
-      this._callbacks.getOpenPopupElement(null);
-    }
-    this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this._callbacks.changeMasterData, this.#clearPopupPresenter, this._callbacks.getOpenPopupElement);
-    this.#FilmDetailsPopupPresenter.render(this.#film);
-    this._callbacks.getOpenPopupElement(this.#FilmDetailsPopupPresenter);
+    this._callbacks.popupElement(methodsForPopup.CREATE, this.#film, this.#id, this._callbacks.changeMasterData, this._callbacks.popupElement);
   }
 
 
@@ -92,14 +85,6 @@ class FilmCardPresenter {
     renderNodeElement(this.#FilmCardComponent, positionMarkup.BEFORE_END, this.#FilmCardControlButtonsComponent);
 
     replaceNodeElementWithoutParent(this.#FilmCardComponent, prevFilmCardComponent);
-
-    if (this.#FilmDetailsPopupPresenter !== null) {
-      this.#FilmDetailsPopupPresenter.render(this.#film);
-    }
-  }
-
-  #clearPopupPresenter = () => {
-    this.#FilmDetailsPopupPresenter = null;
   }
 
   destroy () {

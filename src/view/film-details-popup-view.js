@@ -1,7 +1,9 @@
-import {controlButtons} from '/src/utils/util.js';
+import {he, dayjs, controlButtons} from '/src/utils/util.js';
+import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
+import {setNewCommentElementValid} from '/src/helpers/new-comment-submit-validation.js';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -99,30 +101,27 @@ const filmDetailsCommentsCount = (filmData) => `
 <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmData.comments.length}</span></h3>
 `;
 
-const createFilmDetailsCommentsMarkup = (film) => {
-  let htmlTextMarkup = '';
-  film.comments.forEach((item) => {
-    htmlTextMarkup += `<li class="film-details__comment">
+const createFilmDetailsCommentsMarkup = () => `
+  <ul class="film-details__comments-list">
+
+  </ul>
+`;
+
+const createFilmDetailsCommentFromDataMarkup = (item) => `
+<li id="${item.id}"class="film-details__comment">
     <span class="film-details__comment-emoji">
-      <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji-smile">
+      <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
     </span>
     <div>
-      <p class="film-details__comment-text">${item}</p>
+      <p class="film-details__comment-text">${he.encode(item.comment)}</p>
       <p class="film-details__comment-info">
-        <span class="film-details__comment-author">Tim Macoveev</span>
-        <span class="film-details__comment-day">2019/12/31 23:59</span>
+        <span class="film-details__comment-author">${item.author}</span>
+        <span class="film-details__comment-day">${item.date}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
-   </li>\n`;
-  });
-
-  return `
-  <ul class="film-details__comments-list">
-    ${htmlTextMarkup}
-  </ul>
-  `;
-};
+   </li>\n
+`;
 
 const createFolmDetailsNewCommentMarkup = () => `
 <div class="film-details__new-comment">
@@ -163,17 +162,33 @@ const createFilmsDetailsCloseButtonMarkup = () => `
 `;
 
 class FilmDetailsNewCommentMarkup extends AbstractView {
-  #currentCheckedButton = null;
+  #data = {};
+  #commentsCount = null;
+  #newComment = {};
 
-  constructor() {
+  #currentCheckedButton = null;
+  #newCommentTextInputElement = null;
+  #bigEmojiElement = null;
+
+  constructor(data, callback) {
     super();
 
+    this.#data = {...data};
+    this.#commentsCount = this.#data.comments.length;
+    this._callback.changeData = callback;
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
+    this.#bigEmojiElement = this._element.querySelector('.film-details__add-emoji-label');
+    this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
+
+    this.addHandlers();
   }
 
   #smileButtonClickHandler = (evt) => {
     evt.preventDefault();
+    if (!evt.target.closest('label')) {
+      return;
+    }
     if (this.#currentCheckedButton !== null) {
       this.#currentCheckedButton.checked = false;
     }
@@ -181,19 +196,46 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     inputElement.checked = true;
     this.#currentCheckedButton = inputElement;
 
-    const bigEmojiLabel = this._element.querySelector('.film-details__add-emoji-label');
     const currentEmojiLabel = evt.target.closest('img');
 
     const newImgElement = document.createElement('img');
     newImgElement.setAttribute('src', currentEmojiLabel.getAttribute('src'));
     newImgElement.classList.add('limitation-border');
 
-    bigEmojiLabel.textContent = '';
-    renderNodeElement(bigEmojiLabel, positionMarkup.BEFORE_END, newImgElement);
+    this.#bigEmojiElement.textContent = '';
+    renderNodeElement(this.#bigEmojiElement, positionMarkup.BEFORE_END, newImgElement);
   }
 
-  initSmileButtonsClickHandler = () => {
+  #newCommentTextInputHandler = (evt) => {
+    evt.preventDefault();
+    this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
+  }
+
+  #validationCheck = (newCommentInputElement, currentCheckedEmotionButton) => {
+    setNewCommentElementValid(newCommentInputElement, currentCheckedEmotionButton);
+    if (!newCommentInputElement.validity.valid) {
+      return false;
+    }
+    return true;
+  }
+
+  #submitNewComment = () => {
+    if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
+      return;
+    }
+    const id = Number(this.#commentsCount + 1);
+    const emotion = this.#currentCheckedButton.value;
+    const comment = this.#newCommentTextInputElement.value;
+    this.#newComment = {...this.#newComment, id: id, author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
+    const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
+    removeEnterAndControlKeyUpDownHandlers();
+    this._callback.changeData(changedData);
+  }
+
+  addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
+    this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextInputHandler);
+    twoKeysPressFunction(this.#submitNewComment);
   }
 
 }
@@ -207,7 +249,6 @@ class FilmDetailsPopupMarkup extends AbstractView {
   }
 }
 
-
 class FilmDetailsCloseButtonMarkup extends AbstractView {
   constructor() {
     super();
@@ -216,7 +257,6 @@ class FilmDetailsCloseButtonMarkup extends AbstractView {
     this._element = createNodeElement(this._template);
   }
 }
-
 
 class FilmDetailInfoMarkup extends AbstractView {
   constructor(filmData) {
@@ -275,7 +315,6 @@ class FilmDetailsCardFilterButtons extends AbstractView {
   };
 }
 
-
 class FilmDetailsCommentsCountMarkup extends AbstractView {
   constructor(filmData) {
     super();
@@ -286,12 +325,35 @@ class FilmDetailsCommentsCountMarkup extends AbstractView {
 }
 
 class FilmDetailsCommentMarkup extends AbstractView {
-  constructor(filmData) {
+  constructor() {
     super();
 
     this._template = createFilmDetailsCommentsMarkup;
-    this._element = createNodeElement(this._template(filmData));
+    this._element = createNodeElement(this._template());
   }
 }
 
-export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };
+class FilmDetailsCommentFromDataMarkup extends AbstractView {
+  #id = null;
+  constructor(commentData, callback) {
+    super();
+
+    this.#id = commentData.id;
+    this._callback.changeData = callback;
+    this._template = createFilmDetailsCommentFromDataMarkup;
+    this._element = createNodeElement(this._template(commentData));
+
+    this.addDeleteCommentButtonClickHandler();
+  }
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.changeData(this.#id);
+  };
+
+  addDeleteCommentButtonClickHandler() {
+    this._element.querySelector('.film-details__comment-delete').addEventListener('click', this.#deleteButtonClickHandler);
+  }
+}
+
+export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };

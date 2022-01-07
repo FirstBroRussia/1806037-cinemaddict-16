@@ -1,11 +1,13 @@
-import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode} from '/src/utils/util.js';
+import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode, methodsForPopup} from '/src/utils/util.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
 import {FilmsCountMarkup} from '/src/view/films-count-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 import {NavigationMenuMarkup, FilterWrapMarkup, AllFilmsFilterMarkup, WatchlistFilmsFilterMarkup, HistoryFilterMarkup, FavoriteFilmsFilterMarkup, StatsMarkup, WatchlistFilmsCountMarkup, WatchedFilmsCountMarkup, FavoriteFilmsCountMarkup} from '/src/view/navigation-menu-view.js';
+import {MainModel} from '/src/model/main-model.js';
 
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
+import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
 
 const NO_FILMS_VALUE = 0;
 
@@ -16,7 +18,10 @@ class MainPresenter {
   #selectedFilter = null;
   #selectedSort = null;
 
+  #MainModel = null;
   #FilmsListPresenter = null;
+  #FilmDetailsPopupPresenter = null;
+  #IdFilmCardPopupElement = null;
 
   #ProfileUserComponent = null;
 
@@ -35,26 +40,35 @@ class MainPresenter {
 
   #FilmsCountComponent = null;
 
+  constructor () {
+    this.#MainModel = new MainModel();
+    this.#MainModel.odserverAdd(this.redrawView);
 
-  constructor (films) {
-    this.#films = films.slice();
+    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter);
 
+  }
+
+  #primaryInit = () => {
     this.#ProfileUserComponent = new ProfileUserMarkup();
+
     this.#NavigationMenuComponent = new NavigationMenuMarkup();
     this.#FilterWrapComponent = new FilterWrapMarkup();
     this.#AllFilmsFilterComponent = new AllFilmsFilterMarkup();
+
     this.#WatchlistFilterComponent = new WatchlistFilmsFilterMarkup();
     this.#WatchlistFilmsCountComponent = new WatchlistFilmsCountMarkup(this.#films);
+
     this.#HistoryFilmsFilterComponent = new HistoryFilterMarkup();
     this.#HistoryFilmsCountComponent = new WatchedFilmsCountMarkup(this.#films);
+
     this.#FavoriteFilmsFilterComponent = new FavoriteFilmsFilterMarkup();
     this.#FavoriteFilmsCountComponent = new FavoriteFilmsCountMarkup(this.#films);
-    this.#StatsComponent = new StatsMarkup();
-    this.#SortListComponent = new SortListMarkup();
-    this.#FilmsCountComponent = new FilmsCountMarkup(this.#films.length);
-  }
 
-  init () {
+    this.#StatsComponent = new StatsMarkup();
+
+    this.#SortListComponent = new SortListMarkup();
+
+    this.#FilmsCountComponent = new FilmsCountMarkup(this.#films.length);
     renderNodeElement(headerBodyElement, positionMarkup.BEFORE_END, this.#ProfileUserComponent);
 
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#NavigationMenuComponent);
@@ -81,12 +95,38 @@ class MainPresenter {
 
     renderNodeElement(footerStatisticBodyElement, positionMarkup.BEFORE_END, this.#FilmsCountComponent);
 
-    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData);
     this.#selectedFilter = filterMode.ALL_MOVIES;
     this.#selectedSort = sortMode.DEFAULT;
-    this.#FilmsListPresenter.init(this.#films, this.#selectedFilter, this.#selectedSort);
 
+    this.#setConvertedFilms();
+    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
+
+
+  async init (films, id) {
+    if (this.#films === null) {
+      this.#films = await this.#MainModel.getData();
+      this.#primaryInit();
+      return;
+    }
+    if (films !== undefined) {
+      this.#films = films.slice();
+    } else {
+      this.#films = await this.#MainModel.getData();
+    }
+    this.#updateView(id);
+  }
+
+  redrawView = (films, id) => {
+    this.init(films, id);
+    if (this.#FilmDetailsPopupPresenter !== null) {
+      this.#films.forEach( (film) => {
+        if (this.#IdFilmCardPopupElement === film.id) {
+          this.#FilmDetailsPopupPresenter.render(film);
+        }
+      });
+    }
+  };
 
   #changeMasterData = (id, changedData) => {
     for (let index = 0; index < this.#films.length; index++) {
@@ -96,7 +136,7 @@ class MainPresenter {
       }
     }
 
-    this.#updateView(id);
+    this.#MainModel.changeData(id, changedData);
   }
 
   #updateView = (id) => {
@@ -134,7 +174,7 @@ class MainPresenter {
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
-    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
+    this.init();
   }
 
   #sortButtonClickHandler = (clickButton) => {
@@ -145,7 +185,7 @@ class MainPresenter {
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
-    this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
+    this.init();
   }
 
   #getFilteredFilmsListSwitch = (films, value) => {
@@ -165,9 +205,26 @@ class MainPresenter {
     }
   }
 
-  #setConvertedFilms = (films) => {
-    this.#convertedFilms = this.#getFilteredFilmsListSwitch(films, this.#selectedFilter);
+  #setConvertedFilms = () => {
+    this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
+  }
+
+
+  #popupPresenter = (method, film, id, ...cb) => {
+    if (method === methodsForPopup.CREATE) {
+      this.#IdFilmCardPopupElement = Number(id);
+      if (this.#FilmDetailsPopupPresenter !== null) {
+        this.#FilmDetailsPopupPresenter.closeFilmDetailsPopup();
+        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
+        this.#FilmDetailsPopupPresenter.render(film);
+        return;
+      }
+      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
+      this.#FilmDetailsPopupPresenter.render(film);
+    } else if (method === methodsForPopup.DELETE) {
+      this.#FilmDetailsPopupPresenter = null;
+    }
   }
 
 }

@@ -1,7 +1,9 @@
 import {footerBodyElement, onEscKeydown} from '/src/utils/util.js';
+import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
-import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
+import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
+import {methodsForPopup} from '../utils/util';
 
 
 class FilmDetailsPopupPresenter {
@@ -17,15 +19,15 @@ class FilmDetailsPopupPresenter {
   #FilmDetailsFilterButtonsComponent = null;
   #FilmDetailsCommentsCountComponent = null;
   #FilmDetailsCommentsComponent = null;
+  #FilmDetailsCommentFromDataComponent = null;
   #FilmDetailsNewCommentComponent = null;
 
   #filmDetailsTopContainerElement = null;
   #filmDetailsBottonContainerElement = null;
 
-  constructor (changeMasterData, getClearCurrentPresenter, getOpenPopupElement) {
+  constructor (changeMasterData, popupElement) {
     this._callbacks.changeMasterData = changeMasterData;
-    this._callbacks.destroyCurrentPresenter = getClearCurrentPresenter;
-    this._callbacks.getOpenPopupElement = getOpenPopupElement;
+    this._callbacks.popupElement = popupElement;
   }
 
   render (film) {
@@ -43,9 +45,15 @@ class FilmDetailsPopupPresenter {
 
     this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#film);
     this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
+
     this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
-    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
-    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup();
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
+    this.#film.comments.forEach( (item) => {
+      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
+      renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
+    });
+
+    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#film, this.#changeData);
 
     this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
     this.#filmDetailsBottonContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
@@ -56,8 +64,6 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
-
-    this.#FilmDetailsNewCommentComponent.initSmileButtonsClickHandler();
 
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsCloseButtonComponent);
     renderNodeElement(this.#filmDetailsTopContainerElement, positionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
@@ -70,6 +76,9 @@ class FilmDetailsPopupPresenter {
     renderNodeElement(footerBodyElement, positionMarkup.BEFORE_END, this.#FilmDetailsPopupComponent);
   }
 
+  #changeData = (changedData) => {
+    this._callbacks.changeMasterData(this.#id, changedData);
+  };
 
   #controlButtonsChangeData = (controlButton) => {
     switch (controlButton) {
@@ -95,10 +104,16 @@ class FilmDetailsPopupPresenter {
     const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
     const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
     const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
+    const prevFilmDetailsNewCommentComponent = this.#FilmDetailsNewCommentComponent;
 
     this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
     this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
-    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup(this.#film);
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
+    this.#film.comments.forEach( (item) => {
+      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
+      renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
+    });
+    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#film, this.#changeData);
 
     this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
     this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
@@ -107,34 +122,33 @@ class FilmDetailsPopupPresenter {
     replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
     replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
     replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
+    replaceNodeElementWithoutParent(this.#FilmDetailsNewCommentComponent, prevFilmDetailsNewCommentComponent);
   }
 
   closeFilmDetailsPopup = () => {
     this._callbacks.changeMasterData(this.#id, this.#film);
-    this._callbacks.getOpenPopupElement(null);
     this.#FilmDetailsPopupComponent.remove();
-    this._callbacks.destroyCurrentPresenter();
     document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
-
+    removeEnterAndControlKeyUpDownHandlers();
+    this._callbacks.popupElement(methodsForPopup.DELETE);
   };
 
   #controlButtonClickHandler = (clickButton) => {
     const changedData = this.#controlButtonsChangeData(clickButton);
-    this.#insideUpdateData(changedData);
+    this.#changeData(changedData);
   }
 
-  #insideUpdateData = (film) => {
-    this.#film = {...film};
-    this.#insideUpdateView();
-  };
-
-  #insideUpdateView = () => {
-    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
-    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
-    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
+  #deleteCommentButtonClickHandler = (idComment) => {
+    let changedData;
+    changedData = {...this.#film};
+    const changedCommentsList = changedData.comments.filter( (item) => {
+      if (item.id === idComment) {
+        return false;
+      }
+      return true;
+    });
+    changedData = {...changedData, comments: changedCommentsList};
+    this.#changeData(changedData);
   };
 
 }
