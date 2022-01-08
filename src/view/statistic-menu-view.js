@@ -267,19 +267,22 @@ class StatisticSmartView extends AbstractView {
     let filmsByGenresMap = new Map();
 
     films.forEach( (film) => {
-      filmsByGenresMap.set(film.genre[0], 0);
+      film.genre.forEach( (genre) => {
+        filmsByGenresMap.set(genre, 0);
+      });
     });
 
     films.forEach( (film) => {
-      const genreFilm = film.genre[0];
-      for (const item of filmsByGenresMap) {
-        const itemKey = item[0];
-        let itemValue;
-        if (itemKey === genreFilm) {
-          itemValue = Number(item[1]) + 1;
-          filmsByGenresMap.set(itemKey, itemValue);
+      film.genre.forEach( (genre) => {
+        for (const item of filmsByGenresMap) {
+          const itemKey = item[0];
+          let itemValue;
+          if (itemKey === genre) {
+            itemValue = Number(item[1]) + 1;
+            filmsByGenresMap.set(itemKey, itemValue);
+          }
         }
-      }
+      });
     });
 
     const arrayMap = Array.from(filmsByGenresMap)

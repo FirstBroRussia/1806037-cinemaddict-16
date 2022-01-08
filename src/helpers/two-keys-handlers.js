@@ -9,7 +9,7 @@ const onEnterKeyDown = (evt) => {
 };
 
 const onControlKeyDown = (evt) => {
-  if (evt.key === 'Control' || evt.keyCode === 17) {
+  if (evt.key === 'Control' || evt.keyCode === 17 || evt.metaKey) {
     return true;
   }
 };

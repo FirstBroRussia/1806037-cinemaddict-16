@@ -152,6 +152,8 @@ const createFolmDetailsNewCommentMarkup = () => `
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
         </div>
+
+        <button class="submit-new-comment__button" type="submit" style="height: 50px">Опубликовать</button>
       </div>
 `;
 
@@ -219,6 +221,11 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     return true;
   }
 
+  #submitButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#submitNewComment();
+  }
+
   #submitNewComment = () => {
     if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
       return;
@@ -235,6 +242,7 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
   addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
     this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextInputHandler);
+    this._element.querySelector('.submit-new-comment__button').addEventListener('click', this.#submitButtonClickHandler);
     twoKeysPressFunction(this.#submitNewComment);
   }
 
