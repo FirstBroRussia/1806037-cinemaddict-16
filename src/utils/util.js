@@ -1,4 +1,6 @@
 /* eslint-disable no-undef */
+import {nanoid} from 'nanoid';
+
 const he = require('he');
 
 const Chart = require('chart.js');
@@ -94,4 +96,4 @@ const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY')
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-export {he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};
+export {nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};
