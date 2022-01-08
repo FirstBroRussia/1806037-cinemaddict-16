@@ -109,7 +109,6 @@ class MainPresenter {
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
 
-
   async init (films, id) {
     if (this.#films === null) {
       this.#films = await this.#MainModel.getData();
