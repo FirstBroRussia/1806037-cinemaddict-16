@@ -51,9 +51,9 @@ class FilmCardPresenter {
 
   #controlButtonsChangeDataSwitch = (value) => {
     switch (value) {
-      case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist, watchingDate: dayjs().format()});
+      case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
       case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched, watchingDate: dayjs().format()});
-      case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite, watchingDate: dayjs().format()});
+      case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
     }
   }
 
