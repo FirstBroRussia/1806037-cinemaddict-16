@@ -320,7 +320,7 @@ class StatisticSmartView extends AbstractView {
       case 'today' : {
         diffBetweenDate = 0;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (currentTime.diff(convertedTime, 'day') !== diffBetweenDate) {
             return false;
           }
@@ -331,7 +331,7 @@ class StatisticSmartView extends AbstractView {
       case 'week' : {
         diffBetweenDate = 7;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }
@@ -342,7 +342,7 @@ class StatisticSmartView extends AbstractView {
       case 'month' : {
         diffBetweenDate = 30;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }
@@ -353,7 +353,7 @@ class StatisticSmartView extends AbstractView {
       case 'year' : {
         diffBetweenDate = 365;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }

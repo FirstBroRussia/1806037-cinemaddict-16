@@ -10,6 +10,8 @@ import {StatisticSmartView} from '/src/view/statistic-menu-view.js';
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
 
+import {METHODS_FOR_API, dayjs} from '/src/utils/util.js';
+
 const NO_FILMS_VALUE = 0;
 
 class MainPresenter {
@@ -18,8 +20,6 @@ class MainPresenter {
 
   #selectedFilter = null;
   #selectedSort = null;
-
-  #currentSectionElement = null;
 
   #MainModel = null;
   #FilmsListPresenter = null;
@@ -46,11 +46,10 @@ class MainPresenter {
   #FilmsCountComponent = null;
 
   constructor () {
-    this.#MainModel = new MainModel();
-    this.#MainModel.odserverAdd(this.redrawView);
+    this.#MainModel = new MainModel('https://16.ecmascript.pages.academy/cinemaddict/');
+    this.#MainModel.odserverAdd(this.#observersCallback);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter);
-
   }
 
   #primaryInit = () => {
@@ -109,16 +108,16 @@ class MainPresenter {
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
 
-  async init (films, id) {
+  async init (method, films, id) {
     if (this.#films === null) {
-      this.#films = await this.#MainModel.getData();
+      this.#films = await this.#MainModel.getData(METHODS_FOR_API.GET_MOVIES);
       this.#primaryInit();
       return;
     }
     if (films !== undefined) {
       this.#films = films.slice();
     } else {
-      this.#films = await this.#MainModel.getData();
+      this.#films = await this.#MainModel.getData(method);
     }
     if (films === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
@@ -128,33 +127,29 @@ class MainPresenter {
     this.#updateView(id);
   }
 
-  redrawView = (films, id) => {
-    this.init(films, id);
-    if (this.#FilmDetailsPopupPresenter !== null) {
-      this.#films.forEach( (film) => {
-        if (this.#IdFilmCardPopupElement === film.id) {
-          this.#FilmDetailsPopupPresenter.render(film);
-        }
-      });
-    }
-  };
+  #observersCallback = async (films, id) => {
+    this.init(METHODS_FOR_API.GET_MOVIES, films, id);
+  }
 
-  #changeMasterData = (id, changedData) => {
-    for (let index = 0; index < this.#films.length; index++) {
-      if (this.#films[index].id === id) {
-        this.#films[index] = changedData;
-        break;
-      }
-    }
-
-    this.#MainModel.changeData(id, changedData);
+  #changeMasterData = (method, id, changedData) => {
+    this.#MainModel.changeData(method, id, changedData);
   }
 
   #updateView = (id) => {
     this.#SortListComponent.showComponent();
-    this.#navigationMenuUpdateView();
 
     this.#setConvertedFilms(this.#films);
+    this.#navigationMenuUpdateView();
+
+    if (this.#FilmDetailsPopupPresenter !== null) {
+      this.#films.forEach( async (film) => {
+        if (this.#IdFilmCardPopupElement === Number(film.id)) {
+          const filmDataForPopupElement = await this.#getFilmDataForPopupElement(film, this.#IdFilmCardPopupElement);
+          this.#FilmDetailsPopupPresenter.render(filmDataForPopupElement);
+        }
+      });
+    }
+
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
@@ -180,15 +175,13 @@ class MainPresenter {
     this.#selectedSort = sortMode.DEFAULT;
     this.#SortListComponent.defaultSortButtonClickSimulation();
 
-    this.#setConvertedFilms(this.#films);
-    this.init();
+    this.init(METHODS_FOR_API.GET_MOVIES);
   }
 
   #sortButtonClickHandler = (clickButton) => {
     this.#selectedSort = clickButton;
 
-    this.#setConvertedFilms(this.#films);
-    this.init();
+    this.init(METHODS_FOR_API.GET_MOVIES);
   }
 
   #statsButtonClickHandler = () => {
@@ -212,7 +205,12 @@ class MainPresenter {
   #getSortFilmsListSwitch = (films, sort) => {
     switch (sort) {
       case 'default' : return films.slice();
-      case 'date' : return films.slice().sort( (itemA, itemB) => itemB.releaseYear - itemA.releaseYear);
+      case 'date' : return films.slice().sort( (itemA, itemB) => {
+        const currentTime = dayjs(dayjs().format());
+        const itemATime = currentTime.diff(dayjs(itemA.releaseFullFormat.date).format());
+        const itemBTime = currentTime.diff(dayjs(itemB.releaseFullFormat.date).format());
+        return itemATime - itemBTime;
+      });
       case 'rating' : return films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating);
     }
   }
@@ -222,18 +220,26 @@ class MainPresenter {
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
+  #getFilmDataForPopupElement = async (film, id) => {
+    const commentsDataForCurrentFilm = await this.#MainModel.getData(METHODS_FOR_API.GET_COMMENTS, Number(id));
+    const updateFilmData = {...film, comments: commentsDataForCurrentFilm};
 
-  #popupPresenter = (method, film, id, ...cb) => {
+    return updateFilmData;
+  }
+
+
+  #popupPresenter = async (method, film, id, ...cb) => {
     if (method === methodsForPopup.CREATE) {
       this.#IdFilmCardPopupElement = Number(id);
+      const updateFilmData = await this.#getFilmDataForPopupElement(film, this.#IdFilmCardPopupElement);
       if (this.#FilmDetailsPopupPresenter !== null) {
         this.#FilmDetailsPopupPresenter.closeFilmDetailsPopup();
         this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
-        this.#FilmDetailsPopupPresenter.render(film);
+        this.#FilmDetailsPopupPresenter.render(updateFilmData);
         return;
       }
       this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
-      this.#FilmDetailsPopupPresenter.render(film);
+      this.#FilmDetailsPopupPresenter.render(updateFilmData);
     } else if (method === methodsForPopup.DELETE) {
       this.#FilmDetailsPopupPresenter = null;
     }

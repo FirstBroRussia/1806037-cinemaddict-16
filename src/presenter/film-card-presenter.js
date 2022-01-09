@@ -1,7 +1,7 @@
 import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
-import {methodsForPopup, dayjs} from '../utils/util';
+import {methodsForPopup, dayjs, METHODS_FOR_API} from '../utils/util';
 
 
 class FilmCardPresenter {
@@ -25,13 +25,13 @@ class FilmCardPresenter {
     }
     if (this.#film !== null) {
       this.#film = {...film};
-      this.#id = this.#film.id;
+      this.#id = Number(this.#film.id);
       this.updateCardComponent();
       return;
     }
 
     this.#film = {...film};
-    this.#id = this.#film.id;
+    this.#id = Number(this.#film.id);
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
     this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
@@ -59,7 +59,7 @@ class FilmCardPresenter {
 
   #controlButtonClickHandler = (clickButton) => {
     const changedData = this.#controlButtonsChangeDataSwitch(clickButton);
-    this._callbacks.changeMasterData(this.#id, changedData);
+    this._callbacks.changeMasterData(METHODS_FOR_API.PUT_MOVIES, this.#id, changedData);
   }
 
 

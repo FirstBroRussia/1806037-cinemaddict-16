@@ -1,4 +1,4 @@
-import {nanoid, he, dayjs, controlButtons} from '/src/utils/util.js';
+import {nanoid, he, dayjs, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -64,15 +64,11 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${film.releaseFullFormat}</td>
+            <td class="film-details__cell">${getReleaseDateFormat(film.releaseFullFormat.date)}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${film.duration}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
-            <td class="film-details__cell">${film.country}</td>
+            <td class="film-details__cell">${getCreatingCommentDateFormat(film.duration)}</td>
           </tr>
           <tr class="film-details__row genre">
             <td class="film-details__term">${film.genre.length === 1 ? 'Genre' : 'Genres'}</td>
