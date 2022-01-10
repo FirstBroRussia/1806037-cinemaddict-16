@@ -1,12 +1,18 @@
 /* eslint-disable no-undef */
+import {nanoid} from 'nanoid';
+
 const he = require('he');
+
+const Chart = require('chart.js');
+const ChartDataLabels = require('chartjs-plugin-datalabels');
 
 const dayjs = require('dayjs');
 const dayjsRandom = require('dayjs-random');
 dayjs.extend(dayjsRandom);
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
-
+const relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 
 const INITIAL_FILMS_CARD_COUNT = 5;
 
@@ -41,6 +47,14 @@ const methodsForPopup = {
   EDIT: 'edit',
 };
 
+const periods = {
+  ALL_TIME: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
 function getRandomNumber(min, max, fixed) {
   if (fixed) {
     const randomFractionalNumber = (Math.random() * (max + 1 - min) + min).toFixed(1);
@@ -71,8 +85,15 @@ const getDurationFormatTime = (value) => {
   return dayjs.duration(time, 'minutes').format('H[h] mm[m]');
 };
 
+const deleteSectionElement = () => {
+  const sectionElement = mainBodyElement.querySelector('section');
+  if (sectionElement !== null) {
+    sectionElement.remove();
+  }
+};
+
 const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY');
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-export {he, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup};
+export {nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};

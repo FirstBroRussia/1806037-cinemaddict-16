@@ -1,7 +1,7 @@
 import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
-import {methodsForPopup} from '../utils/util';
+import {methodsForPopup, dayjs} from '../utils/util';
 
 
 class FilmCardPresenter {
@@ -52,7 +52,7 @@ class FilmCardPresenter {
   #controlButtonsChangeDataSwitch = (value) => {
     switch (value) {
       case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
-      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched});
+      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched, watchingDate: dayjs().format()});
       case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
     }
   }

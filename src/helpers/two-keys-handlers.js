@@ -9,7 +9,7 @@ const onEnterKeyDown = (evt) => {
 };
 
 const onControlKeyDown = (evt) => {
-  if (evt.key === 'Control' || evt.keyCode === 17) {
+  if (evt.key === 'Control' || evt.keyCode === 17 || evt.metaKey) {
     return true;
   }
 };
@@ -41,6 +41,8 @@ const controlKeyDownFalseHandler = (evt) => {
 
 const checkPressingOfTwoKeysHandler = () => {
   if (enterKey && ctrlKey) {
+    ctrlKey = true;
+    enterKey = false;
     submitFunction();
   }
 };
@@ -60,7 +62,7 @@ const removeEnterAndControlKeyUpDownHandlers = () => {
   document.removeEventListener('keyup', enterKeyDownFalseHandler);
   document.removeEventListener('keyup', controlKeyDownFalseHandler);
 
-  document.addEventListener('keydown', checkPressingOfTwoKeysHandler);
+  document.removeEventListener('keydown', checkPressingOfTwoKeysHandler);
 };
 
 const twoKeysPressFunction = (callback) => {

@@ -1,4 +1,4 @@
-import {footerBodyElement, onEscKeydown} from '/src/utils/util.js';
+import {footerBodyElement, onEscKeydown, dayjs} from '/src/utils/util.js';
 import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
@@ -83,7 +83,7 @@ class FilmDetailsPopupPresenter {
   #controlButtonsChangeData = (controlButton) => {
     switch (controlButton) {
       case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
-      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched});
+      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched, watchingDate: dayjs().format()});
       case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
     }
   }

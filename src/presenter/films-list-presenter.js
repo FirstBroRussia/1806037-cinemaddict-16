@@ -1,4 +1,4 @@
-import {INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode} from '/src/utils/util.js';
+import {deleteSectionElement, INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode} from '/src/utils/util.js';
 import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 
@@ -13,8 +13,6 @@ const NO_FILMS_VALUE = 0;
 
 class FilmsListPresenter {
   #films = null;
-
-  // #currentOpenPopupElement = null;
 
   #FilterMode = null;
   #SortMode = null;
@@ -70,9 +68,8 @@ class FilmsListPresenter {
   }
 
   #renderGeneralFilmsList = (films, id) => {
-    if (this.#AllFilmsComponent !== null) {
-      this.#AllFilmsComponent.remove();
-    }
+    deleteSectionElement();
+
     this.#AllFilmsComponent = new AllFilmsMarkup();
 
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
@@ -86,11 +83,11 @@ class FilmsListPresenter {
     this.#GeneralFilmsListTagComponent = this.#generalFilmsListTagSwitch(this.#FilterMode);
     this.#GeneralFilmsListContainerComponent = new GeneralFilmsListContainerMarkup();
 
-    renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
-
     renderNodeElement(this.#AllFilmsComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
     renderNodeElement(this.#GeneralFilmsListComponent, positionMarkup.BEFORE_END, this.#GeneralFilmsListContainerComponent);
+
+    renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#AllFilmsComponent);
     this.renderGeneralFilmsCard(films, id);
   }
 

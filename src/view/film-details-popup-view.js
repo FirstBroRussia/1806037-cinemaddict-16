@@ -1,4 +1,4 @@
-import {he, dayjs, controlButtons} from '/src/utils/util.js';
+import {nanoid, he, dayjs, controlButtons} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -152,6 +152,8 @@ const createFolmDetailsNewCommentMarkup = () => `
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
         </div>
+
+        <button class="submit-new-comment__button" type="submit" style="height: 50px">Опубликовать</button>
       </div>
 `;
 
@@ -219,14 +221,18 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     return true;
   }
 
+  #submitButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#submitNewComment();
+  }
+
   #submitNewComment = () => {
     if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
       return;
     }
-    const id = Number(this.#commentsCount + 1);
     const emotion = this.#currentCheckedButton.value;
     const comment = this.#newCommentTextInputElement.value;
-    this.#newComment = {...this.#newComment, id: id, author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
+    this.#newComment = {...this.#newComment, id: nanoid(), author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
     const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
     removeEnterAndControlKeyUpDownHandlers();
     this._callback.changeData(changedData);
@@ -235,6 +241,7 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
   addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
     this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextInputHandler);
+    this._element.querySelector('.submit-new-comment__button').addEventListener('click', this.#submitButtonClickHandler);
     twoKeysPressFunction(this.#submitNewComment);
   }
 

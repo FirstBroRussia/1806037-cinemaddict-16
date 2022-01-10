@@ -31,7 +31,7 @@ const createFavoriteFilmsFilterTemplate = () => `
 `;
 
 const createStatsTemplate = () => `
-<a href="#stats" class="main-navigation__additional main-navigation__additional--active">Stats</a>
+<a href="#stats" class="main-navigation__additional">Stats</a>
 `;
 
 const createWatchlistFilmsCountTemplate = (filmsData) => `
@@ -219,6 +219,24 @@ class StatsMarkup extends AbstractView {
 
     this._template = createStatsTemplate;
     this._element = createNodeElement(this._template());
+  }
+
+  setStatsButtonClickHandler = (event, callback) => {
+    if (typeof event !== 'string') {
+      throw new Error('Параметр "event" должен быть типом данных "string"');
+    }
+    this._callback.statsButtonClick = callback;
+    this._element.addEventListener(event, this.#hangStatsButtonHandler);
+  }
+
+  #hangStatsButtonHandler = (evt) => {
+    if (this._element.closest('.main-navigation__item--active')) {
+      return;
+    }
+    NavigationMenuMarkup.setCurrentActiveButton(this._element);
+    this._element.classList.add('main-navigation__item--active');
+    evt.preventDefault();
+    this._callback.statsButtonClick(evt);
   }
 
 }

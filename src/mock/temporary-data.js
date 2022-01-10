@@ -1,4 +1,4 @@
-import {getRandomNumber, dayjs} from '../utils/util.js';
+import {getRandomNumber, dayjs, nanoid} from '../utils/util.js';
 
 const MIN_LENGTH_COMMENTS_LIST = 0;
 const MAX_LENGTH_COMMENTS_LIST = 5;
@@ -41,7 +41,7 @@ const pathForPicture = [
   'the-man-with-the-golden-arm.jpg'
 ];
 
-const genre = [
+const genres = [
   'Melodrama',
   'Cartoon',
   'Comedy',
@@ -129,14 +129,6 @@ const country = [
   'India'
 ];
 
-function idGeneration () {
-  let currentId = 0;
-  return () => {
-    currentId += 1;
-    return currentId;
-  };
-}
-
 const descriptionsList = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
   .split(/\.\s*/);
 
@@ -153,15 +145,14 @@ const getRandomActorsList = () => Array.from({length: getRandomNumber(MIN_LENGTH
   .join(', ');
 
 const getRandomGenresList = () => Array.from({length: getRandomNumber(MIN_LENGTH_STRING_GENRES, MAX_LENGTH_STRING_GENRES)})
-  .map( () => genre[getRandomNumber(0, genre.length - 1)])
+  .map( () => genres[getRandomNumber(0, genres.length - 1)])
   .join(', ');
 
 
 function getRandomCommentsListForRandomFilm() {
-  const queueId = idGeneration();
   return Array.from({ length: getRandomNumber(MIN_LENGTH_COMMENTS_LIST, MAX_LENGTH_COMMENTS_LIST) })
     .map(() => ({
-      id: queueId(),
+      id: nanoid(),
       author: authors[getRandomNumber(0, authors.length - 1)],
       comment: comments[getRandomNumber(0, comments.length - 1)],
       date: dayjs.between(`${MIN_YEAR_COUNT}`, `${MAX_YEAR_COUNT}`).format('YYYY/MM/DD HH:mm'),
@@ -190,8 +181,9 @@ const createFilmsData = () => Array.from({length: getRandomNumber(MIN_LENGTH_DAT
     isWatchlist: Boolean(getRandomNumber(0,1)),
     isWatched: Boolean(getRandomNumber(0,1)),
     isFavorite: Boolean(getRandomNumber(0,1)),
+    watchingDate: dayjs.between('2021', '2022').format('DD MMMM YYYY'),
   }));
 
 const filmsData = createFilmsData();
 
-export {filmsData};
+export {filmsData, genres};
