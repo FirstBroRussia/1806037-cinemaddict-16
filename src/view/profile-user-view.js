@@ -1,21 +1,11 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
-
-const ZERO_VALUE = 0;
-const MIN_NOVICE_VALUE = 1;
-const MAX_NOVICE_VALUE = 10;
-const MIN_FAN_VALUE = 11;
-const MAX_FAN_VALUE = 20;
-const MOVIE_BUFF_VALUE = 21;
+import {MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE} from '/src/utils/util.js';
 
 
 const createTitleProfileUserTemplate = (data) => {
   let markup;
-  if (data.length === ZERO_VALUE) {
-    return `<section class="header__profile profile">
-
-    </section>`;
-  } else if (data.length >= MIN_NOVICE_VALUE && data.length <= MAX_NOVICE_VALUE) {
+  if (data.length >= MIN_NOVICE_VALUE && data.length <= MAX_NOVICE_VALUE) {
     markup = 'Novice';
   } else if (data.length >= MIN_FAN_VALUE && data.length <= MAX_FAN_VALUE) {
     markup = 'Fan';

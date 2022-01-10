@@ -15,6 +15,13 @@ const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const ZERO_VALUE = 0;
+
+const MIN_NOVICE_VALUE = 1;
+const MAX_NOVICE_VALUE = 10;
+const MIN_FAN_VALUE = 11;
+const MAX_FAN_VALUE = 20;
+const MOVIE_BUFF_VALUE = 21;
+
 const INITIAL_FILMS_CARD_COUNT = 5;
 
 const bodyElement = document.querySelector('body');
@@ -22,6 +29,10 @@ const headerBodyElement = document.querySelector('.header');
 const mainBodyElement = document.querySelector('.main');
 const footerBodyElement = document.querySelector('.footer');
 const footerStatisticBodyElement = document.querySelector('.footer__statistics');
+
+const RESPONSES_FROM_SERVER = {
+  SUCCESS_SERVER_RESPONSE: 200,
+};
 
 const METHODS_FOR_API = {
   GET_MOVIES: 'getMovies',
@@ -105,4 +116,4 @@ const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY')
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-export {ZERO_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};
+export {ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, RESPONSES_FROM_SERVER, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};

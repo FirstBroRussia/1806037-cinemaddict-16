@@ -11,13 +11,9 @@ import {StatisticSmartView} from '/src/view/statistic-menu-view.js';
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
 
-import {METHODS_FOR_API, dayjs} from '/src/utils/util.js';
+import {METHODS_FOR_API, RESPONSES_FROM_SERVER, dayjs, ZERO_VALUE} from '/src/utils/util.js';
 
 const NO_FILMS_VALUE = 0;
-
-const serverResponses = {
-  SUCCESS_SERVER_RESPONSE: 200,
-};
 
 class MainPresenter {
   #films = null;
@@ -58,7 +54,10 @@ class MainPresenter {
 
   #primaryInit = () => {
     const watchedFilms = this.#setWatchedFilms(this.#films);
-    this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
+    if (watchedFilms.length !== ZERO_VALUE) {
+      this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
+      renderNodeElement(headerBodyElement, positionMarkup.BEFORE_END, this.#ProfileUserComponent);
+    }
 
     this.#NavigationMenuComponent = new NavigationMenuMarkup();
     this.#FilterWrapComponent = new FilterWrapMarkup();
@@ -78,7 +77,6 @@ class MainPresenter {
     this.#SortListComponent = new SortListMarkup();
 
     this.#FilmsCountComponent = new FilmsCountMarkup(this.#films.length);
-    renderNodeElement(headerBodyElement, positionMarkup.BEFORE_END, this.#ProfileUserComponent);
 
     renderNodeElement(mainBodyElement, positionMarkup.BEFORE_END, this.#NavigationMenuComponent);
     renderNodeElement(this.#NavigationMenuComponent, positionMarkup.BEFORE_END, this.#FilterWrapComponent);
@@ -126,7 +124,7 @@ class MainPresenter {
   }
 
   #observerNotificationMainPresenter = (method, response, idFilm) => {
-    if (response.responseStatus === serverResponses.SUCCESS_SERVER_RESPONSE) {
+    if (response.responseStatus === RESPONSES_FROM_SERVER.SUCCESS_SERVER_RESPONSE) {
       this.init(METHODS_FOR_API.GET_MOVIES, idFilm);
     }
   }
@@ -148,10 +146,13 @@ class MainPresenter {
   }
 
   #profileUserUpdateView = () => {
-    const prevProfileUserComponent = this.#ProfileUserComponent;
+    this.#ProfileUserComponent.remove();
     const watchedFilms = this.#setWatchedFilms(this.#films);
+    if (watchedFilms.length === ZERO_VALUE) {
+      return;
+    }
     this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
-    replaceNodeElementWithoutParent(this.#ProfileUserComponent, prevProfileUserComponent);
+    renderNodeElement(headerBodyElement, positionMarkup.BEFORE_END, this.#ProfileUserComponent);
   }
 
   #navigationMenuUpdateView = () => {
