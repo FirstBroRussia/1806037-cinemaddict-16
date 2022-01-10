@@ -31,7 +31,6 @@ class MainPresenter {
   #StatisticsSmartComponent = null;
 
   #FilmDetailsPopupPresenter = null;
-  #IdFilmCardPopupElement = null;
 
   #ProfileUserComponent = null;
 
@@ -58,7 +57,8 @@ class MainPresenter {
   }
 
   #primaryInit = () => {
-    this.#ProfileUserComponent = new ProfileUserMarkup();
+    const watchedFilms = this.#setWatchedFilms(this.#films);
+    this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
 
     this.#NavigationMenuComponent = new NavigationMenuMarkup();
     this.#FilterWrapComponent = new FilterWrapMarkup();
@@ -137,12 +137,21 @@ class MainPresenter {
 
   #updateView = (id) => {
     this.#setConvertedFilms(this.#films);
+
+    this.#profileUserUpdateView();
     this.#navigationMenuUpdateView();
 
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
     }
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort, id);
+  }
+
+  #profileUserUpdateView = () => {
+    const prevProfileUserComponent = this.#ProfileUserComponent;
+    const watchedFilms = this.#setWatchedFilms(this.#films);
+    this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
+    replaceNodeElementWithoutParent(this.#ProfileUserComponent, prevProfileUserComponent);
   }
 
   #navigationMenuUpdateView = () => {
@@ -212,7 +221,6 @@ class MainPresenter {
 
   #popupPresenter = async (method, film, id, ...cb) => {
     if (method === methodsForPopup.CREATE) {
-      this.#IdFilmCardPopupElement = Number(id);
       if (this.#FilmDetailsPopupPresenter !== null) {
         const prevPopupPresenter = this.#FilmDetailsPopupPresenter;
 
@@ -228,6 +236,8 @@ class MainPresenter {
       this.#FilmDetailsPopupPresenter = null;
     }
   }
+
+  #setWatchedFilms = () => this.#films.slice().filter( (film) => film.isWatched);
 
 }
 
