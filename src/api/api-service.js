@@ -54,9 +54,18 @@ class ApiService {
       body: body,
     });
 
-    console.log(await response.json());
+    let resultResponse;
 
-    return await response.status;
+    try {
+      resultResponse = await response.json();
+    } catch {
+      resultResponse = null;
+    }
+
+    return {
+      responseStatus: response.status,
+      data: resultResponse,
+    };
   }
 
   #actionsToDataSwitch = (method, id) => {

@@ -3,7 +3,6 @@ import {ApiService} from '/src/api/api-service.js';
 
 class MainModel {
   _observers = [];
-  #filmsData = null;
 
   #APIService = null;
 
@@ -33,43 +32,79 @@ class MainModel {
   async changeData (methodAPI, changedData, idFilm, idComment) {
     const adaptChangedDataToServer = this.#adaptToServerSwitch(methodAPI, changedData);
 
-    const responseStatus = await this.#APIService.updateData(methodAPI, adaptChangedDataToServer, idFilm, idComment);
+    let response = await this.#APIService.updateData(methodAPI, adaptChangedDataToServer, idFilm, idComment);
+    if (methodAPI === 'putMovies') {
+      response = {...response, data : this.#adaptToClient(response.data)};
+    }
 
-    this.observersNotify(responseStatus, idFilm, methodAPI);
+    this.observersNotify(methodAPI, response, idFilm);
   }
 
   odserverAdd = (callback) => {
     this._observers.push(callback);
   };
 
+  observerRemove = (callback) => {
+    for (let index = 0; index < this._observers.length; index++) {
+      if (this._observers[index] === callback) {
+        this._observers.splice(index, 1);
+        break;
+      }
+    }
+  }
+
   observersRemove = () => {
     this._observers = [];
+  }
+
+  observersNotify = (method, response, idFilm) => {
+    this._observers.forEach( (item) => item(method, response, idFilm));
   };
 
-  observersNotify = (responseStatus, idFilm, idComment, method) => {
-    this._observers.forEach( (item) => item(responseStatus, idFilm, idComment, method));
-  };
-
-  #adaptToClient = (dataList) => dataList.slice().map( (item) => ({
-    id: item.id,
-    img: item.film_info.poster,
-    name: item.film_info.title,
-    originalName: item.film_info.alternative_title,
-    rating: item.film_info.total_rating,
-    director: item.film_info.director,
-    screenwritters: item.film_info.writers,
-    actors: item.film_info.actors,
-    releaseFullFormat: item.film_info.release,
-    duration: item.film_info.runtime,
-    genre: item.film_info.genre,
-    description: item.film_info.description,
-    ageRating: item.film_info.age_rating,
-    comments: item.comments,
-    isWatchlist: item.user_details.watchlist,
-    isWatched: item.user_details.already_watched,
-    isFavorite: item.user_details.favorite,
-    watchingDate: item.user_details.watching_date,
-  }))
+  #adaptToClient = (dataList) => {
+    if (Array.isArray(dataList)) {
+      return dataList.slice().map( (item) => ({
+        id: item.id,
+        img: item.film_info.poster,
+        name: item.film_info.title,
+        originalName: item.film_info.alternative_title,
+        rating: item.film_info.total_rating,
+        director: item.film_info.director,
+        screenwritters: item.film_info.writers,
+        actors: item.film_info.actors,
+        releaseFullFormat: item.film_info.release,
+        duration: item.film_info.runtime,
+        genre: item.film_info.genre,
+        description: item.film_info.description,
+        ageRating: item.film_info.age_rating,
+        comments: item.comments,
+        isWatchlist: item.user_details.watchlist,
+        isWatched: item.user_details.already_watched,
+        isFavorite: item.user_details.favorite,
+        watchingDate: item.user_details.watching_date,
+      }));
+    }
+    return ({
+      id: dataList.id,
+      img: dataList.film_info.poster,
+      name: dataList.film_info.title,
+      originalName: dataList.film_info.alternative_title,
+      rating: dataList.film_info.total_rating,
+      director: dataList.film_info.director,
+      screenwritters: dataList.film_info.writers,
+      actors: dataList.film_info.actors,
+      releaseFullFormat: dataList.film_info.release,
+      duration: dataList.film_info.runtime,
+      genre: dataList.film_info.genre,
+      description: dataList.film_info.description,
+      ageRating: dataList.film_info.age_rating,
+      comments: dataList.comments,
+      isWatchlist: dataList.user_details.watchlist,
+      isWatched: dataList.user_details.already_watched,
+      isFavorite: dataList.user_details.favorite,
+      watchingDate: dataList.user_details.watching_date,
+    });
+  }
 
   #adaptToServer = (data) => ({
     id: data.id,

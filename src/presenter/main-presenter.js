@@ -125,9 +125,9 @@ class MainPresenter {
     this.#updateView(id);
   }
 
-  #observerNotificationMainPresenter = (responseStatus, idFilm) => {
-    if (responseStatus === serverResponses.SUCCESS_SERVER_RESPONSE) {
-      this.init(METHODS_FOR_API.GET_MOVIES, idFilm);
+  #observerNotificationMainPresenter = (method, response) => {
+    if (response.responseStatus === serverResponses.SUCCESS_SERVER_RESPONSE) {
+      this.init(METHODS_FOR_API.GET_MOVIES);
     }
   }
 
@@ -216,14 +216,14 @@ class MainPresenter {
       if (this.#FilmDetailsPopupPresenter !== null) {
         const prevPopupPresenter = this.#FilmDetailsPopupPresenter;
 
-        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(film, this.#IdFilmCardPopupElement, this.#MainModel, ...cb);
-        await this.#FilmDetailsPopupPresenter.init();
+        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...cb);
+        await this.#FilmDetailsPopupPresenter.init(film);
 
         prevPopupPresenter.closeFilmDetailsPopup();
         return;
       }
-      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(film, this.#IdFilmCardPopupElement, this.#MainModel, ...cb);
-      this.#FilmDetailsPopupPresenter.init();
+      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...cb);
+      this.#FilmDetailsPopupPresenter.init(film);
     } else if (method === methodsForPopup.DELETE) {
       this.#FilmDetailsPopupPresenter = null;
     }
