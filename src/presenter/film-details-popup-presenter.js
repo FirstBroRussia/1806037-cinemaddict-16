@@ -90,7 +90,7 @@ class FilmDetailsPopupPresenter {
         break;
       }
       case 'postComment' : {
-        this.#filmCommentsData = response.data;
+        this.#filmCommentsData = response.data.comments;
 
         this.#updateCommentsListView();
 

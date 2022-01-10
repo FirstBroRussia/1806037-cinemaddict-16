@@ -125,9 +125,9 @@ class MainPresenter {
     this.#updateView(id);
   }
 
-  #observerNotificationMainPresenter = (method, response) => {
+  #observerNotificationMainPresenter = (method, response, idFilm) => {
     if (response.responseStatus === serverResponses.SUCCESS_SERVER_RESPONSE) {
-      this.init(METHODS_FOR_API.GET_MOVIES);
+      this.init(METHODS_FOR_API.GET_MOVIES, idFilm);
     }
   }
 
