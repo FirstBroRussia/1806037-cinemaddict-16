@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode, methodsForPopup, deleteSectionElement} from '/src/utils/util.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
@@ -13,6 +14,10 @@ import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-prese
 import {METHODS_FOR_API, dayjs} from '/src/utils/util.js';
 
 const NO_FILMS_VALUE = 0;
+
+const serverResponses = {
+  SUCCESS_SERVER_RESPONSE: 200,
+};
 
 class MainPresenter {
   #films = null;
@@ -47,7 +52,7 @@ class MainPresenter {
 
   constructor () {
     this.#MainModel = new MainModel('https://16.ecmascript.pages.academy/cinemaddict/');
-    this.#MainModel.odserverAdd(this.#observersCallback);
+    this.#MainModel.odserverAdd(this.#observerNotificationMainPresenter);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter);
   }
@@ -108,47 +113,31 @@ class MainPresenter {
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
 
-  async init (method, films, id) {
+  async init (methodAPI, id) {
     if (this.#films === null) {
       this.#films = await this.#MainModel.getData(METHODS_FOR_API.GET_MOVIES);
       this.#primaryInit();
       return;
     }
-    if (films !== undefined) {
-      this.#films = films.slice();
-    } else {
-      this.#films = await this.#MainModel.getData(method);
-    }
-    if (films === NO_FILMS_VALUE) {
-      this.#SortListComponent.hideComponent();
-    } else {
-      this.#SortListComponent.showComponent();
-    }
+
+    this.#films = await this.#MainModel.getData(methodAPI);
+    this.#films === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
     this.#updateView(id);
   }
 
-  #observersCallback = async (films, id) => {
-    this.init(METHODS_FOR_API.GET_MOVIES, films, id);
+  #observerNotificationMainPresenter = (responseStatus, idFilm) => {
+    if (responseStatus === serverResponses.SUCCESS_SERVER_RESPONSE) {
+      this.init(METHODS_FOR_API.GET_MOVIES, idFilm);
+    }
   }
 
-  #changeMasterData = (method, id, changedData) => {
-    this.#MainModel.changeData(method, id, changedData);
+  #changeMasterData = (method, changedData, idFilm, idComment) => {
+    this.#MainModel.changeData(method, changedData, idFilm, idComment);
   }
 
   #updateView = (id) => {
-    this.#SortListComponent.showComponent();
-
     this.#setConvertedFilms(this.#films);
     this.#navigationMenuUpdateView();
-
-    if (this.#FilmDetailsPopupPresenter !== null) {
-      this.#films.forEach( async (film) => {
-        if (this.#IdFilmCardPopupElement === Number(film.id)) {
-          const filmDataForPopupElement = await this.#getFilmDataForPopupElement(film, this.#IdFilmCardPopupElement);
-          this.#FilmDetailsPopupPresenter.render(filmDataForPopupElement);
-        }
-      });
-    }
 
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
@@ -220,26 +209,21 @@ class MainPresenter {
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
-  #getFilmDataForPopupElement = async (film, id) => {
-    const commentsDataForCurrentFilm = await this.#MainModel.getData(METHODS_FOR_API.GET_COMMENTS, Number(id));
-    const updateFilmData = {...film, comments: commentsDataForCurrentFilm};
-
-    return updateFilmData;
-  }
-
 
   #popupPresenter = async (method, film, id, ...cb) => {
     if (method === methodsForPopup.CREATE) {
       this.#IdFilmCardPopupElement = Number(id);
-      const updateFilmData = await this.#getFilmDataForPopupElement(film, this.#IdFilmCardPopupElement);
       if (this.#FilmDetailsPopupPresenter !== null) {
-        this.#FilmDetailsPopupPresenter.closeFilmDetailsPopup();
-        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
-        this.#FilmDetailsPopupPresenter.render(updateFilmData);
+        const prevPopupPresenter = this.#FilmDetailsPopupPresenter;
+
+        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(film, this.#IdFilmCardPopupElement, this.#MainModel, ...cb);
+        await this.#FilmDetailsPopupPresenter.init();
+
+        prevPopupPresenter.closeFilmDetailsPopup();
         return;
       }
-      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(...cb);
-      this.#FilmDetailsPopupPresenter.render(updateFilmData);
+      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(film, this.#IdFilmCardPopupElement, this.#MainModel, ...cb);
+      this.#FilmDetailsPopupPresenter.init();
     } else if (method === methodsForPopup.DELETE) {
       this.#FilmDetailsPopupPresenter = null;
     }

@@ -59,7 +59,7 @@ class FilmCardPresenter {
 
   #controlButtonClickHandler = (clickButton) => {
     const changedData = this.#controlButtonsChangeDataSwitch(clickButton);
-    this._callbacks.changeMasterData(METHODS_FOR_API.PUT_MOVIES, this.#id, changedData);
+    this._callbacks.changeMasterData(METHODS_FOR_API.PUT_MOVIES, changedData, this.#id,);
   }
 
 

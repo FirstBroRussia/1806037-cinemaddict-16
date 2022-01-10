@@ -22,6 +22,12 @@ const mainBodyElement = document.querySelector('.main');
 const footerBodyElement = document.querySelector('.footer');
 const footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
+const methodsForPopupUpdateView = {
+  UPDATE_FILM_INFO: 'updateInfo',
+  UPDATE_COMMENTS: 'updateComments',
+  UPDATE_NEW_COMMENT: 'updateNewComment',
+};
+
 const METHODS_FOR_API = {
   GET_MOVIES: 'getMovies',
   PUT_MOVIES: 'putMovies',
@@ -104,4 +110,4 @@ const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY')
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-export {nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};
+export {nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods, methodsForPopupUpdateView};

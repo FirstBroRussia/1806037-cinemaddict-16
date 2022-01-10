@@ -1,16 +1,4 @@
-import {nanoid, dayjs, METHODS_FOR_API} from '/src/utils/util.js';
-
-const METHODS_FOR_FETCH = {
-  GET: 'GET',
-  POST: 'POST',
-  PUT: 'PUT',
-  DELETE: 'DELETE',
-};
-
-const URL = {
-  MOVIES: 'movies/',
-  COMMENTS: 'comments/',
-};
+import {nanoid} from '/src/utils/util.js';
 
 class ApiService {
   #authorization = null;
@@ -43,10 +31,19 @@ class ApiService {
     }
   }
 
-  async updateData (method, id, changedData) {
-    const inputParameters = this.#actionsToDataSwitch(method, id);
+  async updateData (method, changedData, idFilm, idComment) {
+    let inputParameters;
+    let body;
+
+    if (method === 'deleteComment') {
+      inputParameters = this.#actionsToDataSwitch(method, idComment);
+      body = null;
+    } else {
+      inputParameters = this.#actionsToDataSwitch(method, idFilm);
+      body = JSON.stringify(changedData);
+    }
+
     const link = `${this.#linkToServer}/${inputParameters.URL}`;
-    const body = JSON.stringify(changedData);
     const headers = new Headers();
     headers.append('Authorization', this.#authorization);
     headers.append('Content-Type', 'application/json');
@@ -57,18 +54,9 @@ class ApiService {
       body: body,
     });
 
-    try {
-      const responseOk = await response.ok;
-      if (!responseOk) {
-        throw response;
-      }
-      const filmsData = this.getData(METHODS_FOR_API.GET_MOVIES);
+    console.log(await response.json());
 
-      return filmsData;
-    }
-    catch (err) {
-      throw new Error (`${response.status}: ${response.statusText}`);
-    }
+    return await response.status;
   }
 
   #actionsToDataSwitch = (method, id) => {

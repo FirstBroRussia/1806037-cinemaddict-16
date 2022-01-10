@@ -1,4 +1,4 @@
-import {nanoid, he, dayjs, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat} from '/src/utils/util.js';
+import {he, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat, METHODS_FOR_API} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -112,7 +112,7 @@ const createFilmDetailsCommentFromDataMarkup = (item) => `
       <p class="film-details__comment-text">${he.encode(item.comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
-        <span class="film-details__comment-day">${item.date}</span>
+        <span class="film-details__comment-day">${getCreatingCommentDateFormat(item.date)}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -159,23 +159,31 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
+
+class FilmDetailsPopupMarkup extends AbstractView {
+  constructor() {
+    super();
+
+    this._template = createFilmDetailsPopupTemplate;
+    this._element = createNodeElement(this._template());
+  }
+
+}
+
 class FilmDetailsNewCommentMarkup extends AbstractView {
-  #data = {};
-  #commentsCount = null;
-  #newComment = {};
+  #newComment = null;
 
   #currentCheckedButton = null;
   #newCommentTextInputElement = null;
   #bigEmojiElement = null;
 
-  constructor(data, callback) {
+  constructor(callback) {
     super();
 
-    this.#data = {...data};
-    this.#commentsCount = this.#data.comments.length;
     this._callback.changeData = callback;
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
+
     this.#bigEmojiElement = this._element.querySelector('.film-details__add-emoji-label');
     this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
 
@@ -226,12 +234,13 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
       return;
     }
+
     const emotion = this.#currentCheckedButton.value;
     const comment = this.#newCommentTextInputElement.value;
-    this.#newComment = {...this.#newComment, id: nanoid(), author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
-    const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
+    this.#newComment = {emotion: emotion, comment: comment};
     removeEnterAndControlKeyUpDownHandlers();
-    this._callback.changeData(changedData);
+
+    this._callback.changeData(METHODS_FOR_API.POST_COMMENT, this.#newComment);
   }
 
   addHandlers = () => {
@@ -241,15 +250,6 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     twoKeysPressFunction(this.#submitNewComment);
   }
 
-}
-
-class FilmDetailsPopupMarkup extends AbstractView {
-  constructor() {
-    super();
-
-    this._template = createFilmDetailsPopupTemplate;
-    this._element = createNodeElement(this._template());
-  }
 }
 
 class FilmDetailsCloseButtonMarkup extends AbstractView {

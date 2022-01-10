@@ -1,21 +1,20 @@
 /* eslint-disable camelcase */
-import {dayjs, METHODS_FOR_API} from '/src/utils/util.js';
 import {ApiService} from '/src/api/api-service.js';
 
 class MainModel {
   _observers = [];
   #filmsData = null;
 
-  #ApiService = null;
+  #APIService = null;
 
   constructor (link) {
-    this.#ApiService = new ApiService(link);
+    this.#APIService = new ApiService(link);
 
   }
 
-  async getData (method, id) {
-    const dataList = await this.#ApiService.getData(method, id);
-    if (method === 'getComments') {
+  async getData (methodAPI, id) {
+    const dataList = await this.#APIService.getData(methodAPI, id);
+    if (methodAPI === 'getComments') {
       return dataList;
     }
     const filmsData = this.#adaptToClient(dataList);
@@ -23,13 +22,20 @@ class MainModel {
     return filmsData;
   }
 
-  async changeData (method, id, changedData) {
-    const convertedChangedData = this.#adaptToServer(changedData);
+  #adaptToServerSwitch = (method, changedData) => {
+    switch (method) {
+      case 'postComment': return changedData;
+      case 'deleteComment': return null;
+      default : return this.#adaptToServer(changedData);
+    }
+  }
 
-    const updatedData = await this.#ApiService.updateData(method, id, convertedChangedData);
-    const updatedConvertedData = this.#adaptToClient(updatedData);
+  async changeData (methodAPI, changedData, idFilm, idComment) {
+    const adaptChangedDataToServer = this.#adaptToServerSwitch(methodAPI, changedData);
 
-    this.observersNotify(updatedConvertedData, id);
+    const responseStatus = await this.#APIService.updateData(methodAPI, adaptChangedDataToServer, idFilm, idComment);
+
+    this.observersNotify(responseStatus, idFilm, methodAPI);
   }
 
   odserverAdd = (callback) => {
@@ -40,8 +46,8 @@ class MainModel {
     this._observers = [];
   };
 
-  observersNotify = (data, id) => {
-    this._observers.forEach( (item) => item(data, id));
+  observersNotify = (responseStatus, idFilm, idComment, method) => {
+    this._observers.forEach( (item) => item(responseStatus, idFilm, idComment, method));
   };
 
   #adaptToClient = (dataList) => dataList.slice().map( (item) => ({

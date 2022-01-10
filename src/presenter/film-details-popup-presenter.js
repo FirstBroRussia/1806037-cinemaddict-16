@@ -1,15 +1,20 @@
+/* eslint-disable no-fallthrough */
 import {footerBodyElement, onEscKeydown, dayjs} from '/src/utils/util.js';
 import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {methodsForPopup} from '../utils/util';
+import {methodsForPopup, METHODS_FOR_API, methodsForPopupUpdateView} from '../utils/util';
 
 
 class FilmDetailsPopupPresenter {
   _callbacks = {};
+
   #id = null;
-  #film = null;
+  #MainModel = null;
+
+  #filmInfo = null;
+  #filmCommentsData = null;
 
   #FilmDetailsPopupComponent = null;
 
@@ -25,35 +30,75 @@ class FilmDetailsPopupPresenter {
   #filmDetailsTopContainerElement = null;
   #filmDetailsBottonContainerElement = null;
 
-  constructor (changeMasterData, popupElement) {
+  constructor (film, id, MainModel, changeMasterData, popupElement) {
+    this.#id = Number(id);
+    this.#filmInfo = film;
+    this.#MainModel = MainModel;
+    this.#MainModel.odserverAdd(this.#observerNotificationPopupPresenter);
+
     this._callbacks.changeMasterData = changeMasterData;
     this._callbacks.popupElement = popupElement;
   }
 
-  render (film) {
-    if (this.#film !== null) {
-      this.#film = {...film};
-      this.#id = Number(this.#film.id);
-      this.filmDetailsPopupUpdateView();
+  #observerNotificationPopupPresenter = (responseStatus, idFilm, method) => {
+    if (responseStatus === 200) {
+      this.init(method);
+    }
+  }
+
+  #filmDetailsPopupUpdateView = (updateFilmInfo, updateComments, updateNewComment) => {
+    if (updateFilmInfo === 'updateInfo') {
+      const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
+      this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#filmInfo);
+      this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
+      this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
+      this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
+      replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
+    }
+
+    if (updateComments === 'updateComments') {
+      const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
+      const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
+      this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#filmInfo);
+      this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
+      this.#filmCommentsData.forEach( (item) => {
+        this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
+        renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
+      });
+      replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
+      replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
+    }
+
+    if (updateNewComment === 'updateNewComment') {
+      const prevFilmDetailsNewCommentComponent = this.#FilmDetailsNewCommentComponent;
+      this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#changeMasterData);
+      replaceNodeElementWithoutParent(this.#FilmDetailsNewCommentComponent, prevFilmDetailsNewCommentComponent);
+    }
+
+  }
+
+  async init (method) {
+    if (method !== undefined) {
+      this.#popupUpdateViewSwitch(method);
       return;
     }
-    this.#film = {...film};
-    this.#id = Number(this.#film.id);
 
     this.#FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
 
-    this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#film);
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
+    this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#filmInfo);
+    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#filmInfo);
 
-    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
+    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#filmInfo);
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
-    this.#film.comments.forEach( (item) => {
+
+    this.#filmCommentsData = await this.#MainModel.getData(METHODS_FOR_API.GET_COMMENTS, this.#id);
+    this.#filmCommentsData.forEach( (item) => {
       this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
       renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
     });
 
-    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#film, this.#changeData);
+    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#changeMasterData);
 
     this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
     this.#filmDetailsBottonContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
@@ -76,15 +121,29 @@ class FilmDetailsPopupPresenter {
     renderNodeElement(footerBodyElement, positionMarkup.BEFORE_END, this.#FilmDetailsPopupComponent);
   }
 
-  #changeData = (changedData) => {
-    this._callbacks.changeMasterData(this.#id, changedData);
+  #filmDataToServer = async () => {
+    const filmsData = await this.#MainModel.getData(METHODS_FOR_API.GET_MOVIES);
+    for (const film of filmsData) {
+      if (Number(film.id) === this.#id) {
+        this.#filmInfo = film;
+        break;
+      }
+    }
+  }
+
+  #changeMasterData = (method, changedData, idComment) => {
+    switch (method) {
+      case 'putMovies' : return this._callbacks.changeMasterData(method, changedData, this.#id);
+      case 'postComment' : return this._callbacks.changeMasterData(method, changedData, this.#id);
+      case 'deleteComment' : return this._callbacks.changeMasterData(method, changedData, this.#id, idComment);
+    }
   };
 
   #controlButtonsChangeData = (controlButton) => {
     switch (controlButton) {
-      case 'watchlist' : return ({...this.#film, isWatchlist : !this.#film.isWatchlist});
-      case 'history' : return ({...this.#film, isWatched : !this.#film.isWatched, watchingDate: dayjs().format()});
-      case 'favorite' : return ({...this.#film, isFavorite : !this.#film.isFavorite});
+      case 'watchlist' : return ({...this.#filmInfo, isWatchlist : !this.#filmInfo.isWatchlist});
+      case 'history' : return ({...this.#filmInfo, isWatched : !this.#filmInfo.isWatched, watchingDate: dayjs().format()});
+      case 'favorite' : return ({...this.#filmInfo, isFavorite : !this.#filmInfo.isFavorite});
     }
   }
 
@@ -100,33 +159,9 @@ class FilmDetailsPopupPresenter {
     this.closeFilmDetailsPopup();
   }
 
-  filmDetailsPopupUpdateView = () => {
-    const prevFilmDetailsFilterButtonsComponent = this.#FilmDetailsFilterButtonsComponent;
-    const prevFilmDetailsFilmsCountComponent = this.#FilmDetailsCommentsCountComponent;
-    const prevFilmDetailsCommentsComponent = this.#FilmDetailsCommentsComponent;
-    const prevFilmDetailsNewCommentComponent = this.#FilmDetailsNewCommentComponent;
-
-    this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#film);
-    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#film);
-    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
-    this.#film.comments.forEach( (item) => {
-      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(item, this.#deleteCommentButtonClickHandler);
-      renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
-    });
-    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this.#film, this.#changeData);
-
-    this.#FilmDetailsFilterButtonsComponent.setWatchlistClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.setWatchedClickHandler('click', this.#controlButtonClickHandler);
-    this.#FilmDetailsFilterButtonsComponent.setFavoriteClickHandler('click', this.#controlButtonClickHandler);
-
-    replaceNodeElementWithoutParent(this.#FilmDetailsFilterButtonsComponent, prevFilmDetailsFilterButtonsComponent);
-    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
-    replaceNodeElementWithoutParent(this.#FilmDetailsCommentsComponent, prevFilmDetailsCommentsComponent);
-    replaceNodeElementWithoutParent(this.#FilmDetailsNewCommentComponent, prevFilmDetailsNewCommentComponent);
-  }
 
   closeFilmDetailsPopup = () => {
-    this._callbacks.changeMasterData(this.#id, this.#film);
+    // this._callbacks.changeMasterData(this.#id, this.#filmInfo);
     this.#FilmDetailsPopupComponent.remove();
     document.removeEventListener('keydown', this.#closeFilmDetailsPopupKeydownHandler);
     removeEnterAndControlKeyUpDownHandlers();
@@ -135,21 +170,33 @@ class FilmDetailsPopupPresenter {
 
   #controlButtonClickHandler = (clickButton) => {
     const changedData = this.#controlButtonsChangeData(clickButton);
-    this.#changeData(changedData);
+    this.#changeMasterData(METHODS_FOR_API.PUT_MOVIES, changedData);
   }
 
   #deleteCommentButtonClickHandler = (idComment) => {
-    let changedData;
-    changedData = {...this.#film};
-    const changedCommentsList = changedData.comments.filter( (item) => {
-      if (item.id === idComment) {
-        return false;
-      }
-      return true;
-    });
-    changedData = {...changedData, comments: changedCommentsList};
-    this.#changeData(changedData);
+    this.#changeMasterData(METHODS_FOR_API.DELETE_COMMENT, null, idComment);
   };
+
+  #popupUpdateViewSwitch = async (method) => {
+    switch (method) {
+      case 'putMovies' : {
+        await this.#filmDataToServer();
+        this.#filmDetailsPopupUpdateView(methodsForPopupUpdateView.UPDATE_FILM_INFO);
+        return;
+      }
+      case 'postComment' : {
+        await this.#filmDataToServer();
+        this.#filmCommentsData = await this.#MainModel.getData(METHODS_FOR_API.GET_COMMENTS, this.#id);
+        this.#filmDetailsPopupUpdateView(methodsForPopupUpdateView.UPDATE_FILM_INFO, methodsForPopupUpdateView.UPDATE_COMMENTS, methodsForPopupUpdateView.UPDATE_NEW_COMMENT);
+        return;
+      }
+      case 'deleteComment' : {
+        await this.#filmDataToServer();
+        this.#filmCommentsData = await this.#MainModel.getData(METHODS_FOR_API.GET_COMMENTS, this.#id);
+        this.#filmDetailsPopupUpdateView(methodsForPopupUpdateView.UPDATE_FILM_INFO, methodsForPopupUpdateView.UPDATE_COMMENTS);
+      }
+    }
+  }
 
 }
 
