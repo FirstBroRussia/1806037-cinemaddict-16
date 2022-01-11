@@ -9,17 +9,14 @@ class ApiService {
     this.#authorization = `Basic ${nanoid(15)}`;
   }
 
-  async getData (method, id) {
-    const inputParameters = this.#actionsToDataSwitch(method, id);
-    const link = `${this.#linkToServer}/${inputParameters.URL}`;
+  async getMovies () {
+    const link = `${this.#linkToServer}movies/`;
+    const request = 'GET';
     const headers = new Headers();
     headers.append('Authorization', this.#authorization);
+    const body = null;
 
-    const response = await fetch(link, {
-      method: inputParameters.REQUEST_METHOD,
-      headers: headers,
-      body: null,
-    });
+    const response = await this.#getResponseFromServer(link, request, headers, body);
 
     try {
       const dataToServer = await response.json();
@@ -31,28 +28,36 @@ class ApiService {
     }
   }
 
-  async updateData (method, changedData, idFilm, idComment) {
-    let inputParameters;
-    let body;
 
-    if (method === 'deleteComment') {
-      inputParameters = this.#actionsToDataSwitch(method, idComment);
-      body = null;
-    } else {
-      inputParameters = this.#actionsToDataSwitch(method, idFilm);
-      body = JSON.stringify(changedData);
+  async getComments (idFilm) {
+    const link = `${this.#linkToServer}comments/${idFilm}`;
+    const request = 'GET';
+    const headers = new Headers();
+    headers.append('Authorization', this.#authorization);
+    const body = null;
+
+    const response = await this.#getResponseFromServer(link, request, headers, body);
+
+    try {
+      const dataToServer = await response.json();
+
+      return dataToServer;
     }
+    catch (err) {
+      throw new Error (`${response.status}: ${response.statusText}`);
+    }
+  }
 
-    const link = `${this.#linkToServer}/${inputParameters.URL}`;
+
+  async putMovies (idFilm, data) {
+    const link = `${this.#linkToServer}movies/${idFilm}`;
+    const request = 'PUT';
     const headers = new Headers();
     headers.append('Authorization', this.#authorization);
     headers.append('Content-Type', 'application/json');
+    const body = JSON.stringify(data);
 
-    const response = await fetch(link, {
-      method: inputParameters.REQUEST_METHOD,
-      headers: headers,
-      body: body,
-    });
+    const response = await this.#getResponseFromServer(link, request, headers, body);
 
     let resultResponse;
 
@@ -68,15 +73,63 @@ class ApiService {
     };
   }
 
-  #actionsToDataSwitch = (method, id) => {
-    switch (method) {
-      case 'getMovies': return ({REQUEST_METHOD: 'GET', URL: 'movies/'});
-      case 'getComments' : return ({REQUEST_METHOD: 'GET', URL: `comments/${id}`});
-      case 'putMovies' : return ({REQUEST_METHOD: 'PUT', URL: `movies/${id}`});
-      case 'postComment' : return ({REQUEST_METHOD: 'POST', URL: `comments/${id}`});
-      case 'deleteComment' : return ({REQUEST_METHOD: 'DELETE', URL: `comments/${id}`});
+
+  async postComment (idFilm, data) {
+    const link = `${this.#linkToServer}comments/${idFilm}`;
+    const request = 'POST';
+    const headers = new Headers();
+    headers.append('Authorization', this.#authorization);
+    headers.append('Content-Type', 'application/json');
+    const body = JSON.stringify(data);
+
+    const response = await this.#getResponseFromServer(link, request, headers, body);
+
+    let resultResponse;
+
+    try {
+      resultResponse = await response.json();
+    } catch {
+      resultResponse = null;
     }
+
+    return {
+      responseStatus: response.status,
+      data: resultResponse,
+    };
   }
+
+
+  async deleteComment (idComments) {
+    const link = `${this.#linkToServer}comments/${idComments}`;
+    const request = 'DELETE';
+    const headers = new Headers();
+    headers.append('Authorization', this.#authorization);
+    headers.append('Content-Type', 'application/json');
+    const body = null;
+
+    const response = await this.#getResponseFromServer(link, request, headers, body);
+
+    let resultResponse;
+
+    try {
+      resultResponse = await response.json();
+    } catch {
+      resultResponse = null;
+    }
+
+    return {
+      responseStatus: response.status,
+      data: resultResponse,
+    };
+  }
+
+
+  #getResponseFromServer = (link, request, headers, body) => fetch(link, {
+    method: request,
+    headers: headers,
+    body: body
+  })
+
 }
 
 export {ApiService};

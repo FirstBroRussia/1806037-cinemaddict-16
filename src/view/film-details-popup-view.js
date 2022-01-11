@@ -1,4 +1,4 @@
-import {he, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat} from '/src/utils/util.js';
+import {he, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat, getDurationFormatTime} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -68,7 +68,7 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${getCreatingCommentDateFormat(film.duration)}</td>
+            <td class="film-details__cell">${getDurationFormatTime(film.duration)}</td>
           </tr>
           <tr class="film-details__row genre">
             <td class="film-details__term">${film.genre.length === 1 ? 'Genre' : 'Genres'}</td>

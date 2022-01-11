@@ -11,11 +11,13 @@ import {StatisticSmartView} from '/src/view/statistic-menu-view.js';
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
 
-import {METHODS_FOR_API, RESPONSES_FROM_SERVER, dayjs, ZERO_VALUE} from '/src/utils/util.js';
+import {dayjs, ZERO_VALUE} from '/src/utils/util.js';
 
 const NO_FILMS_VALUE = 0;
 
 class MainPresenter {
+  #linkToServer = 'https://16.ecmascript.pages.academy/cinemaddict/';
+
   #films = null;
   #convertedFilms = null;
 
@@ -46,11 +48,12 @@ class MainPresenter {
   #FilmsCountComponent = null;
 
   constructor () {
-    this.#MainModel = new MainModel('https://16.ecmascript.pages.academy/cinemaddict/');
+    this.#MainModel = new MainModel(this.#linkToServer);
     this.#MainModel.odserverAdd(this.#observerNotificationMainPresenter);
 
     this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter);
   }
+
 
   #primaryInit = () => {
     const watchedFilms = this.#setWatchedFilms(this.#films);
@@ -111,27 +114,40 @@ class MainPresenter {
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort);
   }
 
-  async init (methodAPI, id) {
+
+  async init (idFilm) {
     if (this.#films === null) {
-      this.#films = await this.#MainModel.getData(METHODS_FOR_API.GET_MOVIES);
+      this.#films = await this.#MainModel.getMovies();
       this.#primaryInit();
       return;
     }
 
-    this.#films = await this.#MainModel.getData(methodAPI);
+    this.#films = await this.#MainModel.getMovies();
     this.#films === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
-    this.#updateView(id);
+    this.#updateView(idFilm);
   }
 
-  #observerNotificationMainPresenter = (method, response, idFilm) => {
-    if (response.responseStatus === RESPONSES_FROM_SERVER.SUCCESS_SERVER_RESPONSE) {
-      this.init(METHODS_FOR_API.GET_MOVIES, idFilm);
+
+  #observerNotificationMainPresenter = (dataCollection) => {
+    this.init(dataCollection.idFilm);
+  }
+
+
+  #changeMasterData = (method, dataList) => {
+    const {idFilm, idComment, data} = dataList;
+    switch (method) {
+      case 'putMovies' : {
+        this.#MainModel.putMovies(idFilm, data);
+        break;
+      }
+      case 'postComment' : {
+        this.#MainModel.postComment(idFilm, data);
+        break;
+      }
+      case 'deleteComment' : this.#MainModel.deleteComment(idComment);
     }
   }
 
-  #changeMasterData = (method, changedData, idFilm, idComment) => {
-    this.#MainModel.changeData(method, changedData, idFilm, idComment);
-  }
 
   #updateView = (id) => {
     this.#setConvertedFilms(this.#films);
@@ -145,6 +161,7 @@ class MainPresenter {
     this.#FilmsListPresenter.init(this.#convertedFilms, this.#selectedFilter, this.#selectedSort, id);
   }
 
+
   #profileUserUpdateView = () => {
     this.#ProfileUserComponent.remove();
     const watchedFilms = this.#setWatchedFilms(this.#films);
@@ -154,6 +171,7 @@ class MainPresenter {
     this.#ProfileUserComponent = new ProfileUserMarkup(watchedFilms);
     renderNodeElement(headerBodyElement, positionMarkup.BEFORE_END, this.#ProfileUserComponent);
   }
+
 
   #navigationMenuUpdateView = () => {
     const prevWatchlistFilmsCountComponent = this.#WatchlistFilmsCountComponent;
@@ -169,19 +187,22 @@ class MainPresenter {
     replaceNodeElementWithoutParent(this.#FavoriteFilmsCountComponent, prevFavoriteFilmsCountComponent);
   }
 
+
   #filterButtonClickHandler = (clickButton) => {
     this.#selectedFilter = clickButton;
     this.#selectedSort = sortMode.DEFAULT;
     this.#SortListComponent.defaultSortButtonClickSimulation();
 
-    this.init(METHODS_FOR_API.GET_MOVIES);
+    this.init();
   }
+
 
   #sortButtonClickHandler = (clickButton) => {
     this.#selectedSort = clickButton;
 
-    this.init(METHODS_FOR_API.GET_MOVIES);
+    this.init();
   }
+
 
   #statsButtonClickHandler = () => {
     deleteSectionElement();
@@ -195,11 +216,12 @@ class MainPresenter {
   #getFilteredFilmsListSwitch = (films, value) => {
     switch (value) {
       case 'all' : return films.slice();
-      case 'watchlist' : return films.slice().filter( (film) => film.isWatchlist === true);
-      case 'history' : return films.slice().filter( (film) => film.isWatched === true);
-      case 'favorite' : return films.slice().filter( (film) => film.isFavorite === true);
+      case 'watchlist' : return films.slice().filter( (film) => film.isWatchlist);
+      case 'history' : return films.slice().filter( (film) => film.isWatched);
+      case 'favorite' : return films.slice().filter( (film) => film.isFavorite);
     }
   }
+
 
   #getSortFilmsListSwitch = (films, sort) => {
     switch (sort) {
@@ -214,29 +236,30 @@ class MainPresenter {
     }
   }
 
+
   #setConvertedFilms = () => {
     this.#convertedFilms = this.#getFilteredFilmsListSwitch(this.#films, this.#selectedFilter);
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
 
-  #popupPresenter = async (method, film, id, ...cb) => {
+  #popupPresenter = async (method, dataList) => {
     if (method === methodsForPopup.CREATE) {
+      const {data, callbacks} = dataList;
       if (this.#FilmDetailsPopupPresenter !== null) {
         const prevPopupPresenter = this.#FilmDetailsPopupPresenter;
-
-        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...cb);
-        await this.#FilmDetailsPopupPresenter.init(film);
-
+        this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...callbacks);
+        await this.#FilmDetailsPopupPresenter.init(data);
         prevPopupPresenter.closeFilmDetailsPopup();
         return;
       }
-      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...cb);
-      this.#FilmDetailsPopupPresenter.init(film);
+      this.#FilmDetailsPopupPresenter = new FilmDetailsPopupPresenter(this.#MainModel, ...callbacks);
+      this.#FilmDetailsPopupPresenter.init(data);
     } else if (method === methodsForPopup.DELETE) {
       this.#FilmDetailsPopupPresenter = null;
     }
   }
+
 
   #setWatchedFilms = () => this.#films.slice().filter( (film) => film.isWatched);
 

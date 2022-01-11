@@ -11,38 +11,56 @@ class MainModel {
 
   }
 
-  async getData (methodAPI, id) {
-    const dataList = await this.#APIService.getData(methodAPI, id);
-    if (methodAPI === 'getComments') {
-      return dataList;
-    }
-    const filmsData = this.#adaptToClient(dataList);
 
-    return filmsData;
+  async getMovies () {
+    const filmsData = await this.#APIService.getMovies();
+    return this.#getAdaptToClient(filmsData);
   }
 
-  #adaptToServerSwitch = (method, changedData) => {
-    switch (method) {
-      case 'postComment': return changedData;
-      case 'deleteComment': return null;
-      default : return this.#adaptToServer(changedData);
-    }
+
+  async getComments (idFilm) {
+    return await this.#APIService.getComments(idFilm);
   }
 
-  async changeData (methodAPI, changedData, idFilm, idComment) {
-    const adaptChangedDataToServer = this.#adaptToServerSwitch(methodAPI, changedData);
 
-    let response = await this.#APIService.updateData(methodAPI, adaptChangedDataToServer, idFilm, idComment);
-    if (methodAPI === 'putMovies') {
-      response = {...response, data : this.#adaptToClient(response.data)};
-    }
-
-    this.observersNotify(methodAPI, response, idFilm);
+  async putMovies (idFilm, data) {
+    const adaptData = this.#getAdaptToServer(data);
+    let response = await this.#APIService.putMovies(idFilm, adaptData);
+    response = {...response, data : this.#getAdaptToClient(response.data)};
+    const dataCollection = {
+      method: 'putMovies',
+      response: response,
+      idFilm: idFilm
+    };
+    this.observersNotify(dataCollection);
   }
+
+
+  async postComment (idFilm, data) {
+    const response = await this.#APIService.postComment(idFilm, data);
+    const dataCollection = {
+      method: 'postComment',
+      response: response,
+      idFilm: idFilm
+    };
+    this.observersNotify(dataCollection);
+  }
+
+
+  async deleteComment (idComment) {
+    const response = await this.#APIService.deleteComment(idComment);
+    const dataCollection = {
+      method: 'deleteComment',
+      response: response,
+    };
+    this.observersNotify(dataCollection);
+  }
+
 
   odserverAdd = (callback) => {
     this._observers.push(callback);
   };
+
 
   observerRemove = (callback) => {
     for (let index = 0; index < this._observers.length; index++) {
@@ -53,15 +71,18 @@ class MainModel {
     }
   }
 
+
   observersRemove = () => {
     this._observers = [];
   }
 
-  observersNotify = (method, response, idFilm) => {
-    this._observers.forEach( (item) => item(method, response, idFilm));
+
+  observersNotify = (dataCollection) => {
+    this._observers.forEach( (item) => item(dataCollection));
   };
 
-  #adaptToClient = (dataList) => {
+
+  #getAdaptToClient = (dataList) => {
     if (Array.isArray(dataList)) {
       return dataList.slice().map( (item) => ({
         id: item.id,
@@ -106,7 +127,8 @@ class MainModel {
     });
   }
 
-  #adaptToServer = (data) => ({
+
+  #getAdaptToServer = (data) => ({
     id: data.id,
     comments: data.comments,
     film_info: {
