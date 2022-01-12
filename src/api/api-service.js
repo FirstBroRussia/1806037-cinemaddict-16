@@ -16,7 +16,7 @@ class ApiService {
     headers.append('Authorization', this.#authorization);
     const body = null;
 
-    const response = await this.#getResponseFromServer(link, request, headers, body);
+    const response = await this.#requestFromServer(link, request, headers, body);
 
     try {
       const dataToServer = await response.json();
@@ -36,7 +36,7 @@ class ApiService {
     headers.append('Authorization', this.#authorization);
     const body = null;
 
-    const response = await this.#getResponseFromServer(link, request, headers, body);
+    const response = await this.#requestFromServer(link, request, headers, body);
 
     try {
       const dataToServer = await response.json();
@@ -57,7 +57,7 @@ class ApiService {
     headers.append('Content-Type', 'application/json');
     const body = JSON.stringify(data);
 
-    const response = await this.#getResponseFromServer(link, request, headers, body);
+    const response = await this.#requestFromServer(link, request, headers, body);
 
     let resultResponse;
 
@@ -68,7 +68,7 @@ class ApiService {
     }
 
     return {
-      responseStatus: response.status,
+      responseOk: response.ok,
       data: resultResponse,
     };
   }
@@ -82,7 +82,7 @@ class ApiService {
     headers.append('Content-Type', 'application/json');
     const body = JSON.stringify(data);
 
-    const response = await this.#getResponseFromServer(link, request, headers, body);
+    const response = await this.#requestFromServer(link, request, headers, body);
 
     let resultResponse;
 
@@ -93,7 +93,7 @@ class ApiService {
     }
 
     return {
-      responseStatus: response.status,
+      responseOk: response.ok,
       data: resultResponse,
     };
   }
@@ -107,7 +107,7 @@ class ApiService {
     headers.append('Content-Type', 'application/json');
     const body = null;
 
-    const response = await this.#getResponseFromServer(link, request, headers, body);
+    const response = await this.#requestFromServer(link, request, headers, body);
 
     let resultResponse;
 
@@ -118,13 +118,13 @@ class ApiService {
     }
 
     return {
-      responseStatus: response.status,
+      responseOk: response.ok,
       data: resultResponse,
     };
   }
 
 
-  #getResponseFromServer = (link, request, headers, body) => fetch(link, {
+  #requestFromServer = (link, request, headers, body) => fetch(link, {
     method: request,
     headers: headers,
     body: body
