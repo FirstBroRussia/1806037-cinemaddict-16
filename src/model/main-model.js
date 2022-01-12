@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import {ApiService} from '/src/api/api-service.js';
+import {METHODS_FOR_API} from '/src/utils/util.js';
 
 class MainModel {
   _observers = [];
@@ -13,19 +14,23 @@ class MainModel {
 
 
   async getMovies () {
-    const filmsData = await this.#APIService.getMovies();
+    const filmsData = await this.#APIService.getData(METHODS_FOR_API.GET_MOVIES);
     return this.#getAdaptToClient(filmsData);
   }
 
 
   async getComments (idFilm) {
-    return await this.#APIService.getComments(idFilm);
+    const dataList = {idFilm};
+    return await this.#APIService.getData(METHODS_FOR_API.GET_COMMENTS, dataList);
   }
 
 
   async putMovies (idFilm, data) {
     const adaptData = this.#getAdaptToServer(data);
-    let response = await this.#APIService.putMovies(idFilm, adaptData);
+    const dataList = {
+      idFilm,
+      data: adaptData};
+    let response = await this.#APIService.changeData(METHODS_FOR_API.PUT_MOVIES, dataList);
     response = {...response, data : this.#getAdaptToClient(response.data)};
     const dataCollection = {
       method: 'putMovies',
@@ -37,7 +42,10 @@ class MainModel {
 
 
   async postComment (idFilm, data) {
-    const response = await this.#APIService.postComment(idFilm, data);
+    const dataList = {
+      idFilm,
+      data};
+    const response = await this.#APIService.changeData(METHODS_FOR_API.POST_COMMENT, dataList);
     const dataCollection = {
       method: 'postComment',
       response: response,
@@ -48,7 +56,8 @@ class MainModel {
 
 
   async deleteComment (idComment) {
-    const response = await this.#APIService.deleteComment(idComment);
+    const dataList = {idComment};
+    const response = await this.#APIService.changeData(METHODS_FOR_API.DELETE_COMMENT, dataList);
     const dataCollection = {
       method: 'deleteComment',
       response: response,

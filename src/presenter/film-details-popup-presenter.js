@@ -81,7 +81,6 @@ class FilmDetailsPopupPresenter {
   async init (data, method) {
     if (method !== undefined) {
       await this.#setData(data, method);
-      console.log(data);
       this.#popupUpdateViewSwitch(method);
       return;
     }
