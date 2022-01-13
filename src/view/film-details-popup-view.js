@@ -1,4 +1,4 @@
-import {nanoid, he, dayjs, controlButtons} from '/src/utils/util.js';
+import {he, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat, getDurationFormatTime} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -64,15 +64,11 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">${film.releaseFullFormat}</td>
+            <td class="film-details__cell">${getReleaseDateFormat(film.releaseFullFormat.date)}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${film.duration}</td>
-          </tr>
-          <tr class="film-details__row">
-            <td class="film-details__term">Country</td>
-            <td class="film-details__cell">${film.country}</td>
+            <td class="film-details__cell">${getDurationFormatTime(film.duration)}</td>
           </tr>
           <tr class="film-details__row genre">
             <td class="film-details__term">${film.genre.length === 1 ? 'Genre' : 'Genres'}</td>
@@ -89,7 +85,7 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
 `;
 };
 
-const createFilmDetailsCardFilterControlButtons = (film) => `
+const createFilmDetailsCardFilterControlButtonsTemplate = (film) => `
 <section id="${film.id}" class="film-details__controls">
 <button type="button" class="film-details__control-button film-details__control-button--watchlist ${film.isWatchlist && 'film-details__control-button--active'}" id="watchlist" name="watchlist">Add to watchlist</button>
 <button type="button" class="film-details__control-button film-details__control-button--watched ${film.isWatched && 'film-details__control-button--active'}" id="watched" name="watched">Already watched</button>
@@ -97,30 +93,34 @@ const createFilmDetailsCardFilterControlButtons = (film) => `
 </section>
 `;
 
-const filmDetailsCommentsCount = (filmData) => `
-<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmData.comments.length}</span></h3>
+const filmDetailsCommentsCountTemplate = (commentsData) => `
+<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsData.length}</span></h3>
 `;
 
-const createFilmDetailsCommentsMarkup = () => `
+const createFilmDetailsCommentsMarkupTemplate = () => `
   <ul class="film-details__comments-list">
 
   </ul>
 `;
 
-const createFilmDetailsCommentFromDataMarkup = (item) => `
+const createFilmDetailsCommentFromDataTemplate = (item) => `
 <li id="${item.id}"class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${item.emotion}.png" width="55" height="55" alt="emoji-${item.emotion}">
     </span>
-    <div>
+    <div class="film-details__comment-wrap">
       <p class="film-details__comment-text">${he.encode(item.comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
-        <span class="film-details__comment-day">${item.date}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <span class="film-details__comment-day">${getCreatingCommentDateFormat(item.date)}</span>
+
       </p>
     </div>
    </li>\n
+`;
+
+const createDeleteCommentButtonTemplate = () =>`
+<button class="film-details__comment-delete">Delete</button>
 `;
 
 const createFolmDetailsNewCommentMarkup = () => `
@@ -163,27 +163,72 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
+class DeleteCommentButtonMarkup extends AbstractView {
+  #idComment = null;
+
+  constructor (idComment, callback) {
+    super();
+
+    this.#idComment = idComment;
+    this._callback.deleteButtonClick = callback;
+    this._template = createDeleteCommentButtonTemplate;
+    this._element = createNodeElement(this._template());
+
+    this.addDeleteCommentButtonClickHandler();
+  }
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteButtonClick(this.#idComment);
+  };
+
+  addDeleteCommentButtonClickHandler() {
+    this._element.addEventListener('click', this.#deleteButtonClickHandler);
+  }
+
+  updateView (state) {
+    if (state === 'default') {
+      this._element.textContent = 'Delete';
+      return;
+    }
+    this._element.textContent = 'Deleting...';
+  }
+}
+
+class FilmDetailsPopupMarkup extends AbstractView {
+  constructor() {
+    super();
+
+    this._template = createFilmDetailsPopupTemplate;
+    this._element = createNodeElement(this._template());
+  }
+
+}
+
 class FilmDetailsNewCommentMarkup extends AbstractView {
-  #data = {};
-  #commentsCount = null;
-  #newComment = {};
+  #newComment = null;
 
   #currentCheckedButton = null;
   #newCommentTextInputElement = null;
   #bigEmojiElement = null;
 
-  constructor(data, callback) {
+  constructor(callback) {
     super();
 
-    this.#data = {...data};
-    this.#commentsCount = this.#data.comments.length;
-    this._callback.changeData = callback;
+    this._callback.submitNewComment = callback;
     this._template = createFolmDetailsNewCommentMarkup();
     this._element = createNodeElement(this._template);
+
     this.#bigEmojiElement = this._element.querySelector('.film-details__add-emoji-label');
     this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
 
     this.addHandlers();
+  }
+
+  addHandlers = () => {
+    this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
+    this._element.querySelector('.submit-new-comment__button').addEventListener('click', this.#submitButtonClickHandler);
+    twoKeysPressFunction(this.#submitNewComment);
   }
 
   #smileButtonClickHandler = (evt) => {
@@ -208,11 +253,6 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     renderNodeElement(this.#bigEmojiElement, positionMarkup.BEFORE_END, newImgElement);
   }
 
-  #newCommentTextInputHandler = (evt) => {
-    evt.preventDefault();
-    this.#newCommentTextInputElement = this._element.querySelector('.film-details__comment-input');
-  }
-
   #validationCheck = (newCommentInputElement, currentCheckedEmotionButton) => {
     setNewCommentElementValid(newCommentInputElement, currentCheckedEmotionButton);
     if (!newCommentInputElement.validity.valid) {
@@ -230,30 +270,15 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
       return;
     }
+
     const emotion = this.#currentCheckedButton.value;
     const comment = this.#newCommentTextInputElement.value;
-    this.#newComment = {...this.#newComment, id: nanoid(), author: 'Vasya', date: dayjs().format('YYYY/MM/DD HH:mm'), emotion: emotion, comment: comment};
-    const changedData = {...this.#data, comments: [...this.#data.comments, this.#newComment]};
+    this.#newComment = {emotion: emotion, comment: comment};
     removeEnterAndControlKeyUpDownHandlers();
-    this._callback.changeData(changedData);
+
+    this._callback.submitNewComment(this.#newComment);
   }
 
-  addHandlers = () => {
-    this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
-    this._element.querySelector('.film-details__comment-input').addEventListener('input', this.#newCommentTextInputHandler);
-    this._element.querySelector('.submit-new-comment__button').addEventListener('click', this.#submitButtonClickHandler);
-    twoKeysPressFunction(this.#submitNewComment);
-  }
-
-}
-
-class FilmDetailsPopupMarkup extends AbstractView {
-  constructor() {
-    super();
-
-    this._template = createFilmDetailsPopupTemplate;
-    this._element = createNodeElement(this._template());
-  }
 }
 
 class FilmDetailsCloseButtonMarkup extends AbstractView {
@@ -278,7 +303,7 @@ class FilmDetailsCardFilterButtons extends AbstractView {
   constructor(filmData) {
     super();
 
-    this._template = createFilmDetailsCardFilterControlButtons;
+    this._template = createFilmDetailsCardFilterControlButtonsTemplate;
     this._element = createNodeElement(this._template(filmData));
   }
 
@@ -323,11 +348,11 @@ class FilmDetailsCardFilterButtons extends AbstractView {
 }
 
 class FilmDetailsCommentsCountMarkup extends AbstractView {
-  constructor(filmData) {
+  constructor(commentsData) {
     super();
 
-    this._template = filmDetailsCommentsCount;
-    this._element = createNodeElement(this._template(filmData));
+    this._template = filmDetailsCommentsCountTemplate;
+    this._element = createNodeElement(this._template(commentsData));
   }
 }
 
@@ -335,32 +360,18 @@ class FilmDetailsCommentMarkup extends AbstractView {
   constructor() {
     super();
 
-    this._template = createFilmDetailsCommentsMarkup;
+    this._template = createFilmDetailsCommentsMarkupTemplate;
     this._element = createNodeElement(this._template());
   }
 }
 
 class FilmDetailsCommentFromDataMarkup extends AbstractView {
-  #id = null;
-  constructor(commentData, callback) {
+  constructor(commentData) {
     super();
 
-    this.#id = commentData.id;
-    this._callback.changeData = callback;
-    this._template = createFilmDetailsCommentFromDataMarkup;
+    this._template = createFilmDetailsCommentFromDataTemplate;
     this._element = createNodeElement(this._template(commentData));
-
-    this.addDeleteCommentButtonClickHandler();
-  }
-
-  #deleteButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.changeData(this.#id);
-  };
-
-  addDeleteCommentButtonClickHandler() {
-    this._element.querySelector('.film-details__comment-delete').addEventListener('click', this.#deleteButtonClickHandler);
   }
 }
 
-export { FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup };
+export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup, DeleteCommentButtonMarkup};

@@ -1,12 +1,12 @@
 import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
-import {methodsForPopup, dayjs} from '../utils/util';
+import {methodsForPopup, dayjs, METHODS_FOR_API} from '../utils/util';
 
 
 class FilmCardPresenter {
   #film = null;
-  #id = null;
+  #idFilm = null;
   _callbacks = {};
 
   #FilmCardComponent = null;
@@ -19,19 +19,20 @@ class FilmCardPresenter {
     this._callbacks.popupElement = popupElement;
   }
 
+
   render (film) {
     if (!film) {
       return this.#FilmCardComponent;
     }
     if (this.#film !== null) {
       this.#film = {...film};
-      this.#id = this.#film.id;
+      this.#idFilm = Number(this.#film.id);
       this.updateCardComponent();
       return;
     }
 
     this.#film = {...film};
-    this.#id = this.#film.id;
+    this.#idFilm = Number(this.#film.id);
 
     this.#FilmCardComponent = new FilmCardMarkup(this.#film);
     this.#FilmCardComponent.addEventHandler('click', this.#openPopupClickHandler);
@@ -57,14 +58,23 @@ class FilmCardPresenter {
     }
   }
 
+
   #controlButtonClickHandler = (clickButton) => {
     const changedData = this.#controlButtonsChangeDataSwitch(clickButton);
-    this._callbacks.changeMasterData(this.#id, changedData);
+    const dataList = {
+      data: changedData,
+      idFilm: this.#idFilm
+    };
+    this._callbacks.changeMasterData(METHODS_FOR_API.PUT_MOVIES, dataList);
   }
 
 
   #openPopupClickHandler = () => {
-    this._callbacks.popupElement(methodsForPopup.CREATE, this.#film, this.#id, this._callbacks.changeMasterData, this._callbacks.popupElement);
+    const dataList = {
+      data: this.#film,
+      callbacks: [this._callbacks.changeMasterData, this._callbacks.popupElement]
+    };
+    this._callbacks.popupElement(methodsForPopup.CREATE, dataList);
   }
 
 
@@ -86,6 +96,7 @@ class FilmCardPresenter {
 
     replaceNodeElementWithoutParent(this.#FilmCardComponent, prevFilmCardComponent);
   }
+
 
   destroy () {
     this.#FilmCardComponent.remove();

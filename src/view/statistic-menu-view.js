@@ -1,9 +1,8 @@
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
-import {Chart, ChartDataLabels, dayjs} from '/src/utils/util.js';
+import {Chart, ChartDataLabels, dayjs, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE} from '/src/utils/util.js';
 import {createNodeElement, positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
 const HOUR_IN_MINUTES = 60;
-const ZERO_VALUE = 0;
 
 const createDurationCountMarkup = (duration) => {
   if (duration < HOUR_IN_MINUTES) {
@@ -21,13 +20,24 @@ const createStatisticMenuTemplate = () =>`
 </section>
 `;
 
-const createStatisticsRankTemplate = () => `
-<p class="statistic__rank">
-  Your rank
-  <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-  <span class="statistic__rank-label">Movie buff</span>
-</p>
-`;
+const createStatisticsRankTemplate = (data) => {
+  let markup;
+  if (data.length >= MIN_NOVICE_VALUE && data.length <= MAX_NOVICE_VALUE) {
+    markup = 'Novice';
+  } else if (data.length >= MIN_FAN_VALUE && data.length <= MAX_FAN_VALUE) {
+    markup = 'Fan';
+  } else if (data.length >= MOVIE_BUFF_VALUE) {
+    markup = 'Movie Buff';
+  }
+
+  return `
+  <p class="statistic__rank">
+    Your rank
+    <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+    <span class="statistic__rank-label">${markup}</span>
+  </p>
+  `;
+};
 
 const createStatisticsPeriodTimeFiltersButtonTemplate = () => `
 <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -82,11 +92,11 @@ const createStatisticsChartCanvasTemplate = () => `
 `;
 
 class StatisticsRankMarkup extends AbstractView {
-  constructor () {
+  constructor (data) {
     super();
 
     this._template = createStatisticsRankTemplate;
-    this._element = createNodeElement(this._template());
+    this._element = createNodeElement(this._template(data));
   }
 }
 
@@ -251,12 +261,14 @@ class StatisticSmartView extends AbstractView {
     const filmsByGenresMap = this.#setGenresListByFilmsCountMap(this.#data);
 
     this.#StatisticMenuComponent = new StatisticMenuMarkup();
-    this.#StatisticsRankMarkupComponent = new StatisticsRankMarkup();
+    if (this.#data.length !== ZERO_VALUE) {
+      this.#StatisticsRankMarkupComponent = new StatisticsRankMarkup(this.#data);
+      renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsRankMarkupComponent);
+    }
     this.#StatisticsPeriodTimeFiltersButtonMarkupComponent = new StatisticsPeriodTimeFiltersButtonMarkup(this.#getValueOnClickedFilterButtons);
     this.#StatisticsInfoMarkupComponent = new StatisticsInfoMarkup(this.#data, filmsByGenresMap);
     this.#StatisticsChartCanvasMarkupComponent = new StatisticsChartCanvasMarkup(filmsByGenresMap);
 
-    renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsRankMarkupComponent);
     renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsPeriodTimeFiltersButtonMarkupComponent);
     renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsInfoMarkupComponent);
     renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsChartCanvasMarkupComponent);
@@ -320,7 +332,7 @@ class StatisticSmartView extends AbstractView {
       case 'today' : {
         diffBetweenDate = 0;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (currentTime.diff(convertedTime, 'day') !== diffBetweenDate) {
             return false;
           }
@@ -331,7 +343,7 @@ class StatisticSmartView extends AbstractView {
       case 'week' : {
         diffBetweenDate = 7;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }
@@ -342,7 +354,7 @@ class StatisticSmartView extends AbstractView {
       case 'month' : {
         diffBetweenDate = 30;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }
@@ -353,7 +365,7 @@ class StatisticSmartView extends AbstractView {
       case 'year' : {
         diffBetweenDate = 365;
         convertedData = this.#data.slice().filter( (item) => {
-          convertedTime = dayjs(item.watchingDate);
+          convertedTime = dayjs(item.watchingDate).format();
           if (Number(currentTime.diff(convertedTime, 'day')) > diffBetweenDate) {
             return false;
           }

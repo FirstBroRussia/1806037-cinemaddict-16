@@ -46,6 +46,9 @@ class AbstractView {
   };
 
   remove() {
+    if (this._element === null) {
+      return;
+    }
     this._element.remove();
     this._element = null;
   }
