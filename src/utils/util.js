@@ -30,6 +30,10 @@ const mainBodyElement = document.querySelector('.main');
 const footerBodyElement = document.querySelector('.footer');
 const footerStatisticBodyElement = document.querySelector('.footer__statistics');
 
+const DELETE_BUTTON_STATE = {
+  DEFAULT: 'default',
+  DELETING: 'deleting',
+};
 
 const METHODS_FOR_API = {
   GET_MOVIES: 'getMovies',
@@ -113,4 +117,9 @@ const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY')
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
 
-export {ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods};
+const setHeadShakingStyleAnimation = (element) => {
+  element.classList.add('shake');
+  setTimeout( () => element.classList.remove('shake'), 800);
+};
+
+export {DELETE_BUTTON_STATE, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods, setHeadShakingStyleAnimation};

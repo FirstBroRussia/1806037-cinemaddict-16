@@ -26,6 +26,7 @@ class ApiService {
   }
 
   async changeData (method, dataList) {
+
     const {link, request, headers, body} = this.#setBodyRequest(method, dataList);
 
     const response = await this.#requestFromServer(link, request, headers, body);
