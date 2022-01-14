@@ -42,26 +42,41 @@ class MainModel {
 
 
   async postComment (idFilm, data) {
+    let dataCollection;
     const dataList = {
       idFilm,
       data};
     const response = await this.#APIService.changeData(METHODS_FOR_API.POST_COMMENT, dataList);
-    const dataCollection = {
-      method: 'postComment',
+    dataCollection = {
+      method: 'successPostComment',
       response: response,
       idFilm: idFilm
     };
+    if (!response.responseOk) {
+      dataCollection = {
+        method: 'failPostComment',
+        response: response,
+        idFilm: idFilm
+      };
+    }
     this.observersNotify(dataCollection);
   }
 
 
   async deleteComment (idComment) {
+    let dataCollection;
     const dataList = {idComment};
     const response = await this.#APIService.changeData(METHODS_FOR_API.DELETE_COMMENT, dataList);
-    const dataCollection = {
-      method: 'deleteComment',
+    dataCollection = {
+      method: 'successDeletingComment',
       response: response,
     };
+    if (!response.responseOk) {
+      dataCollection = {
+        method: 'failDeletingComment',
+        response: response,
+      };
+    }
     this.observersNotify(dataCollection);
   }
 

@@ -51,20 +51,17 @@ class FilmDetailsPopupPresenter {
 
   #setData = async (dataList, method) => {
     if (method !== undefined) {
-      const {data, responseOk} = dataList;
+      const {data} = dataList;
       switch (method) {
         case 'putMovies' : {
           this.#filmInfo = data;
           break;
         }
-        case 'postComment' : {
+        case 'successPostComment' : {
           this.#filmCommentsData = data.comments;
           break;
         }
-        case 'deleteComment' : {
-          if (!responseOk) {
-            return;
-          }
+        case 'successDeletingComment' : {
           this.#filmCommentsData = this.#filmCommentsData.slice().filter( (item) => {
             if (item.id === this.#idDeletingComment) {
               return false;
@@ -73,6 +70,7 @@ class FilmDetailsPopupPresenter {
           });
           this.#idDeletingComment = null;
         }
+        default : break;
       }
       return;
     }
@@ -172,28 +170,28 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsPopupComponent.formElementEnabled();
   }
 
-  #popupUpdateViewSwitch = async (method, data) => {
-    const {responseOk} = data;
+  #popupUpdateViewSwitch = async (method) => {
     switch (method) {
       case 'putMovies' : {
         this.#updateFilmInfoView();
         break;
       }
-      case 'postComment' : {
-        if (!responseOk) {
-          this.#failPostNewComment();
-          return;
-        }
+      case 'successPostComment' : {
         this.#updateCommentsListView();
         this.#updateNewCommentView();
         break;
       }
-      case 'deleteComment' : {
-        if (!responseOk) {
-          this.#failDeletingComment();
-          return;
-        }
+      case 'failPostComment' : {
+        this.#failPostNewComment();
+        break;
+      }
+      case 'successDeletingComment' : {
         this.#updateCommentsListView();
+        this.#deleteButtonUpdateViewFn = null;
+        break;
+      }
+      case 'failDeletingComment' : {
+        this.#failDeletingComment();
         this.#deleteButtonUpdateViewFn = null;
       }
     }

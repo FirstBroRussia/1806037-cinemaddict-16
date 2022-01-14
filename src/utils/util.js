@@ -35,6 +35,7 @@ const DELETE_BUTTON_STATE = {
   DELETING: 'deleting',
 };
 
+
 const METHODS_FOR_API = {
   GET_MOVIES: 'getMovies',
   PUT_MOVIES: 'putMovies',
