@@ -1,8 +1,14 @@
 /* eslint-disable no-undef */
 import {nanoid} from 'nanoid';
+import 'he';
+import 'chart.js';
+import 'chartjs-plugin-datalabels';
+import 'dayjs';
+import 'dayjs-random';
+import 'dayjs/plugin/duration';
+import 'dayjs/plugin/relativeTime';
 
 const he = require('he');
-
 const Chart = require('chart.js');
 const ChartDataLabels = require('chartjs-plugin-datalabels');
 
