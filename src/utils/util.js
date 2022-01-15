@@ -3,11 +3,9 @@ import * as he from 'he';
 import * as Chart from 'chart.js';
 import * as ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as dayjs from 'dayjs';
-import * as dayjsRandom from 'dayjs-random';
 import * as duration from 'dayjs/plugin/duration';
 import * as relativeTime from 'dayjs/plugin/relativeTime';
 
-dayjs.extend(dayjsRandom);
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 

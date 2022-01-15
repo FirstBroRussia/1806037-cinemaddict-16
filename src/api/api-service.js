@@ -7,7 +7,6 @@ class ApiService {
     this.#authorization = 'Basic zzzAAAwwwEEErrr';
   }
 
-
   async getData (method, dataList) {
     const {link, request, headers, body} = this.#setBodyRequest(method, dataList);
 
