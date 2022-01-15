@@ -1,6 +1,6 @@
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
-const positionMarkup = {
+const PositionMarkup = {
   BEFORE_BEGIN: 'beforebegin',
   AFTER_BEGIN: 'afterbegin',
   BEFORE_END: 'beforeend',
@@ -40,4 +40,4 @@ const removeNodeElement = (parentNodeElement, childElement) => {
   getNodeElement(parentNodeElement).removeChild(getNodeElement(childElement));
 };
 
-export {positionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent, removeNodeElement};
+export {PositionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent, removeNodeElement};

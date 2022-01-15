@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import {ApiService} from '/src/api/api-service.js';
-import {METHODS_FOR_API} from '/src/utils/util.js';
+import {MethodsForAPI} from '/src/utils/util.js';
 
 class MainModel {
   _observers = [];
@@ -12,25 +12,22 @@ class MainModel {
 
   }
 
-
   async getMovies () {
-    const filmsData = await this.#APIService.getData(METHODS_FOR_API.GET_MOVIES);
+    const filmsData = await this.#APIService.getData(MethodsForAPI.GET_MOVIES);
     return this.#getAdaptToClient(filmsData);
   }
 
-
   async getComments (idFilm) {
     const dataList = {idFilm};
-    return await this.#APIService.getData(METHODS_FOR_API.GET_COMMENTS, dataList);
+    return await this.#APIService.getData(MethodsForAPI.GET_COMMENTS, dataList);
   }
-
 
   async putMovies (idFilm, data) {
     const adaptData = this.#getAdaptToServer(data);
     const dataList = {
       idFilm,
       data: adaptData};
-    let response = await this.#APIService.changeData(METHODS_FOR_API.PUT_MOVIES, dataList);
+    let response = await this.#APIService.changeData(MethodsForAPI.PUT_MOVIES, dataList);
     response = {...response, data : this.#getAdaptToClient(response.data)};
     const dataCollection = {
       method: 'putMovies',
@@ -40,13 +37,12 @@ class MainModel {
     this.observersNotify(dataCollection);
   }
 
-
   async postComment (idFilm, data) {
     let dataCollection;
     const dataList = {
       idFilm,
       data};
-    const response = await this.#APIService.changeData(METHODS_FOR_API.POST_COMMENT, dataList);
+    const response = await this.#APIService.changeData(MethodsForAPI.POST_COMMENT, dataList);
     dataCollection = {
       method: 'successPostComment',
       response: response,
@@ -62,11 +58,10 @@ class MainModel {
     this.observersNotify(dataCollection);
   }
 
-
   async deleteComment (idFilm, idComment) {
     let dataCollection;
     const dataList = {idComment, idFilm};
-    const response = await this.#APIService.changeData(METHODS_FOR_API.DELETE_COMMENT, dataList);
+    const response = await this.#APIService.changeData(MethodsForAPI.DELETE_COMMENT, dataList);
     dataCollection = {
       method: 'successDeletingComment',
       response: response,
@@ -82,11 +77,9 @@ class MainModel {
     this.observersNotify(dataCollection);
   }
 
-
   odserverAdd = (callback) => {
     this._observers.push(callback);
   };
-
 
   observerRemove = (callback) => {
     for (let index = 0; index < this._observers.length; index++) {
@@ -97,16 +90,13 @@ class MainModel {
     }
   }
 
-
   observersRemove = () => {
     this._observers = [];
   }
 
-
   observersNotify = (dataCollection) => {
     this._observers.forEach( (item) => item(dataCollection));
   };
-
 
   #getAdaptToClient = (dataList) => {
     if (Array.isArray(dataList)) {
@@ -152,7 +142,6 @@ class MainModel {
       watchingDate: dataList.user_details.watching_date,
     });
   }
-
 
   #getAdaptToServer = (data) => ({
     id: data.id,

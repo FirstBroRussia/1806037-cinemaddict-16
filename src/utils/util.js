@@ -1,48 +1,34 @@
-/* eslint-disable no-undef */
-import {nanoid} from 'nanoid';
-import 'he';
-import 'chart.js';
-import 'chartjs-plugin-datalabels';
-import 'dayjs';
-import 'dayjs-random';
-import 'dayjs/plugin/duration';
-import 'dayjs/plugin/relativeTime';
 
-const he = require('he');
-const Chart = require('chart.js');
-const ChartDataLabels = require('chartjs-plugin-datalabels');
+import * as he from 'he';
+import * as Chart from 'chart.js';
+import * as ChartDataLabels from 'chartjs-plugin-datalabels';
+import * as dayjs from 'dayjs';
+import * as dayjsRandom from 'dayjs-random';
+import * as duration from 'dayjs/plugin/duration';
+import * as relativeTime from 'dayjs/plugin/relativeTime';
 
-const dayjs = require('dayjs');
-const dayjsRandom = require('dayjs-random');
 dayjs.extend(dayjsRandom);
-const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
-const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
 const ZERO_VALUE = 0;
 
-const MIN_NOVICE_VALUE = 1;
-const MAX_NOVICE_VALUE = 10;
-const MIN_FAN_VALUE = 11;
-const MAX_FAN_VALUE = 20;
-const MOVIE_BUFF_VALUE = 21;
-
 const INITIAL_FILMS_CARD_COUNT = 5;
 
-const bodyElement = document.querySelector('body');
-const headerBodyElement = document.querySelector('.header');
-const mainBodyElement = document.querySelector('.main');
-const footerBodyElement = document.querySelector('.footer');
-const footerStatisticBodyElement = document.querySelector('.footer__statistics');
+const FilmsWatchedValue = {
+  MIN_NOVICE_VALUE: 1,
+  MAX_NOVICE_VALUE: 10,
+  MIN_FAN_VALUE: 11,
+  MAX_FAN_VALUE: 20,
+  MOVIE_BUFF_VALUE: 21,
+};
 
-const DELETE_BUTTON_STATE = {
+const DeleteButtonState = {
   DEFAULT: 'default',
   DELETING: 'deleting',
 };
 
-
-const METHODS_FOR_API = {
+const MethodsForAPI = {
   GET_MOVIES: 'getMovies',
   PUT_MOVIES: 'putMovies',
   GET_COMMENTS: 'getComments',
@@ -50,37 +36,28 @@ const METHODS_FOR_API = {
   DELETE_COMMENT: 'deleteComment',
 };
 
-const controlButtons = {
+const ControlButtons = {
   isWatchlist: 'watchlist',
   isWatched: 'history',
   isFavorite: 'favorite',
 };
 
-const filterMode = {
+const FilterMode = {
   ALL_MOVIES: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITE: 'favorite',
 };
 
-const sortMode = {
+const SortMode = {
   DEFAULT: 'default',
   DATE: 'date',
   RATING: 'rating',
 };
 
-const methodsForPopup = {
+const MethodsForPopup = {
   CREATE: 'create',
   DELETE: 'delete',
-  EDIT: 'edit',
-};
-
-const periods = {
-  ALL_TIME: 'all-time',
-  TODAY: 'today',
-  WEEK: 'week',
-  MONTH: 'month',
-  YEAR: 'year',
 };
 
 function getRandomNumber(min, max, fixed) {
@@ -122,4 +99,4 @@ const setHeadShakingStyleAnimation = (element) => {
   setTimeout( () => element.classList.remove('shake'), 800);
 };
 
-export {DELETE_BUTTON_STATE, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs,  METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods, setHeadShakingStyleAnimation};
+export {FilmsWatchedValue, DeleteButtonState, ZERO_VALUE, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs,  MethodsForAPI, INITIAL_FILMS_CARD_COUNT, ControlButtons, FilterMode, SortMode, MethodsForPopup, setHeadShakingStyleAnimation};

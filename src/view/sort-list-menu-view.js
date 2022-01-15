@@ -1,4 +1,4 @@
-import {sortMode} from '/src/utils/util.js';
+import {SortMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
@@ -64,7 +64,7 @@ class SortListMarkup extends AbstractView {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.defaultSortClick(sortMode.DEFAULT);
+    this._callback.defaultSortClick(SortMode.DEFAULT);
   }
 
   #hangDateSortHandler = (evt) => {
@@ -75,7 +75,7 @@ class SortListMarkup extends AbstractView {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.dateSortClick(sortMode.DATE);
+    this._callback.dateSortClick(SortMode.DATE);
   }
 
   #hangRatingSortHandler = (evt) => {
@@ -86,7 +86,7 @@ class SortListMarkup extends AbstractView {
     this._currentActiveButton.classList.remove('sort__button--active');
     this._currentActiveButton = evt.target.closest('.sort__button');
     this._currentActiveButton.classList.add('sort__button--active');
-    this._callback.ratingSortClick(sortMode.RATING);
+    this._callback.ratingSortClick(SortMode.RATING);
   }
 
 }

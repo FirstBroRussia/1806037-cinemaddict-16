@@ -1,4 +1,4 @@
-import {controlButtons} from '/src/utils/util.js';
+import {ControlButtons} from '/src/utils/util.js';
 import {getConvertedString, dayjs, getDurationFormatTime} from '../utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
@@ -68,17 +68,17 @@ class ControlButtonsOnTheFilmCardMarkup extends AbstractView {
 
   #hangWatchlistButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick(controlButtons.isWatchlist);
+    this._callback.watchlistClick(ControlButtons.isWatchlist);
   };
 
   #hangWatchedButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick(controlButtons.isWatched);
+    this._callback.watchedClick(ControlButtons.isWatched);
   };
 
   #hangFavoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.FavoriteClick(controlButtons.isFavorite);
+    this._callback.FavoriteClick(ControlButtons.isFavorite);
   };
 
 }

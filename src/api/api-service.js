@@ -1,12 +1,10 @@
-import {nanoid} from '/src/utils/util.js';
-
 class ApiService {
   #authorization = null;
   #linkToServer = null;
 
   constructor (link) {
     this.#linkToServer = link;
-    this.#authorization = `Basic ${nanoid(15)}`;
+    this.#authorization = 'Basic zzzAAAwwwEEErrr';
   }
 
 
@@ -44,7 +42,6 @@ class ApiService {
       data: resultResponse,
     };
   }
-
 
   #requestFromServer = (link, request, headers, body) => fetch(link, {
     method: request,

@@ -1,8 +1,8 @@
-import {he, controlButtons, getReleaseDateFormat, getDurationFormatTime} from '/src/utils/util.js';
+import {he, ControlButtons, getReleaseDateFormat, getDurationFormatTime} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
-import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
+import {PositionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 import {setNewCommentElementValid} from '/src/helpers/new-comment-submit-validation.js';
 import dayjs from 'dayjs';
 
@@ -227,7 +227,7 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     newImgElement.classList.add('limitation-border');
 
     this.#bigEmojiElement.textContent = '';
-    renderNodeElement(this.#bigEmojiElement, positionMarkup.BEFORE_END, newImgElement);
+    renderNodeElement(this.#bigEmojiElement, PositionMarkup.BEFORE_END, newImgElement);
   }
 
   #validationCheck = (newCommentInputElement, currentCheckedEmotionButton) => {
@@ -311,17 +311,17 @@ class FilmDetailsCardFilterButtons extends AbstractView {
 
   #hangWatchlistButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick(controlButtons.isWatchlist);
+    this._callback.watchlistClick(ControlButtons.isWatchlist);
   };
 
   #hangWatchedButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick(controlButtons.isWatched);
+    this._callback.watchedClick(ControlButtons.isWatched);
   };
 
   #hangFavoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.FavoriteClick(controlButtons.isFavorite);
+    this._callback.FavoriteClick(ControlButtons.isFavorite);
   };
 }
 

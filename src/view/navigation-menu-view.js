@@ -1,4 +1,4 @@
-import {filterMode} from '/src/utils/util.js';
+import {FilterMode} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 
@@ -128,7 +128,7 @@ class AllFilmsFilterMarkup extends AbstractView {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.allMoviesFilterClick(filterMode.ALL_MOVIES);
+    this._callback.allMoviesFilterClick(FilterMode.ALL_MOVIES);
   }
 }
 
@@ -155,7 +155,7 @@ class WatchlistFilmsFilterMarkup extends AbstractView {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.watchlistFilterClick(filterMode.WATCHLIST);
+    this._callback.watchlistFilterClick(FilterMode.WATCHLIST);
   }
 }
 
@@ -182,7 +182,7 @@ class HistoryFilterMarkup extends AbstractView {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.historyFilterClick(filterMode.HISTORY);
+    this._callback.historyFilterClick(FilterMode.HISTORY);
   }
 }
 
@@ -209,7 +209,7 @@ class FavoriteFilmsFilterMarkup extends AbstractView {
     NavigationMenuMarkup.setCurrentActiveButton(this._element);
     this._element.classList.add('main-navigation__item--active');
     evt.preventDefault();
-    this._callback.favoriteFilterClick(filterMode.FAVORITE);
+    this._callback.favoriteFilterClick(FilterMode.FAVORITE);
   }
 }
 

@@ -1,6 +1,6 @@
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
-import {Chart, ChartDataLabels, dayjs, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE} from '/src/utils/util.js';
-import {createNodeElement, positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
+import {Chart, ChartDataLabels, dayjs, ZERO_VALUE, FilmsWatchedValue} from '/src/utils/util.js';
+import {createNodeElement, PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
 const HOUR_IN_MINUTES = 60;
 
@@ -22,11 +22,11 @@ const createStatisticMenuTemplate = () =>`
 
 const createStatisticsRankTemplate = (data) => {
   let markup;
-  if (data.length >= MIN_NOVICE_VALUE && data.length <= MAX_NOVICE_VALUE) {
+  if (data.length >= FilmsWatchedValue.MIN_NOVICE_VALUE && data.length <= FilmsWatchedValue.MAX_NOVICE_VALUE) {
     markup = 'Novice';
-  } else if (data.length >= MIN_FAN_VALUE && data.length <= MAX_FAN_VALUE) {
+  } else if (data.length >= FilmsWatchedValue.MIN_FAN_VALUE && data.length <= FilmsWatchedValue.MAX_FAN_VALUE) {
     markup = 'Fan';
-  } else if (data.length >= MOVIE_BUFF_VALUE) {
+  } else if (data.length >= FilmsWatchedValue.MOVIE_BUFF_VALUE) {
     markup = 'Movie Buff';
   }
 
@@ -250,10 +250,6 @@ class StatisticSmartView extends AbstractView {
   #StatisticsInfoMarkupComponent = null;
   #StatisticsChartCanvasMarkupComponent = null;
 
-  get element () {
-    return this.#StatisticMenuComponent.element;
-  }
-
   constructor (data) {
     super();
 
@@ -263,16 +259,20 @@ class StatisticSmartView extends AbstractView {
     this.#StatisticMenuComponent = new StatisticMenuMarkup();
     if (this.#data.length !== ZERO_VALUE) {
       this.#StatisticsRankMarkupComponent = new StatisticsRankMarkup(this.#data);
-      renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsRankMarkupComponent);
+      renderNodeElement(this.#StatisticMenuComponent, PositionMarkup.BEFORE_END, this.#StatisticsRankMarkupComponent);
     }
-    this.#StatisticsPeriodTimeFiltersButtonMarkupComponent = new StatisticsPeriodTimeFiltersButtonMarkup(this.#getValueOnClickedFilterButtons);
+    this.#StatisticsPeriodTimeFiltersButtonMarkupComponent = new StatisticsPeriodTimeFiltersButtonMarkup(this._getValueOnClickedFilterButtons);
     this.#StatisticsInfoMarkupComponent = new StatisticsInfoMarkup(this.#data, filmsByGenresMap);
     this.#StatisticsChartCanvasMarkupComponent = new StatisticsChartCanvasMarkup(filmsByGenresMap);
 
-    renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsPeriodTimeFiltersButtonMarkupComponent);
-    renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsInfoMarkupComponent);
-    renderNodeElement(this.#StatisticMenuComponent, positionMarkup.BEFORE_END, this.#StatisticsChartCanvasMarkupComponent);
+    renderNodeElement(this.#StatisticMenuComponent, PositionMarkup.BEFORE_END, this.#StatisticsPeriodTimeFiltersButtonMarkupComponent);
+    renderNodeElement(this.#StatisticMenuComponent, PositionMarkup.BEFORE_END, this.#StatisticsInfoMarkupComponent);
+    renderNodeElement(this.#StatisticMenuComponent, PositionMarkup.BEFORE_END, this.#StatisticsChartCanvasMarkupComponent);
 
+  }
+
+  get element () {
+    return this.#StatisticMenuComponent.element;
   }
 
   #setGenresListByFilmsCountMap = (films) => {
@@ -312,7 +312,7 @@ class StatisticSmartView extends AbstractView {
     const prevStatisticsInfoMarkupComponent = this.#StatisticsInfoMarkupComponent;
     const prevStatisticsChartCanvasMarkupComponent = this.#StatisticsChartCanvasMarkupComponent;
 
-    this.#StatisticsPeriodTimeFiltersButtonMarkupComponent = new StatisticsPeriodTimeFiltersButtonMarkup(this.#getValueOnClickedFilterButtons, checkedButton);
+    this.#StatisticsPeriodTimeFiltersButtonMarkupComponent = new StatisticsPeriodTimeFiltersButtonMarkup(this._getValueOnClickedFilterButtons, checkedButton);
     this.#StatisticsInfoMarkupComponent = new StatisticsInfoMarkup(data, filmsByGenresMap);
     this.#StatisticsChartCanvasMarkupComponent = new StatisticsChartCanvasMarkup(filmsByGenresMap);
 
@@ -376,7 +376,7 @@ class StatisticSmartView extends AbstractView {
     }
   }
 
-  #getValueOnClickedFilterButtons = (value) => {
+  _getValueOnClickedFilterButtons = (value) => {
     const convertedData = this.#periodTimeSwitch(value);
     this.#updateView(convertedData, value);
   }

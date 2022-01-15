@@ -1,15 +1,14 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
-import {MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE} from '/src/utils/util.js';
-
+import {FilmsWatchedValue} from '/src/utils/util.js';
 
 const createTitleProfileUserTemplate = (data) => {
   let markup;
-  if (data.length >= MIN_NOVICE_VALUE && data.length <= MAX_NOVICE_VALUE) {
+  if (data.length >= FilmsWatchedValue.MIN_NOVICE_VALUE && data.length <= FilmsWatchedValue.MAX_NOVICE_VALUE) {
     markup = 'Novice';
-  } else if (data.length >= MIN_FAN_VALUE && data.length <= MAX_FAN_VALUE) {
+  } else if (data.length >= FilmsWatchedValue.MIN_FAN_VALUE && data.length <= FilmsWatchedValue.MAX_FAN_VALUE) {
     markup = 'Fan';
-  } else if (data.length >= MOVIE_BUFF_VALUE) {
+  } else if (data.length >= FilmsWatchedValue.MOVIE_BUFF_VALUE) {
     markup = 'Movie Buff';
   }
 

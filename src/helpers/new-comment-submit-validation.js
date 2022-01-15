@@ -1,4 +1,4 @@
-const ZERO_VALUE = 0;
+import {ZERO_VALUE} from '/src/utils/util.js';
 
 const setNewCommentElementValid = (inputElement, currentCheckedEmotionButton) => {
   if (inputElement.value.length === ZERO_VALUE) {
@@ -12,7 +12,6 @@ const setNewCommentElementValid = (inputElement, currentCheckedEmotionButton) =>
     return;
   }
   inputElement.setCustomValidity('');
-  //inputElement.reportValidity();
 };
 
 
