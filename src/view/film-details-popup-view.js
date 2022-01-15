@@ -1,9 +1,10 @@
-import {he, controlButtons, getReleaseDateFormat, getCreatingCommentDateFormat, getDurationFormatTime} from '/src/utils/util.js';
+import {he, controlButtons, getReleaseDateFormat, getDurationFormatTime} from '/src/utils/util.js';
 import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 import {setNewCommentElementValid} from '/src/helpers/new-comment-submit-validation.js';
+import dayjs from 'dayjs';
 
 
 const createFilmDetailsPopupTemplate = () => `
@@ -112,7 +113,7 @@ const createFilmDetailsCommentFromDataTemplate = (item) => `
       <p class="film-details__comment-text">${he.encode(item.comment)}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
-        <span class="film-details__comment-day">${getCreatingCommentDateFormat(item.date)}</span>
+        <span class="film-details__comment-day">${dayjs(item.date).fromNow()}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
@@ -273,6 +274,7 @@ class FilmDetailInfoMarkup extends AbstractView {
     this._template = createFilmDetailsInfoMarkupTemplate;
     this._element = createNodeElement(this._template(filmData));
   }
+
 }
 
 class FilmDetailsCardFilterButtons extends AbstractView {
