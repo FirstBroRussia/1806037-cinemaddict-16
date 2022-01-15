@@ -1,9 +1,8 @@
-import {deleteSectionElement, INITIAL_FILMS_CARD_COUNT, bodyElement, mainBodyElement, controlButtons, filterMode, sortMode} from '/src/utils/util.js';
+import {INITIAL_FILMS_CARD_COUNT, ZERO_VALUE, bodyElement, mainBodyElement, controlButtons} from '/src/utils/util.js';
 import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-view.js';
 import {positionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 
 import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
-import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
 import {EmptyAllFilmsListMarkup, EmptyWatchlistMarkup, EmptyWatchedMarkup, EmptyFavoriteMarkup} from '/src/view/empty-films-list-view.js';
 
 import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
@@ -26,7 +25,6 @@ class FilmsListPresenter {
   #MostCommentedFilmCardPresentersMap = null;
 
   #ShowMoreButtonComponent = null;
-  #LoadingFilmsListComponent = null;
 
   #AllFilmsComponent = null;
 
@@ -43,11 +41,11 @@ class FilmsListPresenter {
   #MostCommentedFilmsListContainerComponent = null;
 
 
-  constructor (changeMasterData, popupElement) {
+  constructor (changeMasterData, popupElement, deleteSectionElement) {
     this._callbacks.changeMasterData = changeMasterData;
     this._callbacks.popupElement = popupElement;
+    this._callbacks.deleteSectionElement = deleteSectionElement;
 
-    this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
   }
 
   init (films, selectedFilter, selectedSort, id) {
@@ -61,15 +59,12 @@ class FilmsListPresenter {
       this.#SortMode = selectedSort;
     }
 
+    this._callbacks.deleteSectionElement();
     this.#renderGeneralFilmsList(this.#films, id);
-    if (this.#SortMode === sortMode.DEFAULT && this.#FilterMode === filterMode.ALL_MOVIES) {
-      this.#renderExtraFilmsList(this.#films);
-    }
+    this.#renderExtraFilmsList(this.#films);
   }
 
   #renderGeneralFilmsList = (films, id) => {
-    deleteSectionElement();
-
     this.#AllFilmsComponent = new AllFilmsMarkup();
 
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
@@ -149,19 +144,40 @@ class FilmsListPresenter {
     this.#TopRatedFilmCardPresentersMap = new Map();
     this.#MostCommentedFilmCardPresentersMap = new Map();
 
-    const topRatedSortFilms = films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2);
+    const topRatedSortFilms = films.slice().sort( (itemA, itemB) => itemB.rating - itemA.rating).slice(0,2)
+      .filter( (item) => {
+        if (item.rating === ZERO_VALUE) {
+          return false;
+        }
+        return true;
+      });
     topRatedSortFilms.forEach( (film) => {
       this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#TopRatedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
       renderNodeElement(this.#TopRatedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
 
-    const mostCommentedSortFilms = films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2);
+    const mostCommentedSortFilms = films.slice().sort( (itemA, itemB) => itemB.comments.length - itemA.comments.length).slice(0,2)
+      .filter( (item) => {
+        if (item.comments.length === ZERO_VALUE) {
+          return false;
+        }
+        return true;
+      });
     mostCommentedSortFilms.forEach( (film) => {
       this.#FilmCardPresenter = new FilmCardPresenter(this._callbacks.changeMasterData, this._callbacks.popupElement);
       this.#MostCommentedFilmCardPresentersMap.set(film.id, this.#FilmCardPresenter);
       renderNodeElement(this.#MostCommentedFilmsListContainerComponent, positionMarkup.BEFORE_END, this.#FilmCardPresenter.render(film));
     });
+
+    if (topRatedSortFilms.length === ZERO_VALUE) {
+      this.#TopRatedExtraFilmsListComponent.remove();
+      this.#TopRatedExtraFilmsListComponent = null;
+    }
+    if (mostCommentedSortFilms.length === ZERO_VALUE) {
+      this.#MostCommentedExtraFilmsListComponent.remove();
+      this.#MostCommentedExtraFilmsListComponent = null;
+    }
   }
 
   #renderFilmCardsToShowMoreButtonClickHandler = () => {

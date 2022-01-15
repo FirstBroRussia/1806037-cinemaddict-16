@@ -179,6 +179,7 @@ class FilmDetailsPopupPresenter {
       case 'successPostComment' : {
         this.#updateCommentsListView();
         this.#updateNewCommentView();
+        this.#FilmDetailsPopupComponent.formElementEnabled();
         break;
       }
       case 'failPostComment' : {
@@ -192,6 +193,7 @@ class FilmDetailsPopupPresenter {
       }
       case 'failDeletingComment' : {
         this.#failDeletingComment();
+        this.#FilmDetailsCommentsComponent.enabledCommentsListElement();
         this.#deleteButtonUpdateViewFn = null;
       }
     }
@@ -247,10 +249,14 @@ class FilmDetailsPopupPresenter {
 
   #deleteCommentButtonClickHandler = (idComment, deleteButtonUpdateViewFn) => {
     this.#idDeletingComment = idComment;
+    const dataList = {
+      idFilm: this.#idFilm,
+      idComment: idComment,
+    };
     this.#deleteButtonUpdateViewFn = deleteButtonUpdateViewFn;
     this.#deleteButtonUpdateViewFn(DELETE_BUTTON_STATE.DELETING);
     this.#FilmDetailsCommentsComponent.disabledCommentsListElement();
-    this.#changeMasterData(METHODS_FOR_API.DELETE_COMMENT, {idComment});
+    this.#changeMasterData(METHODS_FOR_API.DELETE_COMMENT, dataList);
   };
 
 

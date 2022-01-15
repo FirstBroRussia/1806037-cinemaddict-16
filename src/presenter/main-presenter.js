@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-expressions */
-import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode, methodsForPopup, deleteSectionElement} from '/src/utils/util.js';
+import {headerBodyElement, mainBodyElement, footerStatisticBodyElement, filterMode, sortMode, methodsForPopup} from '/src/utils/util.js';
+import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
 import {FilmsCountMarkup} from '/src/view/films-count-view.js';
@@ -32,6 +33,8 @@ class MainPresenter {
 
   #ProfileUserComponent = null;
 
+  #LoadingFilmsListComponent = null;
+
   #NavigationMenuComponent = null;
   #FilterWrapComponent = null;
   #AllFilmsFilterComponent = null;
@@ -51,9 +54,23 @@ class MainPresenter {
     this.#MainModel = new MainModel(this.#linkToServer);
     this.#MainModel.odserverAdd(this.#observerNotificationMainPresenter);
 
-    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter);
+    this.#FilmsListPresenter = new FilmsListPresenter(this.#changeMasterData, this.#popupPresenter, this.deleteSectionElement);
   }
 
+  async init (idFilm) {
+    if (this.#films === null) {
+      this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
+      renderNodeElement(mainBodyElement, positionMarkup.AFTER_BEGIN, this.#LoadingFilmsListComponent);
+
+      this.#films = await this.#MainModel.getMovies();
+      this.#primaryInit();
+      return;
+    }
+
+    this.#films = await this.#MainModel.getMovies();
+    this.#films === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
+    this.#updateView(idFilm);
+  }
 
   #primaryInit = () => {
     const watchedFilms = this.#setWatchedFilms(this.#films);
@@ -115,19 +132,6 @@ class MainPresenter {
   }
 
 
-  async init (idFilm) {
-    if (this.#films === null) {
-      this.#films = await this.#MainModel.getMovies();
-      this.#primaryInit();
-      return;
-    }
-
-    this.#films = await this.#MainModel.getMovies();
-    this.#films === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
-    this.#updateView(idFilm);
-  }
-
-
   #observerNotificationMainPresenter = (dataCollection) => {
     this.init(dataCollection.idFilm);
   }
@@ -144,7 +148,7 @@ class MainPresenter {
         this.#MainModel.postComment(idFilm, data);
         break;
       }
-      case 'deleteComment' : this.#MainModel.deleteComment(idComment);
+      case 'deleteComment' : this.#MainModel.deleteComment(idFilm, idComment);
     }
   }
 
@@ -154,6 +158,7 @@ class MainPresenter {
 
     this.#profileUserUpdateView();
     this.#navigationMenuUpdateView();
+    this.#filmsCountUpdateView();
 
     if (this.#convertedFilms.length === NO_FILMS_VALUE) {
       this.#SortListComponent.hideComponent();
@@ -187,6 +192,13 @@ class MainPresenter {
     replaceNodeElementWithoutParent(this.#FavoriteFilmsCountComponent, prevFavoriteFilmsCountComponent);
   }
 
+  #filmsCountUpdateView = () => {
+    const prevFilmsCountComponent = this.#FilmsCountComponent;
+    this.#FilmsCountComponent = new FilmsCountMarkup(this.#convertedFilms.length);
+    replaceNodeElementWithoutParent(this.#FilmsCountComponent, prevFilmsCountComponent);
+
+  }
+
 
   #filterButtonClickHandler = (clickButton) => {
     this.#selectedFilter = clickButton;
@@ -205,7 +217,7 @@ class MainPresenter {
 
 
   #statsButtonClickHandler = () => {
-    deleteSectionElement();
+    this.deleteSectionElement();
     this.#SortListComponent.hideComponent();
 
     this.#StatisticsSmartComponent = new StatisticSmartView(this.#films);
@@ -242,6 +254,7 @@ class MainPresenter {
     this.#convertedFilms = this.#getSortFilmsListSwitch(this.#convertedFilms, this.#selectedSort);
   }
 
+  #setWatchedFilms = () => this.#films.slice().filter( (film) => film.isWatched);
 
   #popupPresenter = async (method, dataList) => {
     if (method === methodsForPopup.CREATE) {
@@ -260,8 +273,12 @@ class MainPresenter {
     }
   }
 
-
-  #setWatchedFilms = () => this.#films.slice().filter( (film) => film.isWatched);
+  deleteSectionElement = () => {
+    const sectionElement = mainBodyElement.querySelectorAll('section');
+    if (sectionElement !== null) {
+      sectionElement.forEach( (element) => element.remove());
+    }
+  };
 
 }
 

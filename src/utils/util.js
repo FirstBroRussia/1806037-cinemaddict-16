@@ -107,13 +107,6 @@ const getDurationFormatTime = (value) => {
   return dayjs.duration(time, 'minutes').format('H[h] mm[m]');
 };
 
-const deleteSectionElement = () => {
-  const sectionElement = mainBodyElement.querySelector('section');
-  if (sectionElement !== null) {
-    sectionElement.remove();
-  }
-};
-
 const getReleaseDateFormat = (value) => dayjs(`${value}`).format('DD MMMM YYYY');
 
 const getCreatingCommentDateFormat = (value) => dayjs(`${value}`).format('YYYY/MM/DD HH:mm');
@@ -123,4 +116,4 @@ const setHeadShakingStyleAnimation = (element) => {
   setTimeout( () => element.classList.remove('shake'), 800);
 };
 
-export {DELETE_BUTTON_STATE, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs, deleteSectionElement, METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods, setHeadShakingStyleAnimation};
+export {DELETE_BUTTON_STATE, ZERO_VALUE, MIN_NOVICE_VALUE, MAX_NOVICE_VALUE, MIN_FAN_VALUE, MAX_FAN_VALUE, MOVIE_BUFF_VALUE, nanoid, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs,  METHODS_FOR_API, INITIAL_FILMS_CARD_COUNT, bodyElement, headerBodyElement, mainBodyElement, footerBodyElement, footerStatisticBodyElement, controlButtons, filterMode, sortMode, methodsForPopup, periods, setHeadShakingStyleAnimation};

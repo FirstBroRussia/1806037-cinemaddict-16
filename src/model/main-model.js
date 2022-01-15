@@ -63,18 +63,20 @@ class MainModel {
   }
 
 
-  async deleteComment (idComment) {
+  async deleteComment (idFilm, idComment) {
     let dataCollection;
-    const dataList = {idComment};
+    const dataList = {idComment, idFilm};
     const response = await this.#APIService.changeData(METHODS_FOR_API.DELETE_COMMENT, dataList);
     dataCollection = {
       method: 'successDeletingComment',
       response: response,
+      idFilm: idFilm,
     };
     if (!response.responseOk) {
       dataCollection = {
         method: 'failDeletingComment',
         response: response,
+        idFilm: idFilm,
       };
     }
     this.observersNotify(dataCollection);
