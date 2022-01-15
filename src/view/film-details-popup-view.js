@@ -113,14 +113,10 @@ const createFilmDetailsCommentFromDataTemplate = (item) => `
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${item.author}</span>
         <span class="film-details__comment-day">${getCreatingCommentDateFormat(item.date)}</span>
-
+        <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
    </li>\n
-`;
-
-const createDeleteCommentButtonTemplate = () =>`
-<button class="film-details__comment-delete">Delete</button>
 `;
 
 const createFolmDetailsNewCommentMarkup = () => `
@@ -163,44 +159,24 @@ const createFilmsDetailsCloseButtonMarkup = () => `
     </div>
 `;
 
-class DeleteCommentButtonMarkup extends AbstractView {
-  #idComment = null;
-
-  constructor (idComment, callback) {
-    super();
-
-    this.#idComment = idComment;
-    this._callback.deleteButtonClick = callback;
-    this._template = createDeleteCommentButtonTemplate;
-    this._element = createNodeElement(this._template());
-
-    this.addDeleteCommentButtonClickHandler();
-  }
-
-  #deleteButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.deleteButtonClick(this.#idComment);
-  };
-
-  addDeleteCommentButtonClickHandler() {
-    this._element.addEventListener('click', this.#deleteButtonClickHandler);
-  }
-
-  updateView (state) {
-    if (state === 'default') {
-      this._element.textContent = 'Delete';
-      return;
-    }
-    this._element.textContent = 'Deleting...';
-  }
-}
 
 class FilmDetailsPopupMarkup extends AbstractView {
+  #formElement = null;
+
   constructor() {
     super();
 
     this._template = createFilmDetailsPopupTemplate;
     this._element = createNodeElement(this._template());
+    this.#formElement = this._element.querySelector('.film-details__inner');
+  }
+
+  formElementDisabled () {
+    this.#formElement.classList.add('element--disabled');
+  }
+
+  formElementEnabled () {
+    this.#formElement.classList.remove('element--disabled');
   }
 
 }
@@ -363,15 +339,54 @@ class FilmDetailsCommentMarkup extends AbstractView {
     this._template = createFilmDetailsCommentsMarkupTemplate;
     this._element = createNodeElement(this._template());
   }
-}
 
-class FilmDetailsCommentFromDataMarkup extends AbstractView {
-  constructor(commentData) {
-    super();
+  disabledCommentsListElement () {
+    this._element.classList.add('element--disabled');
+  }
 
-    this._template = createFilmDetailsCommentFromDataTemplate;
-    this._element = createNodeElement(this._template(commentData));
+  enabledCommentsListElement () {
+    this._element.classList.remove('element--disabled');
   }
 }
 
-export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup, DeleteCommentButtonMarkup};
+class FilmDetailsCommentFromDataMarkup extends AbstractView {
+  #idComment = null;
+
+  #deleteButtonElement = null;
+
+  constructor(commentData, callback) {
+    super();
+
+    this.#idComment = commentData.id;
+    this._callback.deleteButtonClick = callback;
+    this._template = createFilmDetailsCommentFromDataTemplate;
+    this._element = createNodeElement(this._template(commentData));
+
+    this.#deleteButtonElement = this._element.querySelector('.film-details__comment-delete');
+    this.addDeleteCommentButtonClickHandler();
+  }
+
+  #deleteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteButtonClick(this.#idComment, this.#updateDeleteButtonView);
+  };
+
+  addDeleteCommentButtonClickHandler() {
+    this.#deleteButtonElement.addEventListener('click', this.#deleteButtonClickHandler);
+  }
+
+  #updateDeleteButtonView = (state) => {
+    switch (state) {
+      case 'deleting' : {
+        this.#deleteButtonElement.textContent = 'Deleting...';
+        break;
+      }
+      case 'default' : {
+        this.#deleteButtonElement.textContent = 'Delete';
+      }
+    }
+  }
+}
+
+
+export {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup};

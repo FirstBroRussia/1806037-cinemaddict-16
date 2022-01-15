@@ -1,10 +1,10 @@
 /* eslint-disable no-fallthrough */
-import {footerBodyElement, onEscKeydown, dayjs} from '/src/utils/util.js';
+import {footerBodyElement, onEscKeydown, dayjs, setHeadShakingStyleAnimation} from '/src/utils/util.js';
 import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
-import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup, DeleteCommentButtonMarkup} from '/src/view/film-details-popup-view.js';
+import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
 import {positionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {methodsForPopup, METHODS_FOR_API} from '../utils/util';
+import {DELETE_BUTTON_STATE, methodsForPopup, METHODS_FOR_API} from '../utils/util';
 
 
 class FilmDetailsPopupPresenter {
@@ -18,6 +18,8 @@ class FilmDetailsPopupPresenter {
   #filmCommentsData = null;
   #idDeletingComment = null;
 
+  #deleteButtonUpdateViewFn = null;
+
   #FilmDetailsPopupComponent = null;
 
   #FilmDetailsCloseButtonComponent = null;
@@ -27,7 +29,6 @@ class FilmDetailsPopupPresenter {
   #FilmDetailsCommentsCountComponent = null;
   #FilmDetailsCommentsComponent = null;
   #FilmDetailsCommentFromDataComponent = null;
-  #FilmDetailsDeleteCommentButtonComponent = null;
   #FilmDetailsNewCommentComponent = null;
 
   #filmDetailsTopContainerElement = null;
@@ -56,11 +57,11 @@ class FilmDetailsPopupPresenter {
           this.#filmInfo = data;
           break;
         }
-        case 'postComment' : {
+        case 'successPostComment' : {
           this.#filmCommentsData = data.comments;
           break;
         }
-        case 'deleteComment' : {
+        case 'successDeletingComment' : {
           this.#filmCommentsData = this.#filmCommentsData.slice().filter( (item) => {
             if (item.id === this.#idDeletingComment) {
               return false;
@@ -69,6 +70,7 @@ class FilmDetailsPopupPresenter {
           });
           this.#idDeletingComment = null;
         }
+        default : break;
       }
       return;
     }
@@ -81,7 +83,7 @@ class FilmDetailsPopupPresenter {
   async init (data, method) {
     if (method !== undefined) {
       await this.#setData(data, method);
-      this.#popupUpdateViewSwitch(method);
+      this.#popupUpdateViewSwitch(method, data);
       return;
     }
 
@@ -97,10 +99,7 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
 
     this.#filmCommentsData.forEach( (commentData) => {
-      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData);
-      this.#FilmDetailsDeleteCommentButtonComponent = new DeleteCommentButtonMarkup(commentData.id, this.#deleteCommentButtonClickHandler);
-      const commentWrap = this.#FilmDetailsCommentFromDataComponent.element.querySelector('.film-details__comment-wrap');
-      renderNodeElement(commentWrap, positionMarkup.BEFORE_END, this.#FilmDetailsDeleteCommentButtonComponent);
+      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData, this.#deleteCommentButtonClickHandler);
       renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
     });
 
@@ -145,10 +144,7 @@ class FilmDetailsPopupPresenter {
     this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
 
     this.#filmCommentsData.forEach( (commentData) => {
-      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData);
-      this.#FilmDetailsDeleteCommentButtonComponent = new DeleteCommentButtonMarkup(commentData.id, this.#deleteCommentButtonClickHandler);
-      const commentWrap = this.#FilmDetailsCommentFromDataComponent.element.querySelector('.film-details__comment-wrap');
-      renderNodeElement(commentWrap, positionMarkup.BEFORE_END, this.#FilmDetailsDeleteCommentButtonComponent);
+      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData, this.#deleteCommentButtonClickHandler);
       renderNodeElement(this.#FilmDetailsCommentsComponent, positionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
     });
     replaceNodeElementWithoutParent(this.#FilmDetailsCommentsCountComponent, prevFilmDetailsFilmsCountComponent);
@@ -162,6 +158,17 @@ class FilmDetailsPopupPresenter {
     replaceNodeElementWithoutParent(this.#FilmDetailsNewCommentComponent, prevFilmDetailsNewCommentComponent);
   }
 
+  #failDeletingComment = () => {
+    this.#deleteButtonUpdateViewFn(DELETE_BUTTON_STATE.DEFAULT);
+    this.#deleteButtonUpdateViewFn = null;
+    setHeadShakingStyleAnimation(this.#FilmDetailsCommentsComponent.element);
+    this.#FilmDetailsCommentsComponent.enabledCommentsListElement();
+  }
+
+  #failPostNewComment = () => {
+    setHeadShakingStyleAnimation(this.#FilmDetailsPopupComponent.element);
+    this.#FilmDetailsPopupComponent.formElementEnabled();
+  }
 
   #popupUpdateViewSwitch = async (method) => {
     switch (method) {
@@ -169,13 +176,23 @@ class FilmDetailsPopupPresenter {
         this.#updateFilmInfoView();
         break;
       }
-      case 'postComment' : {
+      case 'successPostComment' : {
         this.#updateCommentsListView();
         this.#updateNewCommentView();
         break;
       }
-      case 'deleteComment' : {
+      case 'failPostComment' : {
+        this.#failPostNewComment();
+        break;
+      }
+      case 'successDeletingComment' : {
         this.#updateCommentsListView();
+        this.#deleteButtonUpdateViewFn = null;
+        break;
+      }
+      case 'failDeletingComment' : {
+        this.#failDeletingComment();
+        this.#deleteButtonUpdateViewFn = null;
       }
     }
   }
@@ -228,8 +245,11 @@ class FilmDetailsPopupPresenter {
   }
 
 
-  #deleteCommentButtonClickHandler = (idComment) => {
+  #deleteCommentButtonClickHandler = (idComment, deleteButtonUpdateViewFn) => {
     this.#idDeletingComment = idComment;
+    this.#deleteButtonUpdateViewFn = deleteButtonUpdateViewFn;
+    this.#deleteButtonUpdateViewFn(DELETE_BUTTON_STATE.DELETING);
+    this.#FilmDetailsCommentsComponent.disabledCommentsListElement();
     this.#changeMasterData(METHODS_FOR_API.DELETE_COMMENT, {idComment});
   };
 
@@ -239,6 +259,7 @@ class FilmDetailsPopupPresenter {
       idFilm: this.#idFilm,
       data: newComment
     };
+    this.#FilmDetailsPopupComponent.formElementDisabled();
     this.#changeMasterData(METHODS_FOR_API.POST_COMMENT, dataList);
   }
 
