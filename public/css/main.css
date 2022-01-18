@@ -1110,17 +1110,16 @@ button {
   padding-bottom: 50px;
 }
 
-.hidden {
-  display: none;
+.no-scroll {
+  overflow-y: hidden;
 }
 
 .limitation-border {
-  max-height:90%;
-  max-width:90%;
+  width: 90%;
 }
 
-.element--disabled {
-  pointer-events: none;
+.hidden {
+  display: none;
 }
 
 @keyframes shake {

@@ -66,6 +66,14 @@ class NavigationMenuMarkup extends AbstractView {
     this._currentActiveButton = element;
   }
 
+  hideComponent () {
+    this._element.classList.add('hidden');
+  }
+
+  showComponent () {
+    this._element.classList.remove('hidden');
+  }
+
 }
 
 class WatchlistFilmsCountMarkup extends AbstractView {

@@ -1,5 +1,5 @@
 import {he, ControlButtons, getReleaseDateFormat, getDurationFormatTime} from '/src/utils/util.js';
-import {twoKeysPressFunction, removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
+import {twoKeysPressFunction} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 import {AbstractView} from '/src/abstract-class/abstract-view.js';
 import {PositionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
@@ -150,7 +150,6 @@ const createFolmDetailsNewCommentMarkup = () => `
           </label>
         </div>
 
-        <button class="submit-new-comment__button" type="submit" style="height: 50px">Опубликовать</button>
       </div>
 `;
 
@@ -204,7 +203,6 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
 
   addHandlers = () => {
     this._element.querySelector('.film-details__emoji-list').addEventListener('click', this.#smileButtonClickHandler);
-    this._element.querySelector('.submit-new-comment__button').addEventListener('click', this.#submitButtonClickHandler);
     twoKeysPressFunction(this.#submitNewComment);
   }
 
@@ -238,10 +236,6 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     return true;
   }
 
-  #submitButtonClickHandler = (evt) => {
-    evt.preventDefault();
-    this.#submitNewComment();
-  }
 
   #submitNewComment = () => {
     if (!this.#validationCheck(this.#newCommentTextInputElement, this.#currentCheckedButton)) {
@@ -251,7 +245,6 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
     const emotion = this.#currentCheckedButton.value;
     const comment = this.#newCommentTextInputElement.value;
     this.#newComment = {emotion: emotion, comment: comment};
-    removeEnterAndControlKeyUpDownHandlers();
 
     this._callback.submitNewComment(this.#newComment);
   }

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import {ApiService} from '/src/api/api-service.js';
-import {MethodsForAPI} from '/src/utils/util.js';
+import {MethodsForAPI, errorResponse} from '/src/utils/util.js';
 
 class MainModel {
   _observers = [];
@@ -14,12 +14,19 @@ class MainModel {
 
   async getMovies () {
     const filmsData = await this.#APIService.getData(MethodsForAPI.GET_MOVIES);
+    if (filmsData === errorResponse) {
+      return errorResponse;
+    }
     return this.#getAdaptToClient(filmsData);
   }
 
   async getComments (idFilm) {
     const dataList = {idFilm};
-    return await this.#APIService.getData(MethodsForAPI.GET_COMMENTS, dataList);
+    const filmsData = await this.#APIService.getData(MethodsForAPI.GET_COMMENTS, dataList);
+    if (filmsData === errorResponse) {
+      return errorResponse;
+    }
+    return filmsData;
   }
 
   async putMovies (idFilm, data) {

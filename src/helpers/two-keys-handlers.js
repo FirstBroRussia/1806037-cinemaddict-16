@@ -41,8 +41,6 @@ const controlKeyDownFalseHandler = (evt) => {
 
 const checkPressingOfTwoKeysHandler = () => {
   if (enterKey && ctrlKey) {
-    ctrlKey = true;
-    enterKey = false;
     submitFunction();
   }
 };

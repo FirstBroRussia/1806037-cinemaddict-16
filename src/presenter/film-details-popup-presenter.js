@@ -4,8 +4,9 @@ import {onEscKeydown, dayjs, setHeadShakingStyleAnimation} from '/src/utils/util
 import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
 
 import {FilmDetailsPopupMarkup, FilmDetailInfoMarkup, FilmDetailsCardFilterButtons, FilmDetailsCommentsCountMarkup, FilmDetailsCommentMarkup, FilmDetailsCommentFromDataMarkup, FilmDetailsNewCommentMarkup, FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-view.js';
+import {ErrorResponseForCommentsListMarkup} from '/src/view/error-response-from-server.js';
 import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {DeleteButtonState, MethodsForPopup, MethodsForAPI} from '../utils/util';
+import {DeleteButtonState, MethodsForPopup, MethodsForAPI, errorResponse} from '../utils/util';
 
 
 class FilmDetailsPopupPresenter {
@@ -33,9 +34,13 @@ class FilmDetailsPopupPresenter {
   #FilmDetailsNewCommentComponent = null;
 
   #filmDetailsTopContainerElement = null;
-  #filmDetailsBottonContainerElement = null;
+  #filmDetailsBottomContainerElement = null;
+
+  #ErrorResponseForCommentsListComponent = null;
 
   constructor (MainModel, changeMasterData, popupElement) {
+    this.#FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
+
     this.#MainModel = MainModel;
     this.#MainModel.odserverAdd(this.observerNotificationPopupPresenter);
 
@@ -52,25 +57,13 @@ class FilmDetailsPopupPresenter {
 
     await this.#setData(data);
 
-    this.#FilmDetailsPopupComponent = new FilmDetailsPopupMarkup();
+    this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
+    this.#filmDetailsBottomContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
+
     this.#FilmDetailsCloseButtonComponent = new FilmDetailsCloseButtonMarkup();
 
     this.#FilmDetailsInfoComponent = new FilmDetailInfoMarkup(this.#filmInfo);
     this.#FilmDetailsFilterButtonsComponent = new FilmDetailsCardFilterButtons(this.#filmInfo);
-
-    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#filmCommentsData);
-    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
-
-    this.#filmCommentsData.forEach( (commentData) => {
-      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData, this._deleteCommentButtonClickHandler);
-      renderNodeElement(this.#FilmDetailsCommentsComponent, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
-    });
-
-    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this._submitNewCommentHandler);
-
-    this.#filmDetailsTopContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__top-container');
-    this.#filmDetailsBottonContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
-
 
     document.addEventListener('keydown', this._closeFilmDetailsPopupKeydownHandler);
     this.#FilmDetailsCloseButtonComponent.addEventHandler('click', this._closeFilmDetailsPopupClickHandler);
@@ -82,11 +75,29 @@ class FilmDetailsPopupPresenter {
     renderNodeElement(this.#filmDetailsTopContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsInfoComponent);
     renderNodeElement(this.#filmDetailsTopContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsFilterButtonsComponent);
 
-    renderNodeElement(this.#filmDetailsBottonContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentsCountComponent);
-    renderNodeElement(this.#filmDetailsBottonContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentsComponent);
-    renderNodeElement(this.#filmDetailsBottonContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsNewCommentComponent);
-
     renderNodeElement(footerBodyElement, PositionMarkup.BEFORE_END, this.#FilmDetailsPopupComponent);
+
+    if (this.#filmCommentsData === null) {
+      this.#setErrorResponseMarkupForCommentsList();
+      return;
+    }
+
+    this.#filmDetailsBottomContainerElement = this.#FilmDetailsPopupComponent.element.querySelector('.film-details__bottom-container');
+
+    this.#FilmDetailsCommentsCountComponent = new FilmDetailsCommentsCountMarkup(this.#filmCommentsData);
+    this.#FilmDetailsCommentsComponent = new FilmDetailsCommentMarkup();
+
+    this.#filmCommentsData.forEach( (commentData) => {
+      this.#FilmDetailsCommentFromDataComponent = new FilmDetailsCommentFromDataMarkup(commentData, this._deleteCommentButtonClickHandler);
+      renderNodeElement(this.#FilmDetailsCommentsComponent, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentFromDataComponent);
+    });
+
+    this.#FilmDetailsNewCommentComponent = new FilmDetailsNewCommentMarkup(this._submitNewCommentHandler);
+
+    renderNodeElement(this.#filmDetailsBottomContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentsCountComponent);
+    renderNodeElement(this.#filmDetailsBottomContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsCommentsComponent);
+    renderNodeElement(this.#filmDetailsBottomContainerElement, PositionMarkup.BEFORE_END, this.#FilmDetailsNewCommentComponent);
+
   }
 
   closeFilmDetailsPopup = () => {
@@ -129,6 +140,12 @@ class FilmDetailsPopupPresenter {
     }
     this.#filmInfo = dataList;
     this.idFilm = this.#filmInfo.id;
+
+    const responseFromServer = await this.#MainModel.getComments(this.idFilm);
+    if (responseFromServer === errorResponse) {
+      this.#filmCommentsData = null;
+      return;
+    }
     this.#filmCommentsData = await this.#MainModel.getComments(this.idFilm);
   }
 
@@ -212,6 +229,11 @@ class FilmDetailsPopupPresenter {
   #failPostNewComment = () => {
     setHeadShakingStyleAnimation(this.#FilmDetailsPopupComponent.element);
     this.#FilmDetailsPopupComponent.formElementEnabled();
+  }
+
+  #setErrorResponseMarkupForCommentsList = () => {
+    this.#ErrorResponseForCommentsListComponent = new ErrorResponseForCommentsListMarkup();
+    renderNodeElement(this.#filmDetailsBottomContainerElement, PositionMarkup.BEFORE_END, this.#ErrorResponseForCommentsListComponent);
   }
 
   _controlButtonClickHandler = (clickButton) => {

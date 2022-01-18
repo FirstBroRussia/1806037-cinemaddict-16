@@ -1,4 +1,7 @@
+import {errorResponse} from '/src/utils/util.js';
+
 class ApiService {
+
   #authorization = null;
   #linkToServer = null;
 
@@ -10,36 +13,42 @@ class ApiService {
   async getData (method, dataList) {
     const {link, request, headers, body} = this.#setBodyRequest(method, dataList);
 
-    const response = await this.#requestFromServer(link, request, headers, body);
+    let response;
 
     try {
-      const dataToServer = await response.json();
-
-      return dataToServer;
+      response = await this.#requestFromServer(link, request, headers, body);
+      if (response.ok) {
+        return await response.json();
+      }
+      throw response;
     }
-    catch (err) {
-      throw new Error (`${response.status}: ${response.statusText}`);
+    catch{
+      return errorResponse;
     }
   }
 
   async changeData (method, dataList) {
-
     const {link, request, headers, body} = this.#setBodyRequest(method, dataList);
 
-    const response = await this.#requestFromServer(link, request, headers, body);
-
-    let resultResponse;
-
     try {
-      resultResponse = await response.json();
+      const response = await this.#requestFromServer(link, request, headers, body);
+      if (response.ok) {
+        const responseOk = response.ok;
+        if (method === 'deleteComment') {
+          return {
+            responseOk: responseOk,
+            data: null,
+          };
+        }
+        return {
+          responseOk: responseOk,
+          data: await response.json(),
+        };
+      }
+      throw new Error();
     } catch {
-      resultResponse = null;
+      return errorResponse;
     }
-
-    return {
-      responseOk: response.ok,
-      data: resultResponse,
-    };
   }
 
   #requestFromServer = (link, request, headers, body) => fetch(link, {

@@ -13,6 +13,8 @@ const ZERO_VALUE = 0;
 
 const INITIAL_FILMS_CARD_COUNT = 5;
 
+const errorResponse = 'errorResponse';
+
 const FilmsWatchedValue = {
   MIN_NOVICE_VALUE: 1,
   MAX_NOVICE_VALUE: 10,
@@ -97,4 +99,4 @@ const setHeadShakingStyleAnimation = (element) => {
   setTimeout( () => element.classList.remove('shake'), 800);
 };
 
-export {FilmsWatchedValue, DeleteButtonState, ZERO_VALUE, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs,  MethodsForAPI, INITIAL_FILMS_CARD_COUNT, ControlButtons, FilterMode, SortMode, MethodsForPopup, setHeadShakingStyleAnimation};
+export {errorResponse, FilmsWatchedValue, DeleteButtonState, ZERO_VALUE, he, Chart, ChartDataLabels, getDurationFormatTime, getReleaseDateFormat, getCreatingCommentDateFormat, getRandomNumber, getConvertedString, onEscKeydown, dayjs,  MethodsForAPI, INITIAL_FILMS_CARD_COUNT, ControlButtons, FilterMode, SortMode, MethodsForPopup, setHeadShakingStyleAnimation};

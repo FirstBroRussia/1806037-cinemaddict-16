@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions */
 import {headerBodyElement, mainBodyElement, footerStatisticBodyElement} from '/src/main.js';
-import {FilterMode, SortMode, MethodsForPopup} from '/src/utils/util.js';
+import {FilterMode, SortMode, MethodsForPopup, errorResponse} from '/src/utils/util.js';
 import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-view.js';
 import {ProfileUserMarkup} from '/src/view/profile-user-view.js';
 import {SortListMarkup} from '/src/view/sort-list-menu-view.js';
@@ -9,6 +9,7 @@ import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from
 import {NavigationMenuMarkup, FilterWrapMarkup, AllFilmsFilterMarkup, WatchlistFilmsFilterMarkup, HistoryFilterMarkup, FavoriteFilmsFilterMarkup, StatsMarkup, WatchlistFilmsCountMarkup, WatchedFilmsCountMarkup, FavoriteFilmsCountMarkup} from '/src/view/navigation-menu-view.js';
 import {MainModel} from '/src/model/main-model.js';
 import {StatisticSmartView} from '/src/view/statistic-menu-view.js';
+import {ErrorResponseForMainElementMarkup} from '/src/view/error-response-from-server.js';
 
 import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
 import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
@@ -51,6 +52,8 @@ class MainPresenter {
 
   #FilmsCountComponent = null;
 
+  #ErrorResponseForMainElementComponent = null;
+
   constructor () {
     this.#MainModel = new MainModel(this.#linkToServer);
     this.#MainModel.odserverAdd(this.observerNotificationMainPresenter);
@@ -59,16 +62,27 @@ class MainPresenter {
   }
 
   async init (idFilm) {
+    let response;
     if (this.#films === null) {
       this.#LoadingFilmsListComponent = new LoadingFilmsListMarkup();
-      renderNodeElement(mainBodyElement, PositionMarkup.AFTER_BEGIN, this.#LoadingFilmsListComponent);
+      renderNodeElement(mainBodyElement, PositionMarkup.BEFORE_END, this.#LoadingFilmsListComponent);
 
-      this.#films = await this.#MainModel.getMovies();
+      response = await this.#MainModel.getMovies();
+      if (response === errorResponse) {
+        this.#setErrorReceivingDataMarkup();
+        return;
+      }
+      this.#films = response;
       this.#primaryInit();
       return;
     }
 
-    this.#films = await this.#MainModel.getMovies();
+    response = await this.#MainModel.getMovies();
+    if (response === errorResponse) {
+      this.#setErrorReceivingDataMarkup();
+      return;
+    }
+    this.#films = response;
     this.#films.length === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
     this.#updateView(idFilm);
   }
@@ -207,6 +221,14 @@ class MainPresenter {
   }
 
   #setWatchedFilms = () => this.#films.slice().filter( (film) => film.isWatched);
+
+  #setErrorReceivingDataMarkup = () => {
+    this.#ErrorResponseForMainElementComponent = new ErrorResponseForMainElementMarkup();
+    this.#NavigationMenuComponent !== null ? this.#NavigationMenuComponent.hideComponent() : '';
+    this.#SortListComponent !== null ? this.#SortListComponent.hideComponent() : '';
+    this._deleteSectionElement();
+    renderNodeElement(mainBodyElement, PositionMarkup.BEFORE_END, this.#ErrorResponseForMainElementComponent);
+  }
 
   _changeMasterData = (method, dataList) => {
     const {idFilm, idComment, data} = dataList;
