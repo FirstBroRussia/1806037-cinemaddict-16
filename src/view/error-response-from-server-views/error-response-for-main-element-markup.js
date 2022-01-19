@@ -10,12 +10,6 @@ const createErrorResponseForMainElementMarkupTemplate = () => `
 </section>
 `;
 
-const createErrorResponseForCommentsListMarkupTemplate = () => `
-<ul class="film-details__comments-list">
-<h2 class="error-respons">Error in receiving data from the server</h2>
-</ul>
-`;
-
 class ErrorResponseForMainElementMarkup extends AbstractView {
   constructor () {
     super();
@@ -26,14 +20,4 @@ class ErrorResponseForMainElementMarkup extends AbstractView {
 
 }
 
-class ErrorResponseForCommentsListMarkup extends AbstractView {
-  constructor () {
-    super();
-
-    this._template = createErrorResponseForCommentsListMarkupTemplate;
-    this._element = createNodeElement(this._template());
-  }
-
-}
-
-export {ErrorResponseForMainElementMarkup, ErrorResponseForCommentsListMarkup};
+export {ErrorResponseForMainElementMarkup};

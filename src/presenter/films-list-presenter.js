@@ -1,10 +1,23 @@
 import {bodyElement, mainBodyElement} from '/src/main.js';
 import {INITIAL_FILMS_CARD_COUNT, ZERO_VALUE, ControlButtons} from '/src/utils/util.js';
-import {AllFilmsMarkup, FilmsListMarkup, TopRatedFilmsListMarkup, MostCommentedFilmsListMarkup, ExtraFilmsListMarkup, TopRatedListTagMarkup, MostCommentedListTagMarkup, GeneralAllFilmsListTagMarkup, GeneralFilmsListContainerMarkup, GeneralWatchlistFilmsListTagMarkup, GeneralWatchedFilmsListTagMarkup, GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-view.js';
+import {AllFilmsMarkup} from '/src/view/films-list-views/all-films-markup.js';
+import {FilmsListMarkup} from '/src/view/films-list-views/films-list-markup.js';
+import {TopRatedFilmsListMarkup} from '/src/view/films-list-views/top-rated-films-list-markup.js';
+import {MostCommentedFilmsListMarkup} from '/src/view/films-list-views/most-commented-films-list-markup.js';
+import {ExtraFilmsListMarkup} from '/src/view/films-list-views/extra-films-list-markup.js';
+import {TopRatedListTagMarkup} from '/src/view/films-list-views/top-rated-list-tag-markup.js';
+import {MostCommentedListTagMarkup} from '/src/view/films-list-views/most-commented-list-tag-markup.js';
+import {GeneralAllFilmsListTagMarkup} from '/src/view/films-list-views/general-all-films-list-tag-markup.js';
+import {GeneralFilmsListContainerMarkup} from '/src/view/films-list-views/general-films-list-container-markup.js';
+import {GeneralWatchlistFilmsListTagMarkup} from '/src/view/films-list-views/general-watchlist-films-list-tag-markup.js';
+import {GeneralWatchedFilmsListTagMarkup} from '/src/view/films-list-views/general-watched-films-list-tag-markup.js';
+import {GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-views/general-favorite-films-list-tag-markup.js';
 import {PositionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
-
-import {ShowMoreButtonMarkup} from '/src/view/show-more-button-view.js';
-import {EmptyAllFilmsListMarkup, EmptyWatchlistMarkup, EmptyWatchedMarkup, EmptyFavoriteMarkup} from '/src/view/empty-films-list-view.js';
+import {ShowMoreButtonMarkup} from '/src/view/show-more-button-markup.js';
+import {EmptyAllFilmsListMarkup} from '/src/view/empty-films-views/empty-all-films-list-markup.js';
+import {EmptyWatchlistMarkup} from '/src/view/empty-films-views/empty-watchlist-markup.js';
+import {EmptyWatchedMarkup} from '/src/view/empty-films-views/empty-watched-markup.js';
+import {EmptyFavoriteMarkup} from '/src/view/empty-films-views/empty-favorite-markup.js';
 
 import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
 

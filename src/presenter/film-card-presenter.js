@@ -1,4 +1,7 @@
-import {FilmCardMarkup, FilmCardInfoMarkup, ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-view.js';
+import {FilmCardMarkup} from '/src/view/film-card-views/film-card-markup.js';
+import {FilmCardInfoMarkup} from '/src/view/film-card-views/film-card-info-markup.js';
+import {ControlButtonsOnTheFilmCardMarkup} from '/src/view/film-card-views/control-buttons-on-the-film-card-markup.js';
+
 import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 
 import {MethodsForPopup, dayjs, MethodsForAPI} from '../utils/util';

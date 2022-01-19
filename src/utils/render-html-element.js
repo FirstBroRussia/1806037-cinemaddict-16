@@ -28,16 +28,8 @@ const renderNodeElement = (container, position, element) => {
   }
 };
 
-const replaceNodeElement = (parentNodeElement, newChildElement, oldChildElement) => {
-  getNodeElement(parentNodeElement).replaceChild(getNodeElement(newChildElement), getNodeElement(oldChildElement));
-};
-
 const replaceNodeElementWithoutParent = (newChildElement, oldChildElement) => {
   getNodeElement(oldChildElement).replaceWith(getNodeElement(newChildElement));
 };
 
-const removeNodeElement = (parentNodeElement, childElement) => {
-  getNodeElement(parentNodeElement).removeChild(getNodeElement(childElement));
-};
-
-export {PositionMarkup, createNodeElement, renderNodeElement, replaceNodeElement, replaceNodeElementWithoutParent, removeNodeElement};
+export {PositionMarkup, createNodeElement, renderNodeElement, replaceNodeElementWithoutParent};
