@@ -1,11 +1,11 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createWatchedFilmsCountTemplate = (filmsData) => `
 <span class="main-navigation__item-count">${filmsData.filter(({isWatched}) => isWatched).length}
 `;
 
-class WatchedFilmsCountMarkup extends AbstractView {
+export default class WatchedFilmsCountMarkup extends AbstractView {
   constructor (filmsData) {
     super();
 
@@ -13,5 +13,3 @@ class WatchedFilmsCountMarkup extends AbstractView {
     this._element = createNodeElement(this._template(filmsData));
   }
 }
-
-export {WatchedFilmsCountMarkup};

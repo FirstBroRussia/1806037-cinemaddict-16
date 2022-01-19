@@ -1,4 +1,4 @@
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilmsWatchedValue} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
@@ -21,7 +21,7 @@ const createStatisticsRankTemplate = (data) => {
   `;
 };
 
-class StatisticsRankMarkup extends AbstractView {
+export default class StatisticsRankMarkup extends AbstractView {
   constructor (data) {
     super();
 
@@ -29,5 +29,3 @@ class StatisticsRankMarkup extends AbstractView {
     this._element = createNodeElement(this._template(data));
   }
 }
-
-export {StatisticsRankMarkup};

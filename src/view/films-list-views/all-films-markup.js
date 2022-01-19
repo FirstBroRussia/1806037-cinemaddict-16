@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createAllFilmsMarkupTemplate = () => `
 <section class="films">
@@ -7,7 +7,7 @@ const createAllFilmsMarkupTemplate = () => `
   </section>
 `;
 
-class AllFilmsMarkup extends AbstractView {
+export default class AllFilmsMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -15,5 +15,3 @@ class AllFilmsMarkup extends AbstractView {
     this._element = createNodeElement(this._template());
   }
 }
-
-export {AllFilmsMarkup};

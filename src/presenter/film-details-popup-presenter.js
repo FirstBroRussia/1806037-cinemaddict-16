@@ -2,20 +2,20 @@
 import {footerBodyElement} from '/src/main.js';
 import {onEscKeydown, dayjs, setHeadShakingStyleAnimation} from '/src/utils/util.js';
 import {removeEnterAndControlKeyUpDownHandlers} from '/src/helpers/two-keys-handlers.js';
-import {FilmDetailsPopupMarkup} from '/src/view/film-details-popup-views/film-details-popup-markup.js';
-import {FilmDetailInfoMarkup} from '/src/view/film-details-popup-views/film-details-info-markup.js';
-import {FilmDetailsCardFilterButtons} from '/src/view/film-details-popup-views/film-details-card-filter-buttons.js';
-import {FilmDetailsCommentsCountMarkup} from '/src/view/film-details-popup-views/film-details-comments-count-markup.js';
-import {FilmDetailsCommentsListMarkup} from '/src/view/film-details-popup-views/film-details-comments-list-markup.js';
-import {FilmDetailsCommentFromDataMarkup} from '/src/view/film-details-popup-views/film-details-comment-from-data-markup.js';
-import {FilmDetailsNewCommentMarkup} from '/src/view/film-details-popup-views/film-details-new-comment-markup.js';
-import {FilmDetailsCloseButtonMarkup} from '/src/view/film-details-popup-views/film-details-close-button-markup.js';
-import {ErrorResponseForCommentsListMarkup} from '/src/view/error-response-from-server-views/error-response-for-comments-list-markup.js';
+import FilmDetailsPopupMarkup from '/src/view/film-details-popup-views/film-details-popup-markup.js';
+import FilmDetailInfoMarkup from '/src/view/film-details-popup-views/film-details-info-markup.js';
+import FilmDetailsCardFilterButtons from '/src/view/film-details-popup-views/film-details-card-filter-buttons.js';
+import FilmDetailsCommentsCountMarkup from '/src/view/film-details-popup-views/film-details-comments-count-markup.js';
+import FilmDetailsCommentsListMarkup from '/src/view/film-details-popup-views/film-details-comments-list-markup.js';
+import FilmDetailsCommentFromDataMarkup from '/src/view/film-details-popup-views/film-details-comment-from-data-markup.js';
+import FilmDetailsNewCommentMarkup from '/src/view/film-details-popup-views/film-details-new-comment-markup.js';
+import FilmDetailsCloseButtonMarkup from '/src/view/film-details-popup-views/film-details-close-button-markup.js';
+import ErrorResponseForCommentsListMarkup from '/src/view/error-response-from-server-views/error-response-for-comments-list-markup.js';
 import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
 import {DeleteButtonState, MethodsForPopup, MethodsForAPI, errorResponse} from '../utils/util';
 
 
-class FilmDetailsPopupPresenter {
+export default class FilmDetailsPopupPresenter {
   _callbacks = {};
 
   idFilm = null;
@@ -285,5 +285,3 @@ class FilmDetailsPopupPresenter {
   }
 
 }
-
-export {FilmDetailsPopupPresenter};

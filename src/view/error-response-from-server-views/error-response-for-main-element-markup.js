@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createErrorResponseForMainElementMarkupTemplate = () => `
 <section class="films">
@@ -10,7 +10,7 @@ const createErrorResponseForMainElementMarkupTemplate = () => `
 </section>
 `;
 
-class ErrorResponseForMainElementMarkup extends AbstractView {
+export default class ErrorResponseForMainElementMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -19,5 +19,3 @@ class ErrorResponseForMainElementMarkup extends AbstractView {
   }
 
 }
-
-export {ErrorResponseForMainElementMarkup};

@@ -1,4 +1,4 @@
-import {MainPresenter} from '/src/presenter/main-presenter.js';
+import MainPresenter from '/src/presenter/main-presenter.js';
 
 const bodyElement = document.querySelector('body');
 const headerBodyElement = document.querySelector('.header');

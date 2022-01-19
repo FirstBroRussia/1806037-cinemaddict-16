@@ -1,6 +1,6 @@
 import {ControlButtons} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createFilmDetailsCardFilterControlButtonsTemplate = (film) => `
 <section id="${film.id}" class="film-details__controls">
@@ -10,7 +10,7 @@ const createFilmDetailsCardFilterControlButtonsTemplate = (film) => `
 </section>
 `;
 
-class FilmDetailsCardFilterButtons extends AbstractView {
+export default class FilmDetailsCardFilterButtons extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -57,5 +57,3 @@ class FilmDetailsCardFilterButtons extends AbstractView {
     this._callback.FavoriteClick(ControlButtons.isFavorite);
   };
 }
-
-export {FilmDetailsCardFilterButtons};

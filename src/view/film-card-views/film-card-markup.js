@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createFilmCardTemplate = (film) => `
 <article id="${film.id}" class="film-card">
@@ -7,7 +7,7 @@ const createFilmCardTemplate = (film) => `
 
 </article>`;
 
-class FilmCardMarkup extends AbstractView {
+export default class FilmCardMarkup extends AbstractView {
   constructor (filmData, classHidden) {
     super();
 
@@ -36,5 +36,3 @@ class FilmCardMarkup extends AbstractView {
     this._callback.respectiveHandler(evt);
   };
 }
-
-export {FilmCardMarkup};

@@ -1,12 +1,12 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilterMode} from '/src/utils/util.js';
 
 const createAllFilmsFilterTemplate = () => `
 <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
 `;
 
-class AllFilmsFilterMarkup extends AbstractView {
+export default class AllFilmsFilterMarkup extends AbstractView {
   #mainWrapComponent = null;
 
   constructor (mainWrapComponent) {
@@ -36,5 +36,3 @@ class AllFilmsFilterMarkup extends AbstractView {
     this._callback.allMoviesFilterClick(FilterMode.ALL_MOVIES);
   }
 }
-
-export {AllFilmsFilterMarkup};

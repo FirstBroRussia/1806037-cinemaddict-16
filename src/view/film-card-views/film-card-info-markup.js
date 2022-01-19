@@ -1,6 +1,6 @@
 import {getConvertedString, dayjs, getDurationFormatTime} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const MAX_LENGTH_DESCRIPTION_STRING_TO_FILM_CARD = 140;
 
@@ -19,7 +19,7 @@ const createFilmCardInfoMarkup = (film) => `
 </a>
 `;
 
-class FilmCardInfoMarkup extends AbstractView {
+export default class FilmCardInfoMarkup extends AbstractView {
   constructor (filmData) {
     super();
 
@@ -27,5 +27,3 @@ class FilmCardInfoMarkup extends AbstractView {
     this._element = createNodeElement(this._template(filmData));
   }
 }
-
-export {FilmCardInfoMarkup};

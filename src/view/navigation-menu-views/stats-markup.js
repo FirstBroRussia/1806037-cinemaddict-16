@@ -1,11 +1,11 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createStatsTemplate = () => `
 <a href="#stats" class="main-navigation__additional">Stats</a>
 `;
 
-class StatsMarkup extends AbstractView {
+export default class StatsMarkup extends AbstractView {
   #mainWrapComponent = null;
 
   constructor (mainWrapComponent) {
@@ -35,5 +35,3 @@ class StatsMarkup extends AbstractView {
   }
 
 }
-
-export {StatsMarkup};

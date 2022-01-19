@@ -1,30 +1,29 @@
-import {bodyElement, mainBodyElement} from '/src/main.js';
-import {INITIAL_FILMS_CARD_COUNT, ZERO_VALUE, ControlButtons} from '/src/utils/util.js';
-import {AllFilmsMarkup} from '/src/view/films-list-views/all-films-markup.js';
-import {FilmsListMarkup} from '/src/view/films-list-views/films-list-markup.js';
-import {TopRatedFilmsListMarkup} from '/src/view/films-list-views/top-rated-films-list-markup.js';
-import {MostCommentedFilmsListMarkup} from '/src/view/films-list-views/most-commented-films-list-markup.js';
-import {ExtraFilmsListMarkup} from '/src/view/films-list-views/extra-films-list-markup.js';
-import {TopRatedListTagMarkup} from '/src/view/films-list-views/top-rated-list-tag-markup.js';
-import {MostCommentedListTagMarkup} from '/src/view/films-list-views/most-commented-list-tag-markup.js';
-import {GeneralAllFilmsListTagMarkup} from '/src/view/films-list-views/general-all-films-list-tag-markup.js';
-import {GeneralFilmsListContainerMarkup} from '/src/view/films-list-views/general-films-list-container-markup.js';
-import {GeneralWatchlistFilmsListTagMarkup} from '/src/view/films-list-views/general-watchlist-films-list-tag-markup.js';
-import {GeneralWatchedFilmsListTagMarkup} from '/src/view/films-list-views/general-watched-films-list-tag-markup.js';
-import {GeneralFavoriteFilmsListTagMarkup} from '/src/view/films-list-views/general-favorite-films-list-tag-markup.js';
+import {mainBodyElement} from '/src/main.js';
+import {INITIAL_FILMS_CARD_COUNT, ZERO_VALUE} from '/src/utils/util.js';
 import {PositionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
-import {ShowMoreButtonMarkup} from '/src/view/show-more-button-markup.js';
-import {EmptyAllFilmsListMarkup} from '/src/view/empty-films-views/empty-all-films-list-markup.js';
-import {EmptyWatchlistMarkup} from '/src/view/empty-films-views/empty-watchlist-markup.js';
-import {EmptyWatchedMarkup} from '/src/view/empty-films-views/empty-watched-markup.js';
-import {EmptyFavoriteMarkup} from '/src/view/empty-films-views/empty-favorite-markup.js';
 
-import {FilmCardPresenter} from '/src/presenter/film-card-presenter.js';
+import AllFilmsMarkup from '/src/view/films-list-views/all-films-markup.js';
+import FilmsListMarkup from '/src/view/films-list-views/films-list-markup.js';
+import TopRatedFilmsListMarkup from '/src/view/films-list-views/top-rated-films-list-markup.js';
+import MostCommentedFilmsListMarkup from '/src/view/films-list-views/most-commented-films-list-markup.js';
+import ExtraFilmsListMarkup from '/src/view/films-list-views/extra-films-list-markup.js';
+import TopRatedListTagMarkup from '/src/view/films-list-views/top-rated-list-tag-markup.js';
+import MostCommentedListTagMarkup from '/src/view/films-list-views/most-commented-list-tag-markup.js';
+import GeneralAllFilmsListTagMarkup from '/src/view/films-list-views/general-all-films-list-tag-markup.js';
+import GeneralFilmsListContainerMarkup from '/src/view/films-list-views/general-films-list-container-markup.js';
+import GeneralWatchlistFilmsListTagMarkup from '/src/view/films-list-views/general-watchlist-films-list-tag-markup.js';
+import GeneralWatchedFilmsListTagMarkup from '/src/view/films-list-views/general-watched-films-list-tag-markup.js';
+import GeneralFavoriteFilmsListTagMarkup from '/src/view/films-list-views/general-favorite-films-list-tag-markup.js';
+import ShowMoreButtonMarkup from '/src/view/show-more-button-markup.js';
+import EmptyAllFilmsListMarkup from '/src/view/empty-films-views/empty-all-films-list-markup.js';
+import EmptyWatchlistMarkup from '/src/view/empty-films-views/empty-watchlist-markup.js';
+import EmptyWatchedMarkup from '/src/view/empty-films-views/empty-watched-markup.js';
+import EmptyFavoriteMarkup from '/src/view/empty-films-views/empty-favorite-markup.js';
 
-const NO_FILMS_VALUE = 0;
+import FilmCardPresenter from '/src/presenter/film-card-presenter.js';
 
 
-class FilmsListPresenter {
+export default class FilmsListPresenter {
   #films = null;
 
   #FilterMode = null;
@@ -82,7 +81,7 @@ class FilmsListPresenter {
     this.#AllFilmsComponent = new AllFilmsMarkup();
 
     this.#GeneralFilmsListComponent = new FilmsListMarkup();
-    if (films.length === NO_FILMS_VALUE) {
+    if (films.length === ZERO_VALUE) {
       this.#GeneralFilmsListTagComponent = this.#emptyGeneralFilmsListSwitch(this.#FilterMode);
       renderNodeElement(this.#AllFilmsComponent, PositionMarkup.BEFORE_END, this.#GeneralFilmsListComponent);
       renderNodeElement(this.#GeneralFilmsListComponent, PositionMarkup.BEFORE_END, this.#GeneralFilmsListTagComponent);
@@ -101,7 +100,7 @@ class FilmsListPresenter {
   }
 
   #renderExtraFilmsList = (films) => {
-    if (films.length === NO_FILMS_VALUE) {
+    if (films.length === ZERO_VALUE) {
       return;
     }
     this.#TopRatedExtraFilmsListComponent = new ExtraFilmsListMarkup();
@@ -233,5 +232,3 @@ class FilmsListPresenter {
   }
 
 }
-
-export {INITIAL_FILMS_CARD_COUNT, FilmsListPresenter, bodyElement, ControlButtons as controlButtons};

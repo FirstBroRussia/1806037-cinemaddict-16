@@ -1,4 +1,4 @@
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {Chart, ChartDataLabels} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
@@ -8,7 +8,7 @@ const createStatisticsChartCanvasTemplate = () => `
 </div>
 `;
 
-class StatisticsChartCanvasMarkup extends AbstractView {
+export default class StatisticsChartCanvasMarkup extends AbstractView {
   #genresListByFilmsCountMap = null;
 
   constructor (genresListByFilmsCountMap) {
@@ -91,5 +91,3 @@ class StatisticsChartCanvasMarkup extends AbstractView {
     });
   }
 }
-
-export {StatisticsChartCanvasMarkup};

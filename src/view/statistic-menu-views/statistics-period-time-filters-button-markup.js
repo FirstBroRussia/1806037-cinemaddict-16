@@ -1,4 +1,4 @@
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
 const createStatisticsPeriodTimeFiltersButtonTemplate = () => `
@@ -22,7 +22,7 @@ const createStatisticsPeriodTimeFiltersButtonTemplate = () => `
 </form>
 `;
 
-class StatisticsPeriodTimeFiltersButtonMarkup extends AbstractView {
+export default class StatisticsPeriodTimeFiltersButtonMarkup extends AbstractView {
   #currentCheckedButton = null;
 
   constructor (callback, checkedButton) {
@@ -58,5 +58,3 @@ class StatisticsPeriodTimeFiltersButtonMarkup extends AbstractView {
   }
 
 }
-
-export {StatisticsPeriodTimeFiltersButtonMarkup};

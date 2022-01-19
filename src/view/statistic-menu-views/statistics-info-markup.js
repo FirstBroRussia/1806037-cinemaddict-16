@@ -1,4 +1,4 @@
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {ZERO_VALUE} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
@@ -39,7 +39,7 @@ const createStatisticsInfoTemplate = (filmsData, genresListByFilmsCountMap) => {
 `;
 };
 
-class StatisticsInfoMarkup extends AbstractView {
+export default class StatisticsInfoMarkup extends AbstractView {
   constructor (filmsData, genresListByFilmsCountMap) {
     super();
 
@@ -47,5 +47,3 @@ class StatisticsInfoMarkup extends AbstractView {
     this._element = createNodeElement(this._template(filmsData, genresListByFilmsCountMap));
   }
 }
-
-export {StatisticsInfoMarkup};

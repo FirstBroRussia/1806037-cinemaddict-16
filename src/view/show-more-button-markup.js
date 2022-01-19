@@ -1,12 +1,12 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createShowMoreButtonTemplate = () => `
 <button class="films-list__show-more">Show more</button>
 `;
 
 
-class ShowMoreButtonMarkup extends AbstractView {
+export default class ShowMoreButtonMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -14,5 +14,3 @@ class ShowMoreButtonMarkup extends AbstractView {
     this._element = createNodeElement(this._template());
   }
 }
-
-export {ShowMoreButtonMarkup};

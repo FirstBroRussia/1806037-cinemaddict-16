@@ -1,33 +1,30 @@
 /* eslint-disable no-unused-expressions */
 import {headerBodyElement, mainBodyElement, footerStatisticBodyElement} from '/src/main.js';
-import {FilterMode, SortMode, MethodsForPopup, errorResponse} from '/src/utils/util.js';
-import {LoadingFilmsListMarkup} from '/src/view/loading-films-list-markup.js';
-import {ProfileUserMarkup} from '/src/view/profile-user-markup.js';
-import {SortListMarkup} from '/src/view/sort-list-markup.js';
-import {FilmsCountMarkup} from '/src/view/films-count-markup.js';
+import {dayjs, ZERO_VALUE, FilterMode, SortMode, MethodsForPopup, errorResponse} from '/src/utils/util.js';
 import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {NavigationMenuMarkup} from '/src/view/navigation-menu-views/navigation-menu-markup.js';
-import {FilterWrapMarkup} from '/src/view/navigation-menu-views/filter-wrap-markup.js';
-import {AllFilmsFilterMarkup} from '/src/view/navigation-menu-views/all-films-filter-markup.js';
-import {WatchlistFilmsFilterMarkup} from '/src/view/navigation-menu-views/watchlist-films-filter-markup.js';
-import {HistoryFilterMarkup} from '/src/view/navigation-menu-views/history-filter-markup.js';
-import {FavoriteFilmsFilterMarkup} from '/src/view/navigation-menu-views/favorite-films-filter-markup.js';
-import {StatsMarkup} from '/src/view/navigation-menu-views/stats-markup.js';
-import {WatchlistFilmsCountMarkup} from '/src/view/navigation-menu-views/watchlist-films-count-markup.js';
-import {WatchedFilmsCountMarkup} from '/src/view/navigation-menu-views/watched-films-count-markup.js';
-import {FavoriteFilmsCountMarkup} from '/src/view/navigation-menu-views/favorite-films-count-markup.js';
-import {MainModel} from '/src/model/main-model.js';
-import {StatisticSmartView} from '/src/view/statistic-menu-views/statistic-smart-view.js';
-import {ErrorResponseForMainElementMarkup} from '/src/view/error-response-from-server-views/error-response-for-main-element-markup.js';
 
-import {FilmsListPresenter} from '/src/presenter/films-list-presenter.js';
-import {FilmDetailsPopupPresenter} from '/src/presenter/film-details-popup-presenter.js';
+import LoadingFilmsListMarkup from '/src/view/loading-films-list-markup.js';
+import ProfileUserMarkup from '/src/view/profile-user-markup.js';
+import SortListMarkup from '/src/view/sort-list-markup.js';
+import FilmsCountMarkup from '/src/view/films-count-markup.js';
+import NavigationMenuMarkup from '/src/view/navigation-menu-views/navigation-menu-markup.js';
+import FilterWrapMarkup from '/src/view/navigation-menu-views/filter-wrap-markup.js';
+import AllFilmsFilterMarkup from '/src/view/navigation-menu-views/all-films-filter-markup.js';
+import WatchlistFilmsFilterMarkup from '/src/view/navigation-menu-views/watchlist-films-filter-markup.js';
+import HistoryFilterMarkup from '/src/view/navigation-menu-views/history-filter-markup.js';
+import FavoriteFilmsFilterMarkup from '/src/view/navigation-menu-views/favorite-films-filter-markup.js';
+import StatsMarkup from '/src/view/navigation-menu-views/stats-markup.js';
+import WatchlistFilmsCountMarkup from '/src/view/navigation-menu-views/watchlist-films-count-markup.js';
+import WatchedFilmsCountMarkup from '/src/view/navigation-menu-views/watched-films-count-markup.js';
+import FavoriteFilmsCountMarkup from '/src/view/navigation-menu-views/favorite-films-count-markup.js';
+import MainModel from '/src/model/main-model.js';
+import StatisticSmartView from '/src/view/statistic-menu-views/statistic-smart-view.js';
+import ErrorResponseForMainElementMarkup from '/src/view/error-response-from-server-views/error-response-for-main-element-markup.js';
 
-import {dayjs, ZERO_VALUE} from '/src/utils/util.js';
+import FilmsListPresenter from '/src/presenter/films-list-presenter.js';
+import FilmDetailsPopupPresenter from '/src/presenter/film-details-popup-presenter.js';
 
-const NO_FILMS_VALUE = 0;
-
-class MainPresenter {
+export default class MainPresenter {
   #linkToServer = 'https://16.ecmascript.pages.academy/cinemaddict/';
 
   #films = null;
@@ -93,7 +90,7 @@ class MainPresenter {
       return;
     }
     this.#films = response;
-    this.#films.length === NO_FILMS_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
+    this.#films.length === ZERO_VALUE ? this.#SortListComponent.hideComponent() : this.#SortListComponent.showComponent();
     this.#updateView(idFilm);
   }
 
@@ -172,7 +169,7 @@ class MainPresenter {
     this.#navigationMenuUpdateView();
     this.#filmsCountUpdateView();
 
-    if (this.#convertedFilms.length === NO_FILMS_VALUE) {
+    if (this.#convertedFilms.length === ZERO_VALUE) {
       this.#SortListComponent.hideComponent();
     }
     this.#FilmsListPresenter.render(this.#convertedFilms, this.#selectedFilter, this.#selectedSort, id);
@@ -302,5 +299,3 @@ class MainPresenter {
   };
 
 }
-
-export {MainPresenter};

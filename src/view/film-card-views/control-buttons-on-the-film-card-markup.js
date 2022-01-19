@@ -1,6 +1,6 @@
 import {ControlButtons} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 
 const createControlButtonOnTheFilmCardTemplate = (film) => `
@@ -11,7 +11,7 @@ const createControlButtonOnTheFilmCardTemplate = (film) => `
 </div>
 `;
 
-class ControlButtonsOnTheFilmCardMarkup extends AbstractView {
+export default class ControlButtonsOnTheFilmCardMarkup extends AbstractView {
   constructor (filmData) {
     super();
 
@@ -59,5 +59,3 @@ class ControlButtonsOnTheFilmCardMarkup extends AbstractView {
   };
 
 }
-
-export {ControlButtonsOnTheFilmCardMarkup};

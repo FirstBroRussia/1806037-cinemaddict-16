@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createMostCommentedFilmsListTemplate = () => `
 <div class="films-list__container most-commented">
@@ -8,7 +8,7 @@ const createMostCommentedFilmsListTemplate = () => `
 </div>
 `;
 
-class MostCommentedFilmsListMarkup extends AbstractView {
+export default class MostCommentedFilmsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -16,5 +16,3 @@ class MostCommentedFilmsListMarkup extends AbstractView {
     this._element = createNodeElement(this._template());
   }
 }
-
-export {MostCommentedFilmsListMarkup};

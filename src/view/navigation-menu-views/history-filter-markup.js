@@ -1,12 +1,12 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilterMode} from '/src/utils/util.js';
 
 const createWatchedFilmsFilterTemplate = () => `
 <a href="#history" class="main-navigation__item">History </span></a>
 `;
 
-class HistoryFilterMarkup extends AbstractView {
+export default class HistoryFilterMarkup extends AbstractView {
   #mainWrapComponent = null;
 
   constructor (mainWrapComponent) {
@@ -35,5 +35,3 @@ class HistoryFilterMarkup extends AbstractView {
     this._callback.historyFilterClick(FilterMode.HISTORY);
   }
 }
-
-export {HistoryFilterMarkup};

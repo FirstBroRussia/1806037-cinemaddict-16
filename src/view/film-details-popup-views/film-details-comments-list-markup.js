@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createFilmDetailsCommentsListMarkupTemplate = () => `
   <ul class="film-details__comments-list">
@@ -7,7 +7,7 @@ const createFilmDetailsCommentsListMarkupTemplate = () => `
   </ul>
 `;
 
-class FilmDetailsCommentsListMarkup extends AbstractView {
+export default class FilmDetailsCommentsListMarkup extends AbstractView {
   constructor() {
     super();
 
@@ -23,5 +23,3 @@ class FilmDetailsCommentsListMarkup extends AbstractView {
     this._element.classList.remove('element--disabled');
   }
 }
-
-export {FilmDetailsCommentsListMarkup};

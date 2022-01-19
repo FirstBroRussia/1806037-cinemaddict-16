@@ -1,13 +1,14 @@
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
-import { dayjs, ZERO_VALUE} from '/src/utils/util.js';
+import {dayjs, ZERO_VALUE} from '/src/utils/util.js';
 import {PositionMarkup, renderNodeElement, replaceNodeElementWithoutParent} from '/src/utils/render-html-element.js';
-import {StatisticMenuMarkup} from '/src/view/statistic-menu-views/statistic-menu-markup.js';
-import {StatisticsRankMarkup} from '/src/view/statistic-menu-views/statistics-rank-markup.js';
-import {StatisticsPeriodTimeFiltersButtonMarkup} from '/src/view/statistic-menu-views/statistics-period-time-filters-button-markup.js';
-import {StatisticsInfoMarkup} from '/src/view/statistic-menu-views/statistics-info-markup.js';
-import {StatisticsChartCanvasMarkup} from '/src/view/statistic-menu-views/statistics-chart-canvas-markup.js';
 
-class StatisticSmartView extends AbstractView {
+import AbstractView from '/src/abstract-class/abstract-view.js';
+import StatisticMenuMarkup from '/src/view/statistic-menu-views/statistic-menu-markup.js';
+import StatisticsRankMarkup from '/src/view/statistic-menu-views/statistics-rank-markup.js';
+import StatisticsPeriodTimeFiltersButtonMarkup from '/src/view/statistic-menu-views/statistics-period-time-filters-button-markup.js';
+import StatisticsInfoMarkup from '/src/view/statistic-menu-views/statistics-info-markup.js';
+import StatisticsChartCanvasMarkup from '/src/view/statistic-menu-views/statistics-chart-canvas-markup.js';
+
+export default class StatisticSmartView extends AbstractView {
   #data = null;
 
   #StatisticMenuComponent = null;
@@ -148,5 +149,3 @@ class StatisticSmartView extends AbstractView {
   }
 
 }
-
-export {StatisticSmartView};

@@ -1,12 +1,12 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilterMode} from '/src/utils/util.js';
 
 const createFavoriteFilmsFilterTemplate = () => `
 <a href="#favorites" class="main-navigation__item">Favorites </span></a>
 `;
 
-class FavoriteFilmsFilterMarkup extends AbstractView {
+export default class FavoriteFilmsFilterMarkup extends AbstractView {
   #mainWrapComponent = null;
 
   constructor (mainWrapComponent) {
@@ -35,5 +35,3 @@ class FavoriteFilmsFilterMarkup extends AbstractView {
     this._callback.favoriteFilterClick(FilterMode.FAVORITE);
   }
 }
-
-export {FavoriteFilmsFilterMarkup};

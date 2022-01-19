@@ -1,6 +1,6 @@
 import {errorResponse} from '/src/utils/util.js';
 
-class ApiService {
+export default class ApiService {
 
   #authorization = null;
   #linkToServer = null;
@@ -110,5 +110,3 @@ class ApiService {
   }
 
 }
-
-export {ApiService};

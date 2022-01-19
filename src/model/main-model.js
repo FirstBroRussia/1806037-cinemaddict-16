@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-import {ApiService} from '/src/api/api-service.js';
+import ApiService from '/src/api/api-service.js';
 import {MethodsForAPI, errorResponse} from '/src/utils/util.js';
 
-class MainModel {
+export default class MainModel {
   _observers = [];
 
   #APIService = null;
@@ -176,5 +176,3 @@ class MainModel {
   })
 
 }
-
-export {MainModel};

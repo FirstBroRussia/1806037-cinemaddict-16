@@ -1,6 +1,6 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
 
-class AbstractView {
+export default class AbstractView {
   _callback = {};
 
   constructor () {
@@ -53,5 +53,3 @@ class AbstractView {
     this._element = null;
   }
 }
-
-export {AbstractView};

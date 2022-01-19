@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilmsWatchedValue} from '/src/utils/util.js';
 
 const createTitleProfileUserTemplate = (data) => {
@@ -21,7 +21,7 @@ const createTitleProfileUserTemplate = (data) => {
   `;
 };
 
-class ProfileUserMarkup extends AbstractView {
+export default class ProfileUserMarkup extends AbstractView {
   constructor (data) {
     super();
 
@@ -29,5 +29,3 @@ class ProfileUserMarkup extends AbstractView {
     this._element = createNodeElement(this._template(data));
   }
 }
-
-export {ProfileUserMarkup};

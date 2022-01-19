@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createFilmDetailsPopupTemplate = () => `
 <section class="film-details">
@@ -17,7 +17,7 @@ const createFilmDetailsPopupTemplate = () => `
 </section>
 `;
 
-class FilmDetailsPopupMarkup extends AbstractView {
+export default class FilmDetailsPopupMarkup extends AbstractView {
   #formElement = null;
 
   constructor() {
@@ -37,5 +37,3 @@ class FilmDetailsPopupMarkup extends AbstractView {
   }
 
 }
-
-export {FilmDetailsPopupMarkup};

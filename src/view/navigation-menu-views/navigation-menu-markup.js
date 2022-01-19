@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createNavigationMenuTemplate = () => `
 <nav class="main-navigation">
@@ -7,7 +7,7 @@ const createNavigationMenuTemplate = () => `
   </nav>
 `;
 
-class NavigationMenuMarkup extends AbstractView {
+export default class NavigationMenuMarkup extends AbstractView {
   _currentActiveButton = null;
 
   constructor () {
@@ -35,5 +35,3 @@ class NavigationMenuMarkup extends AbstractView {
   }
 
 }
-
-export {NavigationMenuMarkup};

@@ -1,6 +1,6 @@
 import {getReleaseDateFormat, getDurationFormatTime} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createFilmDetailsInfoMarkupTemplate = (film) => {
   let textMarkupToGenresList = '';
@@ -64,7 +64,7 @@ const createFilmDetailsInfoMarkupTemplate = (film) => {
 `;
 };
 
-class FilmDetailInfoMarkup extends AbstractView {
+export default class FilmDetailInfoMarkup extends AbstractView {
   constructor(filmData) {
     super();
 
@@ -73,5 +73,3 @@ class FilmDetailInfoMarkup extends AbstractView {
   }
 
 }
-
-export {FilmDetailInfoMarkup};

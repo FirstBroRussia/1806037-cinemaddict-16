@@ -1,6 +1,6 @@
 import {he} from '/src/utils/util.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import dayjs from 'dayjs';
 
 
@@ -20,7 +20,7 @@ const createFilmDetailsCommentFromDataTemplate = (item) => `
    </li>\n
 `;
 
-class FilmDetailsCommentFromDataMarkup extends AbstractView {
+export default class FilmDetailsCommentFromDataMarkup extends AbstractView {
   #idComment = null;
 
   #deleteButtonElement = null;
@@ -58,5 +58,3 @@ class FilmDetailsCommentFromDataMarkup extends AbstractView {
     }
   }
 }
-
-export {FilmDetailsCommentFromDataMarkup};

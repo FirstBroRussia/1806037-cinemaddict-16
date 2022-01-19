@@ -1,5 +1,5 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 
 const createErrorResponseForCommentsListMarkupTemplate = () => `
 <ul class="film-details__comments-list">
@@ -7,7 +7,7 @@ const createErrorResponseForCommentsListMarkupTemplate = () => `
 </ul>
 `;
 
-class ErrorResponseForCommentsListMarkup extends AbstractView {
+export default class ErrorResponseForCommentsListMarkup extends AbstractView {
   constructor () {
     super();
 
@@ -16,5 +16,3 @@ class ErrorResponseForCommentsListMarkup extends AbstractView {
   }
 
 }
-
-export {ErrorResponseForCommentsListMarkup};

@@ -1,12 +1,12 @@
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {FilterMode} from '/src/utils/util.js';
 
 const createWatchlistFilmsFilterTemplate = () => `
 <a href="#watchlist" class="main-navigation__item">Watchlist </span></a>
 `;
 
-class WatchlistFilmsFilterMarkup extends AbstractView {
+export default class WatchlistFilmsFilterMarkup extends AbstractView {
   #mainWrapComponent = null;
 
   constructor (mainWrapComponent) {
@@ -35,5 +35,3 @@ class WatchlistFilmsFilterMarkup extends AbstractView {
     this._callback.watchlistFilterClick(FilterMode.WATCHLIST);
   }
 }
-
-export {WatchlistFilmsFilterMarkup};

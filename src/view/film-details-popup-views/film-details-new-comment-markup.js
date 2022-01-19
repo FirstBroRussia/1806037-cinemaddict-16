@@ -1,6 +1,6 @@
 import {twoKeysPressFunction} from '/src/helpers/two-keys-handlers.js';
 import {createNodeElement} from '/src/utils/render-html-element.js';
-import {AbstractView} from '/src/abstract-class/abstract-view.js';
+import AbstractView from '/src/abstract-class/abstract-view.js';
 import {PositionMarkup, renderNodeElement} from '/src/utils/render-html-element.js';
 import {setNewCommentElementValid} from '/src/helpers/new-comment-submit-validation.js';
 
@@ -37,7 +37,7 @@ const createFolmDetailsNewCommentMarkup = () => `
       </div>
 `;
 
-class FilmDetailsNewCommentMarkup extends AbstractView {
+export default class FilmDetailsNewCommentMarkup extends AbstractView {
   #newComment = null;
 
   #currentCheckedButton = null;
@@ -106,5 +106,3 @@ class FilmDetailsNewCommentMarkup extends AbstractView {
   }
 
 }
-
-export {FilmDetailsNewCommentMarkup};
